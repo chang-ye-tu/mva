@@ -5,10 +5,15 @@
 - [Härdle, W., Simar, L., 2015. Applied Multivariate Statistical Analysis. 4th ed., Springer.](https://link.springer.com/book/10.1007/978-3-662-45171-7)
 - [Härdle, W., Hlávka, Z., 2019. Multivariate Statistics: Exercises and Solutions. 2nd ed., Springer.](https://link.springer.com/book/10.1007/978-3-642-36005-3)
 
+## 範例原始碼
+
+[MVA-ToDo: Quantlets to Update for MVA](https://github.com/QuantLet/MVA-ToDo/tree/master)
+
 ## 評分標準
 
-- 期中考（50%） 04/24 
-- 期末考（50%） 06/12 
+- 期中考（35%） 04/24 
+- 期末考（35%） 06/12 
+- 作業（30%）
 
 ## 授課時程
 

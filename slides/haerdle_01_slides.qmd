@@ -15,13 +15,13 @@ format:
     toc-title: "Outline"
     slide-level: 2
     header-includes: |
-      \usepackage{amsmath,amssymb,bm}
+      \usepackage{amsmath,amsthm,amssymb,bm}
       \usepackage{booktabs}
       \usepackage{graphicx}
       \usepackage{xcolor}
-      \definecolor{mpiblue}{RGB}{0,90,169}
-      \setbeamercolor{frametitle}{bg=mpiblue}
-      \setbeamercolor{progress bar}{fg=mpiblue}
+      %\definecolor{mpiblue}{RGB}{0,90,169}
+      %\setbeamercolor{frametitle}{bg=mpiblue}
+      %\setbeamercolor{progress bar}{fg=mpiblue}
       \newcommand{\indc}{\mathbf{1}}
       \DeclareMathOperator*{\argmin}{arg\,min}
 ---
@@ -49,7 +49,7 @@ each a realisation of a random vector $X = (X_1, X_2, \dots, X_p)^\top \in \math
 - **2D:** Point clouds are immediately interpretable.
 - **3D:** Real-time rotation on a computer screen is feasible.
 - **4D:** A "sliding" technique (Härdle \& Scott, 1992) can show 3D density contours as the fourth variable varies.
-- **$\geqslant\;$5D:** A qualitative jump in difficulty occurs; high-dimensional structure must be mapped into lower dimensions (Klinke \& Polzehl, 1995).
+- $\geqslant\;$**5D:** A qualitative jump in difficulty occurs; high-dimensional structure must be mapped into lower dimensions (Klinke \& Polzehl, 1995).
 
 **This chapter** introduces:
 
@@ -127,10 +127,7 @@ Karachi & Pakistan & 1{,}430 & $x_{(1)}$\\
 
 ## Quartiles and $F$-Spread
 
-**Depth of the fourth:**
-$$
-\text{depth of fourth} = \frac{[\text{depth of median}] + 1}{2} = \frac{8+1}{2} = 4.5
-$$
+**Depth of the fourth:** $\;\displaystyle\frac{[\text{depth of median}] + 1}{2} = \frac{8+1}{2} = 4.5$
 
 So the **fourths** (quartiles) are:
 $$
@@ -163,7 +160,7 @@ $\Rightarrow$ **Tokyo** (3,420) is beyond the upper outside bar $\Rightarrow$ **
 ```{=latex}
 \begin{figure}
   \centering
-  \includegraphics[page=2,width=0.62\linewidth,keepaspectratio]%
+  \includegraphics[page=2,width=0.6\linewidth,keepaspectratio]%
     {haerdle_01_figs.pdf}
   \caption{Boxplot for world cities. One outlier (Tokyo) is visible; the data are right-skewed.}
 \end{figure}
@@ -253,13 +250,13 @@ $\Rightarrow$ Genuine diagonals are **systematically larger**, but with some ove
 ## Swiss Bank Notes: $X_1$ (Length)
 
 :::::::::::::: {.columns}
-::: {.column width="55%"}
+::: {.column width="50%"}
 ```{=latex}
 \includegraphics[page=5,width=\linewidth,keepaspectratio]%
   {haerdle_01_figs.pdf}
 ```
 :::
-::: {.column width="45%"}
+::: {.column width="50%"}
 \vspace{1em}
 
 - Length ($X_1$) shows **less clear separation** than diagonal ($X_6$).
@@ -320,7 +317,7 @@ $$
 ```{=latex}
 \begin{figure}
   \centering
-  \includegraphics[page=6,width=0.80\linewidth,keepaspectratio]%
+  \includegraphics[page=6,width=0.55\linewidth,keepaspectratio]%
     {haerdle_01_figs.pdf}
   \caption{Diagonal of counterfeit bank notes. Histograms with $x_0=137.8$ and
   $h=0.1$ (upper left), $h=0.2$ (lower left), $h=0.3$ (upper right), $h=0.4$ (lower right).
@@ -335,7 +332,7 @@ $$
 ```{=latex}
 \begin{figure}
   \centering
-  \includegraphics[page=7,width=0.78\linewidth,keepaspectratio]%
+  \includegraphics[page=7,width=0.5\linewidth,keepaspectratio]%
     {haerdle_01_figs.pdf}
   \caption{Diagonal of counterfeit notes. Fixed $h=0.4$; origins $x_0\in\{137.65,137.75,137.85,137.95\}$.
   }
@@ -351,7 +348,7 @@ Averaging over multiple histogram origins removes the dependence on $x_0$ and re
 ```{=latex}
 \begin{figure}
   \centering
-  \includegraphics[page=8,width=0.78\linewidth,keepaspectratio]%
+  \includegraphics[page=8,width=0.48\linewidth,keepaspectratio]%
     {haerdle_01_figs.pdf}
   \caption{ASH based on all Swiss bank notes: 2 shifts (upper left), 4 shifts (lower left),
   8 shifts (upper right), 16 shifts (lower right). }
@@ -454,7 +451,7 @@ For the quartic kernel: $h_Q = 2.62\cdot h_G$.
 :::
 ::: {.column width="50%"}
 ```{=latex}
-\includegraphics[page=11,width=\linewidth,keepaspectratio]%
+\includegraphics[page=11,width=.8\linewidth,keepaspectratio]%
   {haerdle_01_figs.pdf}
 ```
 \centering\small 3D: $X_4,X_5,X_6$
@@ -528,7 +525,7 @@ $$
 ```{=latex}
 \begin{figure}
   \centering
-  \includegraphics[page=14,width=0.72\linewidth,keepaspectratio]%
+  \includegraphics[page=14,width=0.6\linewidth,keepaspectratio]%
     {haerdle_01_figs.pdf}
   \caption{Draftman's plot: $X_3, X_4, X_5, X_6$ of the bank data.
   Upper right half shows density contour plots. }
@@ -557,17 +554,14 @@ $\hookrightarrow$ & Brushing through a point cloud reveals conditional dependenc
 \end{tabular}
 \end{center}
 
-# Section 5: Chernoff–Flury Faces
+# Section 5: Chernoff–Flury Faces 
 
-## The Idea of Faces
+## The Idea of Faces (Chernoff 1973, Flury & Riedwyl 1988)
 
-**Principle:** Map each $p$-dimensional observation onto characteristics of a human face, exploiting the brain's powerful face-recognition ability.
-
-- Introduced by **Chernoff (1973)**; extended by **Flury \& Riedwyl (1988)**.
+- **Principle:** Map each $p$-dimensional observation onto characteristics of a human face.
 - Each variable is rescaled to $[0,1]$; the two extremes correspond to extreme face element positions.
 - Flury–Riedwyl design: **36 face elements** (18 for left side, 18 for right side).
-
-**Bank data assignment** ($p=6$):
+- **Bank data assignment** ($p=6$):
 
 | Variable | Face Element |
 |:---------|:-------------|
@@ -583,7 +577,7 @@ $\hookrightarrow$ & Brushing through a point cloud reveals conditional dependenc
 ```{=latex}
 \begin{figure}
   \centering
-  \includegraphics[page=15,width=0.80\linewidth,keepaspectratio]%
+  \includegraphics[page=15,width=0.47\linewidth,keepaspectratio]%
     {haerdle_01_figs.pdf}
   \caption{Chernoff–Flury faces for observations 91--110 of the bank data.
   Observations 91--100: \textbf{counterfeit} (upper); 101--110: \textbf{genuine} (lower).
@@ -599,14 +593,12 @@ $\hookrightarrow$ & Brushing through a point cloud reveals conditional dependenc
 \includegraphics[page=16,width=\linewidth,keepaspectratio]%
   {haerdle_01_figs.pdf}
 ```
-\centering\small Obs.\ 1–50 
 :::
 ::: {.column width="50%"}
 ```{=latex}
 \includegraphics[page=17,width=\linewidth,keepaspectratio]%
   {haerdle_01_figs.pdf}
 ```
-\centering\small Obs.\ 51–100 
 :::
 ::::::::::::::
 
@@ -620,14 +612,12 @@ Genuine notes: **darker appearance**, **broader face lines** (reflecting larger 
 \includegraphics[page=18,width=\linewidth,keepaspectratio]%
   {haerdle_01_figs.pdf}
 ```
-\centering\small Obs.\ 101–150 
 :::
 ::: {.column width="50%"}
 ```{=latex}
 \includegraphics[page=19,width=\linewidth,keepaspectratio]%
   {haerdle_01_figs.pdf}
 ```
-\centering\small Obs.\ 151–200
 :::
 ::::::::::::::
 
@@ -682,15 +672,21 @@ $$
 :::::::::::::: {.columns}
 ::: {.column width="50%"}
 ```{=latex}
-\includegraphics[page=20,width=\linewidth,keepaspectratio]%
+\begin{figure}
+  \centering
+  \includegraphics[page=20,width=.75\linewidth,keepaspectratio]%
   {haerdle_01_figs.pdf}
+\end{figure}
 ```
 \centering\small Order: $1,2,3,4,5,6$
 :::
 ::: {.column width="50%"}
 ```{=latex}
-\includegraphics[page=21,width=\linewidth,keepaspectratio]%
+\begin{figure}
+  \centering
+  \includegraphics[page=21,width=.75\linewidth,keepaspectratio]%
   {haerdle_01_figs.pdf}
+\end{figure}
 ```
 \centering\small Order: $6,5,4,3,2,1$
 :::
@@ -701,7 +697,7 @@ $$
 - **Black:** genuine (obs.\ 96–100); **Red dotted:** counterfeit (obs.\ 101–105).
 - Original order: differences appear in **high frequency** (hard to see).
 - Reversed order: differences shift to **intercept** level.
-- **Andrews' recommendation:** use order suggested by **Principal Component Analysis** (Chapter 11).
+- **Andrews' recommendation:** use order suggested by **Principal Component Analysis**.
 
 ## Andrews' Curves Summary
 
@@ -746,7 +742,7 @@ $\hookrightarrow$ & For $>20$ observations: bad signal-to-ink ratio (Tufte, 1983
 ```{=latex}
 \begin{figure}
   \centering
-  \includegraphics[page=22,width=0.82\linewidth,keepaspectratio]%
+  \includegraphics[page=22,width=0.58\linewidth,keepaspectratio]%
     {haerdle_01_figs.pdf}
   \caption{PCP of observations 96--105 (genuine: black solid; counterfeit: red dash-dot).
   }
@@ -765,7 +761,7 @@ $\hookrightarrow$ & For $>20$ observations: bad signal-to-ink ratio (Tufte, 1983
 :::
 ::: {.column width="50%"}
 ```{=latex}
-\includegraphics[page=24,width=\linewidth,keepaspectratio]%
+\includegraphics[page=24,width=.95\linewidth,keepaspectratio]%
   {haerdle_01_figs.pdf}
 ```
 \centering\small Mileage vs Weight ($\rho=-0.82$)
@@ -787,7 +783,7 @@ $\hookrightarrow$ & For $>20$ observations: bad signal-to-ink ratio (Tufte, 1983
 :::
 ::: {.column width="50%"}
 ```{=latex}
-\includegraphics[page=26,width=\linewidth,keepaspectratio]%
+\includegraphics[page=26,width=.95\linewidth,keepaspectratio]%
   {haerdle_01_figs.pdf}
 ```
 \centering\small Headroom, Rear Seat, Trunk Space
@@ -802,13 +798,13 @@ $\hookrightarrow$ & For $>20$ observations: bad signal-to-ink ratio (Tufte, 1983
 :::::::::::::: {.columns}
 ::: {.column width="50%"}
 ```{=latex}
-\includegraphics[page=27,width=\linewidth,keepaspectratio]%
+\includegraphics[page=27,width=.9\linewidth,keepaspectratio]%
   {haerdle_01_figs.pdf}
 ```
 :::
 ::: {.column width="50%"}
 ```{=latex}
-\includegraphics[page=29,width=0.9\linewidth,keepaspectratio]%
+\includegraphics[page=29,width=.85\linewidth,keepaspectratio]%
   {haerdle_01_figs.pdf}
 ```
 \centering\small Cubic spline PCP 
@@ -823,7 +819,7 @@ $\hookrightarrow$ & For $>20$ observations: bad signal-to-ink ratio (Tufte, 1983
 ```{=latex}
 \begin{figure}
   \centering
-  \includegraphics[page=30,width=0.80\linewidth,keepaspectratio]%
+  \includegraphics[page=30,width=0.6\linewidth,keepaspectratio]%
     {haerdle_01_figs.pdf}
   \caption{PCP for all 13 car data variables, coloured by headquarters:
   \textcolor{red}{red} = EU, \textcolor{blue}{blue} = Japan, black = US.}
@@ -875,37 +871,40 @@ $\hookrightarrow$ & Cubic spline interpolation resolves crossing ambiguity.\\
 ## Hexagon Plots: Age vs Income and Age vs Computer Time
 
 :::::::::::::: {.columns}
-::: {.column width="50%"}
+::: {.column width="65%"}
 ```{=latex}
-\includegraphics[page=31,width=\linewidth,keepaspectratio]%
-  {haerdle_01_figs.pdf}
+\begin{figure}
+  \centering
+  \includegraphics[page=31,width=\linewidth,keepaspectratio]{haerdle_01_figs.pdf}
+  \caption{$X_1$ (Age) vs $X_2$ (Net income)}
+\end{figure}
 ```
-\centering\small $X_1$ (Age) vs $X_2$ (Net income)
+ALLBUS 2006 survey data ($n=2{,}946$). 
+
+Most respondents earn $<2{,}000$ EUR/month; $\approx 40\%$ of all age groups use a computer $<1$ h/week.
+
 :::
-::: {.column width="50%"}
+::: {.column width="35%"}
 ```{=latex}
-\includegraphics[page=32,width=\linewidth,keepaspectratio]%
-  {haerdle_01_figs.pdf}
+\begin{figure}
+  \centering
+  \includegraphics[page=32,width=\linewidth,keepaspectratio]{haerdle_01_figs.pdf}
+  \caption{$X_1$ (Age) vs $X_5$ (Computer time)}
+\end{figure}
 ```
-\centering\small $X_1$ (Age) vs $X_5$ (Computer time)
 :::
 ::::::::::::::
-
-ALLBUS 2006 survey data ($n=2{,}946$). Most respondents earn $<2{,}000$ EUR/month; $\approx 40\%$ of all age groups use a computer $<1$ h/week.
 
 ## Hexagon Plot: Income vs Flat Size
 
 ```{=latex}
 \begin{figure}
   \centering
-  \includegraphics[page=33,width=0.62\linewidth,keepaspectratio]%
+  \includegraphics[page=33,width=0.55\linewidth,keepaspectratio]%
     {haerdle_01_figs.pdf}
-  \caption{Hexagon plot: $X_2$ (Net income) vs $X_7$ (Flat size).}
+  \caption{Hexagon plot: $X_2$ (Net income) vs $X_7$ (Flat size). Clear positive trend: Higher net income $\Rightarrow$ larger flat. A few high-income respondents live in small flats.}
 \end{figure}
 ```
-
-**Clear positive trend:** Higher net income $\Rightarrow$ larger flat. A few high-income respondents live in small flats.
-
 ## Hexagon Plot Summary
 
 \begin{center}
@@ -941,19 +940,28 @@ $X_1$ crime rate, $X_3$ non-retail business, $X_5$ nitric oxide concentration, $
 
 ## PCP for Boston Housing
 
+:::::::::::::: {.columns}
+::: {.column width="45%"}
 ```{=latex}
 \begin{figure}
   \centering
-  \includegraphics[page=34,width=0.80\linewidth,keepaspectratio]%
+  \includegraphics[page=34,width=\linewidth,keepaspectratio]%
     {haerdle_01_figs.pdf}
   \caption{PCP of Boston housing data. Observations with $X_{14} > \text{median}(X_{14})$
   are coloured \textcolor{red}{red}.}
 \end{figure}
 ```
+:::
+::: {.column width="55%"}
+
+\vspace{8em}
 
 - Strong **negative** dependence: $X_{13}$ and $X_{14}$.
 - Red lines dominate the **upper** part of $X_{12}$, **lower** part of $X_{11}$.
 - $X_1$ and $X_9$: values **concentrated near 0** $\Rightarrow$ transformations needed.
+
+:::
+::::::::::::::
 
 ## Scatterplot Matrices (Original and Transformed)
 
@@ -996,57 +1004,20 @@ Note: $X_4$ is binary — **no transformation**.
 ```{=latex}
 \begin{figure}
   \centering
-  \includegraphics[page=37,width=0.80\linewidth,keepaspectratio]%
+  \includegraphics[page=37,width=0.57\linewidth,keepaspectratio]%
     {haerdle_01_figs.pdf}
-  \caption{Boxplots for all variables before (top) and after (bottom) transformation.
-  }
+  \caption{Boxplots for all variables before (top) and after (bottom) transformation: 
+  Transformed variables are more symmetric and have fewer outliers.}
 \end{figure}
 ```
-
-Transformed variables are **more symmetric** and have **fewer outliers**.
 
 ## Key Variable Relationships
 
 | Variable | Relation to $X_{14}$ | Remark |
-|:---------|:---------------------|:-------|
+|:---------|:--------------------:|:-------|
 | $X_1$ (crime) | Negative | Two sub-groups visible in $\log X_1$ |
 | $X_3$ (non-retail) | Negative | Bimodal KDE |
 | $X_5$ (NOx) | Negative | May proxy noise pollution |
 | $X_6$ (rooms) | **Positive** | Strongest linear signal |
 | $X_{11}$ (pupil/teacher) | Negative | Fewer teachers $\Rightarrow$ lower prices |
 | $X_{13}$ (lower status) | **Strongest negative** | Nearly linear on log scale |
-
-# Exercises
-
-## Selected Exercises
-
-\textbf{Exercise 1.3} Assume $X \sim N(0,1)$. What percentage of data falls outside the outside bars $[F_L - 1.5d_F,\; F_U + 1.5d_F]$?
-
-\textbf{Exercise 1.9} Use a bandwidth selection criterion to find the optimal $h$ for the diagonal variable of the bank notes. Is one bandwidth for both groups better?
-
-\textbf{Exercise 1.10} The two density groups overlap near diagonal $\approx 140.4$. Can we effectively separate them using $X_6$ alone?
-
-\textbf{Exercise 1.15} Heights of 13 students:
-$$1.72,\ 1.83,\ 1.74,\ 1.79,\ 1.94,\ 1.81,\ 1.66,\ 1.60,\ 1.78,\ 1.77,\ 1.85,\ 1.70,\ 1.76.$$
-(1) Five-number summary. \quad (2) Boxplot. \quad (3) Histogram.
-
-\textbf{Exercise 1.18} Draftman plot for car data ($X_1 = \text{price}$, $X_2 = \text{mileage}$, $X_8 = \text{weight}$, $X_9 = \text{length}$). Brush on heavy cars. What can you say about price, mileage, length?
-
-## Chapter Summary
-
-**Methods covered in Chapter 1:**
-
-| Method | Detects | Limitation |
-|:-------|:--------|:-----------|
-| Boxplot | Location, spread, outliers, skew | No multimodality |
-| Histogram | Modes, distribution shape | Sensitive to $h$ and $x_0$ |
-| KDE | Modes, shape (smooth) | Bandwidth choice |
-| Scatterplot | Bivariate/trivariate dependence | Max 3D |
-| Faces | Cluster structure, outliers | Variable assignment |
-| Andrews' curves | Clusters, outliers (curves) | Variable order |
-| PCP | High-dim.\ structure, clusters | Crossing ambiguity |
-| Hexagon plot | Large data density | Bin width choice |
-
-**Recurring dataset:** Swiss bank notes — genuine vs.\ counterfeit ($n=200$, $p=6$).
-
-**Next:** Chapter 2 introduces formal multivariate statistics: mean vectors, covariance matrices, and sample geometry.

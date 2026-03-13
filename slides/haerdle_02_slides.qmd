@@ -1,0 +1,795 @@
+---
+title: "A Short Excursion into Matrix Algebra"
+subtitle: "Applied Multivariate Statistical Analysis --- Chapter 2"
+author: "Härdle W. K. & Simar L."
+date: today
+format:
+  beamer:
+    theme: metropolis
+    aspectratio: 169
+    fontsize: 10pt
+    navigation: horizontal
+    toc: false
+    slide-level: 2
+    pdf-engine: xelatex
+    include-in-header:
+      text: |
+        \PassOptionsToPackage{no-math}{fontspec}
+        \let\theorem\relax     \let\endtheorem\relax
+        \let\corollary\relax   \let\endcorollary\relax
+        \let\lemma\relax       \let\endlemma\relax
+        \let\fact\relax        \let\endfact\relax
+        \let\problem\relax     \let\endproblem\relax
+        \let\solution\relax    \let\endsolution\relax
+        \let\definition\relax  \let\enddefinition\relax
+        \let\definitions\relax \let\enddefinitions\relax
+        \let\example\relax     \let\endexample\relax
+        \let\examples\relax    \let\endexamples\relax
+        \usepackage{amsmath,amssymb}
+        \usepackage{mathtools}
+        \usepackage{dsfont}
+        \usepackage{multirow}
+        \usepackage{booktabs}
+        \usepackage{enumerate}
+        \DeclareMathOperator\prb{\mathsf{P}}
+        \DeclareMathOperator\expc{\mathsf{E}}
+        \DeclareMathOperator\var{var}
+        \DeclareMathOperator\cov{cov}
+        \DeclareMathOperator\cor{cor}
+        \DeclareMathOperator\argmin{argmin}
+        \DeclareMathOperator\argmax{argmax}
+        \DeclareMathOperator\indc{\mathds{1}}
+        \newcommand{\bA}{\mathcal{A}}
+        \newcommand{\bB}{\mathcal{B}}
+        \newcommand{\bC}{\mathcal{C}}
+        \newcommand{\bI}{\mathcal{I}}
+        \newcommand{\bP}{\mathcal{P}}
+        \newcommand{\bQ}{\mathcal{Q}}
+        \newcommand{\bX}{\mathcal{X}}
+        \newtheorem{proposition}{Proposition}
+        \renewcommand{\qedsymbol}{$\blacksquare$}
+execute:
+  echo: false
+  warning: false
+---
+
+# \S2.1 Elementary Operations {#sec-2-1}
+
+## Matrices: Basic Definition
+
+A matrix $\mathcal{A}$ is a rectangular array with $n$ rows and $p$ columns:
+$$
+\mathcal{A} =
+\begin{pmatrix}
+a_{11} & a_{12} & \dots & a_{1p} \\
+\vdots & a_{22} & & \vdots \\
+\vdots & \vdots & \ddots & \vdots \\
+a_{n1} & a_{n2} & \dots & a_{np}
+\end{pmatrix}.
+$$
+
+**Notation:** $(a_{ij})$ for $\mathcal{A}$; $\mathcal{A}(n \times p)$ for dimensions; vectors $x(p\times1)$ are one-column matrices.
+
+## Special Matrices and Vectors
+
+\footnotesize
+\begin{tabular}{llll}
+\toprule
+Name & Definition & Notation & Example \\
+\midrule
+Scalar & $p = n = 1$ & $a$ & $3$ \\
+Column vector & $p = 1$ & $a$ & $(1\ 3)^\top$ \\
+Row vector & $n = 1$ & $a^\top$ & $(1\ 3)$ \\
+Vector of ones & $(\underbrace{1,\dots,1}_{n})^\top$ & $1_n$ & $(1\ 1)^\top$ \\
+Square matrix & $n = p$ & $\mathcal{A}(p\times p)$ & $\begin{pmatrix}2&0\\0&2\end{pmatrix}$ \\
+Diagonal matrix & $a_{ij}=0,\,i\neq j$ & $\operatorname{diag}(a_{ii})$ & $\begin{pmatrix}1&0\\0&2\end{pmatrix}$ \\
+Identity matrix & $\operatorname{diag}(\underbrace{1,\dots,1}_{p})$ & $\mathcal{I}_p$ & $\begin{pmatrix}1&0\\0&1\end{pmatrix}$ \\
+Symmetric matrix & $a_{ij}=a_{ji}$ & & $\begin{pmatrix}3&2\\2&3\end{pmatrix}$ \\
+Orthogonal matrix & $\mathcal{A}^\top\mathcal{A}=\mathcal{I}=\mathcal{A}\mathcal{A}^\top$ & & $\frac{1}{\sqrt{2}}\begin{pmatrix}1&1\\1&-1\end{pmatrix}$ \\
+Idempotent matrix & $\mathcal{A}\mathcal{A}=\mathcal{A}$ & & $\begin{pmatrix}1&0&0\\0&\frac{1}{2}&\frac{1}{2}\\0&\frac{1}{2}&\frac{1}{2}\end{pmatrix}$ \\
+\bottomrule
+\end{tabular}
+
+## Matrix Operations
+
+**Elementary operations** ($\mathcal{A}(n\times p)$, $\mathcal{B}(p\times m)$):
+$$\mathcal{A}^\top=(a_{ji}),\quad\mathcal{A}+\mathcal{B}=(a_{ij}+b_{ij}),\quad c\mathcal{A}=(ca_{ij}),\quad\mathcal{A}\mathcal{B}=\left(\sum_j a_{ij}b_{jk}\right).$$
+
+**Properties:**
+$$\mathcal{A}+\mathcal{B}=\mathcal{B}+\mathcal{A},\quad\mathcal{A}(\mathcal{B}+\mathcal{C})=\mathcal{A}\mathcal{B}+\mathcal{A}\mathcal{C},\quad\mathcal{A}(\mathcal{B}\mathcal{C})=(\mathcal{A}\mathcal{B})\mathcal{C}$$
+$$(\mathcal{A}^\top)^\top=\mathcal{A},\qquad(\mathcal{A}\mathcal{B})^\top=\mathcal{B}^\top\mathcal{A}^\top$$
+
+## Rank, Trace, and Determinant
+
+**Rank:** $\operatorname{rank}(\mathcal{A})$ = max number of linearly independent rows (= columns).
+
+**Trace** (square): $\operatorname{tr}(\mathcal{A})=\sum_i a_{ii}$; $\;\operatorname{tr}(\mathcal{A}\mathcal{B})=\operatorname{tr}(\mathcal{B}\mathcal{A})$.
+
+**Determinant:** $|\mathcal{A}|=\sum(-1)^{|\tau|}a_{1\tau(1)}\cdots a_{p\tau(p)}$; $\;|\mathcal{A}^\top|=|\mathcal{A}|$; $\;|\mathcal{A}\mathcal{B}|=|\mathcal{A}||\mathcal{B}|$.
+
+::: {.block}
+**Example 2.1** ($p=2$): $|\mathcal{A}|=a_{11}a_{22}-a_{12}a_{21}$.
+:::
+
+## Inverse, G-Inverse, Eigenvalues
+
+**Inverse:** $|\mathcal{A}|\neq0\Rightarrow\mathcal{A}^{-1}$ exists; $\;c_{ji}=(-1)^{i+j}M_{ji}$ (cofactor); $\;|\mathcal{A}^{-1}|=|\mathcal{A}|^{-1}$.
+
+**G-Inverse:** $\mathcal{A}^-$ satisfies $\mathcal{A}\mathcal{A}^-\mathcal{A}=\mathcal{A}$ (not unique; exists even if $|\mathcal{A}|=0$).
+
+::: {.block}
+**Example 2.2:** $\mathcal{A}=\begin{pmatrix}1&0\\0&0\end{pmatrix}$, $\mathcal{A}^-=\begin{pmatrix}1&0\\0&0\end{pmatrix}$: $\mathcal{A}\mathcal{A}^-\mathcal{A}=\mathcal{A}$. $\checkmark$
+:::
+
+**Eigenvalues/vectors:** $\mathcal{A}\gamma=\lambda\gamma$; $|\mathcal{A}|=\prod\lambda_j$; $\operatorname{tr}(\mathcal{A})=\sum\lambda_j$.
+
+::: {.block}
+**Example 2.3** $\mathcal{A}=\begin{pmatrix}1&0&0\\0&\frac{1}{2}&\frac{1}{2}\\0&\frac{1}{2}&\frac{1}{2}\end{pmatrix}$ idempotent: $\lambda_1=\lambda_2=1$, $\lambda_3=0$; $\operatorname{rank}(\mathcal{A})=\operatorname{tr}(\mathcal{A})=2$.
+:::
+
+## Properties of Matrix Characteristics
+
+$$\operatorname{tr}(\mathcal{A}+\mathcal{B})=\operatorname{tr}\mathcal{A}+\operatorname{tr}\mathcal{B},\quad\operatorname{tr}(c\mathcal{A})=c\operatorname{tr}\mathcal{A},\quad|c\mathcal{A}|=c^n|\mathcal{A}|,\quad|\mathcal{A}\mathcal{B}|=|\mathcal{A}||\mathcal{B}|$$
+$$\operatorname{tr}(\mathcal{A}\mathcal{B})=\operatorname{tr}(\mathcal{B}\mathcal{A}),\quad0\leq\operatorname{rank}(\mathcal{A})\leq\min(n,p),\quad\operatorname{rank}(\mathcal{A})=\operatorname{rank}(\mathcal{A}^\top\mathcal{A})$$
+
+::: {.alertblock}
+**Section Summary**
+- $|\mathcal{A}|=\prod\lambda_j$; inverse exists iff $|\mathcal{A}|\neq0$
+- $\operatorname{tr}(\mathcal{A})=\sum\lambda_j$; for idempotent $\mathcal{A}$: $\operatorname{rank}(\mathcal{A})=\operatorname{tr}(\mathcal{A})$, eigenvalues $\in\{0,1\}$
+:::
+
+## Exercises: \S2.1 (I)
+
+\small
+\begin{enumerate}[(1)]
+\item \textbf{(Centering matrix.)} $\mathcal{H}=\mathcal{I}_n-\frac{1}{n}\mathbf{1}_n\mathbf{1}_n^\top$.
+\begin{enumerate}[(a)]
+  \item Show $\mathcal{H}^2=\mathcal{H}$. \emph{Hint:} $\mathbf{1}^\top\mathbf{1}=n$.
+  \item Compute $\operatorname{tr}(\mathcal{H})$ and $\operatorname{rank}(\mathcal{H})$.
+  \item Show $\mathbf{1}_n^\top(\mathcal{H}\mathcal{X})=\mathbf{0}^\top$ for any $\mathcal{X}(n\times p)$.
+\end{enumerate}
+\item \textbf{(Scatter matrix.)} Show $\mathcal{S}_n=\mathcal{X}^\top\mathcal{H}\mathcal{X}$ is symmetric and PSD. Under what condition is $\mathcal{S}_n>0$?
+\item \textbf{(Correlation matrix.)} $\mathcal{R}=\begin{pmatrix}1&\rho\\\rho&1\end{pmatrix}$, $\rho\in(-1,1)$.
+\begin{enumerate}[(a)]
+  \item Compute $|\mathcal{R}|$ and $\mathcal{R}^{-1}$.
+  \item Compute $\operatorname{tr}(\mathcal{R})$ and $\operatorname{tr}(\mathcal{R}^{-1})$.
+  \item Show $\mathcal{R}>0\Leftrightarrow|\rho|<1$.
+\end{enumerate}
+\end{enumerate}
+
+## Solutions: \S2.1 (I)
+
+\small
+\begin{enumerate}[(1)]
+\item (a) $\mathcal{H}^2=\!\left(\mathcal{I}-\tfrac{1}{n}\mathbf{1}\mathbf{1}^\top\right)^{\!2}=\mathcal{I}-\tfrac{2}{n}\mathbf{1}\mathbf{1}^\top+\tfrac{1}{n^2}\mathbf{1}\underbrace{\mathbf{1}^\top\mathbf{1}}_{=n}\mathbf{1}^\top=\mathcal{I}-\tfrac{1}{n}\mathbf{1}\mathbf{1}^\top=\mathcal{H}$. $\checkmark$
+
+(b) $\operatorname{tr}(\mathcal{H})=n-\tfrac{1}{n}\operatorname{tr}(\mathbf{1}\mathbf{1}^\top)=n-1$. Idempotent $\Rightarrow\operatorname{rank}(\mathcal{H})=\operatorname{tr}(\mathcal{H})=n-1$.
+
+(c) $\mathbf{1}^\top(\mathcal{H}\mathcal{X})=(\mathbf{1}^\top-\tfrac{1}{n}\underbrace{\mathbf{1}^\top\mathbf{1}}_{=n}\mathbf{1}^\top)\mathcal{X}=\mathbf{0}^\top\mathcal{X}=\mathbf{0}^\top$. $\checkmark$
+
+\item Symmetry: $(\mathcal{X}^\top\mathcal{H}\mathcal{X})^\top=\mathcal{X}^\top\mathcal{H}^\top\mathcal{X}=\mathcal{X}^\top\mathcal{H}\mathcal{X}$ (since $\mathcal{H}^\top=\mathcal{H}$). PSD: $\forall v\neq0$: $v^\top\mathcal{S}_n v=\|\mathcal{H}\mathcal{X}v\|^2\geq0$ (using $\mathcal{H}=\mathcal{H}^2$). PD iff $\operatorname{rank}(\mathcal{H}\mathcal{X})=p$, requiring $n-1\geq p$ and columns of $\mathcal{X}$ linearly independent.
+
+\item (a) $|\mathcal{R}|=1-\rho^2$; $\mathcal{R}^{-1}=\frac{1}{1-\rho^2}\begin{pmatrix}1&-\rho\\-\rho&1\end{pmatrix}$.
+
+(b) $\operatorname{tr}(\mathcal{R})=2$; $\operatorname{tr}(\mathcal{R}^{-1})=\frac{2}{1-\rho^2}$.
+
+(c) Eigenvalues $\lambda_{1,2}=1\pm\rho$. Both $>0\Leftrightarrow-1<\rho<1$. $\checkmark$
+\end{enumerate}
+
+## Exercises: \S2.1 (II)
+
+\small
+\begin{enumerate}[(4)]
+\item \textbf{(Rank-1 outer products.)} Show $aa^\top\geq0$ and $\operatorname{rank}(aa^\top)\leq1$ for $a\in\mathbb{R}^n$. Deduce $\sum x_ix_i^\top\geq0$.
+\item \textbf{(Covariance--correlation decomposition.)} Let $\mathcal{D}=\operatorname{diag}(s_1,\dots,s_p)$. Show $\mathcal{S}=\mathcal{D}\mathcal{R}\mathcal{D}$ and derive $\mathcal{S}^{-1}=\mathcal{D}^{-1}\mathcal{R}^{-1}\mathcal{D}^{-1}$.
+\item \textbf{(G-inverse of singular covariance.)} $\mathcal{A}=\begin{pmatrix}4&2\\2&1\end{pmatrix}$.
+\begin{enumerate}[(a)]
+  \item Show $\mathcal{A}\geq0$ and $|\mathcal{A}|=0$.
+  \item Verify $\mathcal{A}^-=\begin{pmatrix}1/4&0\\0&0\end{pmatrix}$ satisfies $\mathcal{A}\mathcal{A}^-\mathcal{A}=\mathcal{A}$.
+  \item Exhibit a second distinct G-inverse.
+\end{enumerate}
+\item \textbf{(Cyclic trace.)} For $\mathcal{H}_{\mathcal{X}}=\mathcal{X}(\mathcal{X}^\top\mathcal{X})^{-1}\mathcal{X}^\top$, show $\operatorname{tr}(\mathcal{H}_{\mathcal{X}})=p$.
+\end{enumerate}
+
+## Solutions: \S2.1 (II)
+
+\small
+\begin{enumerate}[(4)]
+\item For any $x$: $x^\top(aa^\top)x=(a^\top x)^2\geq0$, so $aa^\top\geq0$. Nonzero eigenvalue of $aa^\top$ equals the scalar $a^\top a$ (Theorem 2.6 ahead), so $\operatorname{rank}\leq1$. Sum of PSD matrices is PSD: $v^\top(\sum x_ix_i^\top)v=\sum(x_i^\top v)^2\geq0$. $\checkmark$
+
+\item $s_{jk}=s_js_kr_{jk}$, so $\mathcal{S}=\mathcal{D}\mathcal{R}\mathcal{D}$ entrywise. $\mathcal{S}^{-1}=\mathcal{D}^{-1}\mathcal{R}^{-1}\mathcal{D}^{-1}$.
+
+\item (a) $\mathcal{A}=vv^\top$, $v=(2,1)^\top$: PSD by~(4). $|\mathcal{A}|=4-4=0$. $\checkmark$
+
+(b) $\begin{pmatrix}4&2\\2&1\end{pmatrix}\begin{pmatrix}1/4&0\\0&0\end{pmatrix}\begin{pmatrix}4&2\\2&1\end{pmatrix}=\begin{pmatrix}1&0\\1/2&0\end{pmatrix}\begin{pmatrix}4&2\\2&1\end{pmatrix}=\begin{pmatrix}4&2\\2&1\end{pmatrix}$. $\checkmark$
+
+(c) $\widehat{\mathcal{A}}^-=\begin{pmatrix}0&0\\0&1\end{pmatrix}$: $\begin{pmatrix}4&2\\2&1\end{pmatrix}\begin{pmatrix}0&0\\0&1\end{pmatrix}\begin{pmatrix}4&2\\2&1\end{pmatrix}=\begin{pmatrix}0&2\\0&1\end{pmatrix}\begin{pmatrix}4&2\\2&1\end{pmatrix}=\begin{pmatrix}4&2\\2&1\end{pmatrix}$. $\checkmark$
+
+\item $\operatorname{tr}(\mathcal{H}_{\mathcal{X}})=\operatorname{tr}(\mathcal{X}(\mathcal{X}^\top\mathcal{X})^{-1}\mathcal{X}^\top)=\operatorname{tr}((\mathcal{X}^\top\mathcal{X})^{-1}\mathcal{X}^\top\mathcal{X})=\operatorname{tr}(\mathcal{I}_p)=p$. Interpretation: $\mathcal{H}_{\mathcal{X}}$ projects onto the $p$-dimensional column space of $\mathcal{X}$; it has $p$ eigenvalues equal to 1 and $n-p$ equal to 0.
+\end{enumerate}
+
+# \S2.2 Spectral Decompositions {#sec-2-2}
+
+## Jordan Decomposition
+
+::: {.theorem}
+**Theorem 2.1 (Jordan Decomposition)** Each symmetric $\mathcal{A}(p\times p)$ can be written as
+$$\mathcal{A}=\Gamma\Lambda\Gamma^\top=\sum_{j=1}^p\lambda_j\gamma_j\gamma_j^\top,$$
+where $\Lambda=\operatorname{diag}(\lambda_1,\dots,\lambda_p)$ and $\Gamma=(\gamma_1,\dots,\gamma_p)$ is **orthogonal**.
+:::
+
+**Matrix powers:** For symmetric PD $\mathcal{A}$ and $\alpha\in\mathbb{R}$: $\mathcal{A}^\alpha=\Gamma\Lambda^\alpha\Gamma^\top$.
+
+E.g.: $\mathcal{A}^{-1}=\Gamma\Lambda^{-1}\Gamma^\top$; $\;\mathcal{A}^{1/2}=\Gamma\Lambda^{1/2}\Gamma^\top$.
+
+## Proof of Theorem 2.1
+
+::: {.proof}
+By induction on $p$. **Base case** $p=1$: $\mathcal{A}=(a)=a\cdot1\cdot1^\top$. $\checkmark$
+
+**Inductive step:** Real symmetric $\mathcal{A}$ has a real eigenvalue $\lambda_1$ with unit eigenvector $\gamma_1$. Let $V=\{\gamma_1\}^\perp$ ($\dim\,V=p-1$). For any $v\in V$:
+$$\gamma_1^\top(\mathcal{A}v)=(\mathcal{A}\gamma_1)^\top v=\lambda_1\gamma_1^\top v=0,$$
+so $\mathcal{A}$ maps $V\to V$. By the inductive hypothesis applied to $\mathcal{A}|_V$:
+$$\mathcal{A}|_V=\sum_{j=2}^p\lambda_j\gamma_j\gamma_j^\top,\quad\{\gamma_j\}_{j\geq2}\subset V\text{ orthonormal.}$$
+Since $\{\gamma_1,\dots,\gamma_p\}$ is an orthonormal basis of $\mathbb{R}^p$ and $\mathcal{A}\gamma_j=\lambda_j\gamma_j$:
+$$\mathcal{A}=\sum_{j=1}^p\lambda_j\gamma_j\gamma_j^\top=\Gamma\Lambda\Gamma^\top,\quad\Gamma\text{ orthogonal.}\qquad\checkmark$$
+:::
+
+## Jordan Decomposition: Example 2.4
+
+::: {.block}
+**Example 2.4:** $\mathcal{A}=\begin{pmatrix}3&2\\2&3\end{pmatrix}$.
+:::
+
+Eigenvalues: $(3-\lambda)^2-4=0\Rightarrow\lambda_1=5,\;\lambda_2=1$.
+
+Eigenvectors: $\gamma_1=\tfrac{1}{\sqrt{2}}(1,1)^\top$, $\gamma_2=\tfrac{1}{\sqrt{2}}(1,-1)^\top$.  $\gamma_1^\top\gamma_2=0$. $\checkmark$
+
+Spectral reconstruction: $5\cdot\tfrac{1}{2}\begin{pmatrix}1&1\\1&1\end{pmatrix}+1\cdot\tfrac{1}{2}\begin{pmatrix}1&-1\\-1&1\end{pmatrix}=\begin{pmatrix}3&2\\2&3\end{pmatrix}$. $\checkmark$
+
+Inverse via $\alpha=-1$:
+$$\mathcal{A}^{-1}=\tfrac{1}{\sqrt{2}}\begin{pmatrix}1&1\\1&-1\end{pmatrix}\!\begin{pmatrix}1/5&0\\0&1\end{pmatrix}\!\tfrac{1}{\sqrt{2}}\begin{pmatrix}1&1\\1&-1\end{pmatrix}\!=\frac{1}{5}\begin{pmatrix}3&-2\\-2&3\end{pmatrix}.$$
+
+Verify: $|\mathcal{A}|=9-4=5$; $\;\mathcal{A}\cdot\tfrac{1}{5}\begin{pmatrix}3&-2\\-2&3\end{pmatrix}=\mathcal{I}_2$. $\checkmark$
+
+## Singular Value Decomposition
+
+::: {.theorem}
+**Theorem 2.2 (SVD)** Each $\mathcal{A}(n\times p)$ with rank $r$ decomposes as $\mathcal{A}=\Gamma\Lambda\Delta^\top$, where $\Gamma(n\times r)$, $\Delta(p\times r)$ column-orthonormal and $\Lambda=\operatorname{diag}(\lambda_1^{1/2},\dots,\lambda_r^{1/2})$, $\lambda_j>0$.
+:::
+
+**G-inverse via SVD:** $\mathcal{A}^-=\Delta\Lambda^{-1}\Gamma^\top$ satisfies:
+$$\mathcal{A}\mathcal{A}^-\mathcal{A}=\Gamma\Lambda\underbrace{\Delta^\top\Delta}_{=\mathcal{I}_r}\Lambda^{-1}\underbrace{\Gamma^\top\Gamma}_{=\mathcal{I}_r}\Lambda\Delta^\top=\Gamma\Lambda\Delta^\top=\mathcal{A}.\;\checkmark$$
+
+## Proof of Theorem 2.2
+
+::: {.proof}
+$\mathcal{A}^\top\mathcal{A}$ symmetric PSD; Theorem 2.1 gives orthonormal eigenvectors $\delta_j$ with $\mathcal{A}^\top\mathcal{A}\,\delta_j=\lambda_j\delta_j$ ($\lambda_j>0$, $j=1,\dots,r$).
+
+Define $\gamma_j=\lambda_j^{-1/2}\mathcal{A}\delta_j$. For $j,k\in\{1,\dots,r\}$:
+$$\gamma_j^\top\gamma_k=\lambda_j^{-1/2}\lambda_k^{-1/2}\,\delta_j^\top\mathcal{A}^\top\mathcal{A}\,\delta_k=\lambda_j^{-1/2}\lambda_k^{1/2}\,\delta_{jk}.$$
+Hence $\Gamma^\top\Gamma=\mathcal{I}_r$. From $\mathcal{A}\Delta=\Gamma\Lambda$:
+$$\mathcal{A}=\mathcal{A}\Delta\Delta^\top=\Gamma\Lambda\Delta^\top.\quad\checkmark$$
+:::
+
+## Non-Uniqueness of the G-Inverse (Example 2.5)
+
+::: {.block}
+**Example 2.5:** $\mathcal{A}=\begin{pmatrix}1&0\\0&0\end{pmatrix}$. Both $\begin{pmatrix}1&0\\0&0\end{pmatrix}$ and $\begin{pmatrix}1&0\\0&8\end{pmatrix}$ satisfy $\mathcal{A}\mathcal{A}^-\mathcal{A}=\mathcal{A}$:
+$$\begin{pmatrix}1&0\\0&0\end{pmatrix}\begin{pmatrix}1&0\\0&8\end{pmatrix}\begin{pmatrix}1&0\\0&0\end{pmatrix}=\begin{pmatrix}1&0\\0&0\end{pmatrix}=\mathcal{A}.\quad\checkmark$$
+:::
+
+Any $\begin{pmatrix}1&0\\0&c\end{pmatrix}$, $c\in\mathbb{R}$, is a valid G-inverse: **not unique**.
+
+::: {.alertblock}
+**Key Takeaways: \S2.2**
+- Jordan: $\mathcal{A}=\Gamma\Lambda\Gamma^\top$; largest eigenvector = main data-variation direction
+- $\mathcal{A}^\alpha=\Gamma\Lambda^\alpha\Gamma^\top$: $\alpha=\tfrac{1}{2}$ (whitening), $\alpha=-1$ (inverse)
+- SVD $\mathcal{A}=\Gamma\Lambda\Delta^\top$ extends to non-square matrices
+:::
+
+## Exercises: \S2.2 (I)
+
+\small
+\begin{enumerate}[(1)]
+\item \textbf{(Spectral decomposition of a covariance.)} $\mathcal{S}=\begin{pmatrix}3&2\\2&3\end{pmatrix}$.
+\begin{enumerate}[(a)]
+  \item Find the Jordan decomposition $\mathcal{S}=\Gamma\Lambda\Gamma^\top$.
+  \item Compute $\mathcal{S}^{-1}$ and $\mathcal{S}^{1/2}$; verify $\mathcal{S}^{1/2}\mathcal{S}^{1/2}=\mathcal{S}$.
+  \item For $\mathcal{S}=\begin{pmatrix}5&4\\4&5\end{pmatrix}$: show $\mathcal{S}^{1/2}=\begin{pmatrix}2&1\\1&2\end{pmatrix}$ and find $\mathcal{S}^{-1/2}$.
+\end{enumerate}
+\item \textbf{(Exchangeable covariance.)} $\mathcal{S}=\begin{pmatrix}5&2&2\\2&5&2\\2&2&5\end{pmatrix}=3\mathcal{I}_3+2\mathbf{1}_3\mathbf{1}_3^\top$.
+\begin{enumerate}[(a)]
+  \item Deduce $\lambda_1=9$ (simple), $\lambda_{2,3}=3$ (double); find an orthonormal eigenbasis.
+  \item What proportion of $\operatorname{tr}(\mathcal{S})=15$ does the first PC explain?
+  \item Compute $|\mathcal{S}|$ and $\mathcal{S}^{-1}$ via Jordan decomposition.
+\end{enumerate}
+\end{enumerate}
+
+## Solutions: \S2.2 (I)
+
+\small
+\begin{enumerate}[(1)]
+\item (a) $\lambda_1=5$, $\lambda_2=1$; $\gamma_1=\tfrac{1}{\sqrt{2}}(1,1)^\top$, $\gamma_2=\tfrac{1}{\sqrt{2}}(1,-1)^\top$; $\Gamma=\tfrac{1}{\sqrt{2}}\begin{pmatrix}1&1\\1&-1\end{pmatrix}$, $\Lambda=\operatorname{diag}(5,1)$.
+
+(b) $\mathcal{S}^{-1}=\Gamma\operatorname{diag}(\tfrac{1}{5},1)\Gamma^\top=\tfrac{1}{5}\begin{pmatrix}3&-2\\-2&3\end{pmatrix}$.
+$\mathcal{S}^{1/2}=\Gamma\operatorname{diag}(\sqrt{5},1)\Gamma^\top=\tfrac{1}{2}\begin{pmatrix}\sqrt{5}+1&\sqrt{5}-1\\\sqrt{5}-1&\sqrt{5}+1\end{pmatrix}$.
+$(\mathcal{S}^{1/2})^2=\Gamma\operatorname{diag}(5,1)\Gamma^\top=\mathcal{S}$. $\checkmark$
+
+(c) $\mathcal{S}=\begin{pmatrix}5&4\\4&5\end{pmatrix}$: $\lambda_1=9$, $\lambda_2=1$.
+$\mathcal{S}^{1/2}=\Gamma\operatorname{diag}(3,1)\Gamma^\top=\tfrac{1}{2}\begin{pmatrix}4&2\\2&4\end{pmatrix}=\begin{pmatrix}2&1\\1&2\end{pmatrix}$. $\checkmark$
+$\mathcal{S}^{-1/2}=\Gamma\operatorname{diag}(\tfrac{1}{3},1)\Gamma^\top=\begin{pmatrix}2/3&1/3\\1/3&2/3\end{pmatrix}$.
+
+\item (a) $\mathcal{S}\mathbf{1}_3=(3+6)\mathbf{1}_3=9\mathbf{1}_3\Rightarrow\lambda_1=9$, $\gamma_1=\mathbf{1}_3/\sqrt{3}$. For $v\perp\mathbf{1}_3$: $\mathcal{S}v=3v\Rightarrow\lambda_{2,3}=3$; e.g.\ $\gamma_2=\tfrac{1}{\sqrt{2}}(1,-1,0)^\top$, $\gamma_3=\tfrac{1}{\sqrt{6}}(1,1,-2)^\top$.
+
+(b) $9/15=\mathbf{60\%}$.
+
+(c) $|\mathcal{S}|=9\cdot3\cdot3=81$. $\mathcal{S}^{-1}=\tfrac{1}{9}\gamma_1\gamma_1^\top+\tfrac{1}{3}(\mathcal{I}_3-\gamma_1\gamma_1^\top)=\tfrac{1}{3}\mathcal{I}_3-\tfrac{2}{27}\mathbf{1}_3\mathbf{1}_3^\top=\tfrac{1}{27}\begin{pmatrix}7&-2&-2\\-2&7&-2\\-2&-2&7\end{pmatrix}$.
+\end{enumerate}
+
+## Exercises: \S2.2 (II)
+
+\small
+\begin{enumerate}[(3)]
+\item \textbf{(Whitening.)} $\mathcal{S}=\begin{pmatrix}5&4\\4&5\end{pmatrix}$, $\mathcal{S}^{-1/2}=\begin{pmatrix}2/3&1/3\\1/3&2/3\end{pmatrix}$.
+\begin{enumerate}[(a)]
+  \item Verify $\mathcal{S}^{-1/2}\mathcal{S}\,\mathcal{S}^{-1/2}=\mathcal{I}_2$ using Jordan decomposition.
+  \item If $X\sim(\mu,\mathcal{S})$, show $Z=\mathcal{S}^{-1/2}(X-\mu)$ satisfies $\expc[ZZ^\top]=\mathcal{I}_2$ and explain why this is useful.
+\end{enumerate}
+\item \textbf{(SVD and OLS.)} For $\mathcal{X}(n\times p)=\Gamma\Lambda\Delta^\top$ (full-rank SVD):
+\begin{enumerate}[(a)]
+  \item Show $\mathcal{X}^\top\mathcal{X}=\Delta\Lambda^2\Delta^\top$ and $\mathcal{X}\mathcal{X}^\top=\Gamma\Lambda^2\Gamma^\top$.
+  \item Show $\hat\beta=(\mathcal{X}^\top\mathcal{X})^{-1}\mathcal{X}^\top y=\Delta\Lambda^{-1}\Gamma^\top y$.
+\end{enumerate}
+\item \textbf{(Rank-1 PC projection.)} Let $\gamma_1$ be the leading eigenvector of $\mathcal{S}$. Show $\mathcal{P}_1=\gamma_1\gamma_1^\top$ is idempotent and symmetric. Interpret $\mathcal{P}_1 x$ and $\|\mathcal{P}_1 x\|^2$.
+\end{enumerate}
+
+## Solutions: \S2.2 (II)
+
+\small
+\begin{enumerate}[(3)]
+\item (a) $\mathcal{S}^{-1/2}\mathcal{S}\,\mathcal{S}^{-1/2}=\Gamma\Lambda^{-1/2}\Gamma^\top\cdot\Gamma\Lambda\Gamma^\top\cdot\Gamma\Lambda^{-1/2}\Gamma^\top=\Gamma\underbrace{\Lambda^{-1/2}\Lambda\Lambda^{-1/2}}_{=\mathcal{I}}\Gamma^\top=\mathcal{I}_2$. $\checkmark$
+
+(b) $\expc[ZZ^\top]=\mathcal{S}^{-1/2}\expc[(X-\mu)(X-\mu)^\top]\mathcal{S}^{-1/2}=\mathcal{S}^{-1/2}\mathcal{S}\,\mathcal{S}^{-1/2}=\mathcal{I}_2$. Useful: whitening makes Euclidean distance equal Mahalanobis distance, rendering $k$-means, $k$-NN, and PCA scale/correlation invariant.
+
+\item (a) $\mathcal{X}^\top\mathcal{X}=\Delta\Lambda\Gamma^\top\cdot\Gamma\Lambda\Delta^\top=\Delta\Lambda^2\Delta^\top$; $\mathcal{X}\mathcal{X}^\top=\Gamma\Lambda^2\Gamma^\top$. $\checkmark$
+
+(b) $(\Delta\Lambda^2\Delta^\top)^{-1}\Delta\Lambda\Gamma^\top y=\Delta\Lambda^{-2}\underbrace{\Delta^\top\Delta}_{=\mathcal{I}}\Lambda\Gamma^\top y=\Delta\Lambda^{-1}\Gamma^\top y$. $\checkmark$
+
+\item $\mathcal{P}_1^2=\gamma_1(\underbrace{\gamma_1^\top\gamma_1}_{=1})\gamma_1^\top=\mathcal{P}_1$ (idempotent). $\mathcal{P}_1^\top=\mathcal{P}_1$ (symmetric). $\checkmark$
+
+$\mathcal{P}_1 x=(\gamma_1^\top x)\gamma_1$ is observation $x$ projected onto the first PC direction; $\|\mathcal{P}_1 x\|^2=(\gamma_1^\top x)^2$ is the squared first PC score.
+\end{enumerate}
+
+# \S2.3 Quadratic Forms {#sec-2-3}
+
+## Quadratic Forms: Definition and Definiteness
+
+$Q(x)=x^\top\mathcal{A}x=\sum_{i,j}a_{ij}x_ix_j$ (symmetric $\mathcal{A}$).
+
+$\mathcal{A}>0$ (PD) iff $Q(x)>0$ $\forall x\neq0$; $\mathcal{A}\geq0$ (PSD) iff $Q(x)\geq0$.
+
+::: {.block}
+**Example 2.6:**
+$Q=x_1^2+x_2^2$ ($\mathcal{A}=\mathcal{I}_2$, PD); $Q=(x_1-x_2)^2$ ($\lambda_1=2,\lambda_2=0$, PSD); $Q=x_1^2-x_2^2$ (indefinite).
+:::
+
+## Theorems 2.3--2.5
+
+::: {.theorem}
+**Theorem 2.3** If $\mathcal{A}$ symmetric, there exists a transformation $y=\Gamma^\top x$ s.t.\ $x^\top\mathcal{A}x=\sum_i\lambda_iy_i^2$.
+:::
+
+::: {.proof}
+$\mathcal{A}=\Gamma\Lambda\Gamma^\top$ (Thm 2.1). Set $y=\Gamma^\top x$: $x^\top\mathcal{A}x=y^\top\Lambda y=\sum_i\lambda_iy_i^2$. $\checkmark$
+:::
+
+::: {.theorem}
+**Theorem 2.4** $\mathcal{A}>0\Leftrightarrow$ all $\lambda_i>0$.
+:::
+
+::: {.proof}
+$(\Rightarrow)$: All $\lambda_i>0\Rightarrow\sum\lambda_iy_i^2>0$ $\forall y\neq0$. $(\Leftarrow)$: $\lambda_k\leq0\Rightarrow x=\Gamma e_k$ gives $x^\top\mathcal{A}x=\lambda_k\leq0$. $\checkmark$
+:::
+
+::: {.corollary}
+**Corollary 2.1** $\mathcal{A}>0\Rightarrow|\mathcal{A}|>0$ and $\mathcal{A}^{-1}=\Gamma\Lambda^{-1}\Gamma^\top$ exists.
+:::
+
+## Theorem 2.5: Maximising Quadratic Forms
+
+::: {.theorem}
+**Theorem 2.5** $\mathcal{B}>0$ symmetric: $\;\max_x\dfrac{x^\top\mathcal{A}x}{x^\top\mathcal{B}x}=\lambda_{\max}(\mathcal{B}^{-1}\mathcal{A})$.
+:::
+
+**Spectral proof:** Set $z=\mathcal{B}^{1/2}x/\|\mathcal{B}^{1/2}x\|$ (unit norm) and $\mathcal{B}^{-1/2}\mathcal{A}\mathcal{B}^{-1/2}=\Gamma\Lambda\Gamma^\top$, $w=\Gamma^\top z$:
+$$\max_{\|z\|=1}z^\top\mathcal{B}^{-1/2}\mathcal{A}\mathcal{B}^{-1/2}z=\max_{\|w\|=1}\sum_i\lambda_iw_i^2\leq\lambda_1.$$
+Equality at $w=e_1$; $\mathcal{B}^{-1}\mathcal{A}$ and $\mathcal{B}^{-1/2}\mathcal{A}\mathcal{B}^{-1/2}$ share eigenvalues. $\qed$
+
+**Lagrange proof:** FOC: $2\mathcal{A}x-2\lambda\mathcal{B}x=0\Rightarrow\mathcal{B}^{-1}\mathcal{A}x=\lambda x$. Evaluating at eigenvector $x^*$: $x^{*\top}\mathcal{A}x^*=\lambda\underbrace{x^{*\top}\mathcal{B}x^*}_{=1}=\lambda$. Maximum $=\lambda_{\max}$. $\qed$
+
+::: {.block}
+**Example 2.7:** $\mathcal{A}=\begin{pmatrix}3&2\\2&3\end{pmatrix}$, $\mathcal{B}=\mathcal{I}_2$: $\max_{\|x\|=1}x^\top\mathcal{A}x=\lambda_{\max}(\mathcal{A})=5$, at $x^*=\tfrac{1}{\sqrt{2}}(1,1)^\top$.
+:::
+
+## Exercises: \S2.3 (I)
+
+\small
+\begin{enumerate}[(1)]
+\item \textbf{(Mahalanobis distance and confidence ellipse.)} $\mathcal{S}=\begin{pmatrix}5&4\\4&5\end{pmatrix}$.
+\begin{enumerate}[(a)]
+  \item Compute $\mathcal{S}^{-1}$ and verify $|\mathcal{S}|=9$.
+  \item For $x-\mu=(3,0)^\top$, compute $D^2=(x-\mu)^\top\mathcal{S}^{-1}(x-\mu)$.
+  \item Using eigenvalues $\lambda_1=9$, $\lambda_2=1$ of $\mathcal{S}$, find the principal axes and half-lengths of $\{x:D^2=9\}$ (Theorem 2.7).
+\end{enumerate}
+\item \textbf{(Portfolio variance optimisation.)} $\mathcal{S}=\begin{pmatrix}4&2\\2&4\end{pmatrix}$, $\lambda_1=6$, $\lambda_2=2$.
+\begin{enumerate}[(a)]
+  \item Show $\mathcal{S}>0$.
+  \item Find $\min_{w^\top w=1}w^\top\mathcal{S}w$ and the direction.
+  \item Find $\max_{w^\top w=1}w^\top\mathcal{S}w$ and the direction.
+\end{enumerate}
+\end{enumerate}
+
+## Solutions: \S2.3 (I)
+
+\small
+\begin{enumerate}[(1)]
+\item (a) $|\mathcal{S}|=25-16=9$; $\mathcal{S}^{-1}=\tfrac{1}{9}\begin{pmatrix}5&-4\\-4&5\end{pmatrix}$. $\checkmark$
+
+(b) $D^2=(3,0)\cdot\tfrac{1}{9}\begin{pmatrix}5\\-12\end{pmatrix}=\tfrac{45}{9}=5$.
+
+(c) Eigenvectors: $\gamma_1=\tfrac{1}{\sqrt{2}}(1,1)^\top$ ($\lambda_1=9$), $\gamma_2=\tfrac{1}{\sqrt{2}}(1,-1)^\top$ ($\lambda_2=1$). By Thm 2.7: half-lengths $\sqrt{9/9}=1$ along $\gamma_1$ and $\sqrt{9/1}=3$ along $\gamma_2$. The ellipse is elongated in the $(1,-1)$ direction (lower eigenvalue = larger semi-axis): assets moving in opposite directions generate higher uncertainty.
+
+\item (a) $\lambda_1=6,\lambda_2=2>0\Rightarrow\mathcal{S}>0$ (Theorem 2.4). $\checkmark$
+
+(b) $\min=\lambda_{\min}=2$, at $w^*=\tfrac{1}{\sqrt{2}}(1,-1)^\top$.
+
+(c) $\max=\lambda_{\max}=6$, at $w^*=\tfrac{1}{\sqrt{2}}(1,1)^\top$ (equal-weight portfolio maximally exposed to common factor).
+\end{enumerate}
+
+## Exercises: \S2.3 (II)
+
+\small
+\begin{enumerate}[(3)]
+\item \textbf{(Rayleigh quotient in LDA.)} $\mathcal{B}=\begin{pmatrix}4&2\\2&4\end{pmatrix}$, $\mathcal{W}=2\mathcal{I}_2$.
+\begin{enumerate}[(a)]
+  \item Compute $\mathcal{W}^{-1}\mathcal{B}$; show eigenvalues are $\lambda_1=3$, $\lambda_2=1$.
+  \item Find the optimal discriminant direction $w^*$ for $\lambda_1=3$.
+  \item Interpret why $w^*=(1,1)^\top/\sqrt{2}$ maximises class separation.
+\end{enumerate}
+\item \textbf{(PCA variance explained.)} $\mathcal{S}=\begin{pmatrix}5&2&2\\2&5&2\\2&2&5\end{pmatrix}$, $\lambda_1=9$, $\lambda_{2,3}=3$.
+\begin{enumerate}[(a)]
+  \item Find $a^*=\operatorname{argmax}_{\|a\|=1}a^\top\mathcal{S}a$.
+  \item Find $a^*=\operatorname{argmin}_{\|a\|=1}a^\top\mathcal{S}a$.
+  \item Proportion of $\operatorname{tr}(\mathcal{S})=15$ explained by the first PC?
+\end{enumerate}
+\item \textbf{(Definiteness via rank.)} Show $\mathcal{S}=\mathcal{X}^\top\mathcal{X}$ is PD iff $\operatorname{rank}(\mathcal{X})=p$. What happens when $n<p$?
+\end{enumerate}
+
+## Solutions: \S2.3 (II)
+
+\small
+\begin{enumerate}[(3)]
+\item (a) $\mathcal{W}^{-1}\mathcal{B}=\tfrac{1}{2}\begin{pmatrix}4&2\\2&4\end{pmatrix}=\begin{pmatrix}2&1\\1&2\end{pmatrix}$. Char.\ poly: $(2-\lambda)^2-1=0\Rightarrow\lambda_1=3,\lambda_2=1$. $\checkmark$
+
+(b) $(\mathcal{W}^{-1}\mathcal{B}-3\mathcal{I})w=\begin{pmatrix}-1&1\\1&-1\end{pmatrix}w=0\Rightarrow w^*=\tfrac{1}{\sqrt{2}}(1,1)^\top$.
+
+(c) This direction assigns equal weight to both features. If class 1 has higher mean on both variables, $X_1+X_2$ is maximally discriminating. The between/within variance ratio is $\lambda_1=3$: 3$\times$ more between-class spread than within-class.
+
+\item (a) $a^*=\mathbf{1}_3/\sqrt{3}=\tfrac{1}{\sqrt{3}}(1,1,1)^\top$, $\max=9$ (Theorem 2.5 with $\mathcal{B}=\mathcal{I}$).
+
+(b) Any $a^*\perp\mathbf{1}_3$, e.g.\ $\tfrac{1}{\sqrt{2}}(1,-1,0)^\top$, $\min=3$.
+
+(c) $9/15=\mathbf{60\%}$.
+
+\item $v^\top\mathcal{X}^\top\mathcal{X}v=\|\mathcal{X}v\|^2>0$ $\forall v\neq0$ iff $\mathcal{X}v\neq0$ $\forall v\neq0$ iff $\operatorname{rank}(\mathcal{X})=p$. When $n<p$: $\operatorname{rank}(\mathcal{X})\leq n<p$, so $\mathcal{S}$ is always singular---a fundamental issue in high-dimensional statistics.
+\end{enumerate}
+
+# \S2.4 Derivatives {#sec-2-4}
+
+## Matrix Derivatives: Formulas and Proofs
+
+For $f:\mathbb{R}^p\to\mathbb{R}$, $a(p\times1)$, symmetric $\mathcal{A}(p\times p)$:
+$$\frac{\partial\,a^\top x}{\partial x}=a,\qquad\frac{\partial\,x^\top\mathcal{A}x}{\partial x}=2\mathcal{A}x,\qquad\frac{\partial^2 x^\top\mathcal{A}x}{\partial x\partial x^\top}=2\mathcal{A}.$$
+
+**Proofs:**
+
+$(a^\top x)=\sum_j a_jx_j$: $\partial/\partial x_k=a_k$, so gradient $=a$. $\qed$
+
+$x^\top\mathcal{A}x=\sum_{i,j}a_{ij}x_ix_j$. The $k$-th component of the gradient:
+$$\tfrac{\partial}{\partial x_k}\sum_{i,j}a_{ij}x_ix_j=\sum_j a_{kj}x_j+\sum_i a_{ik}x_i=2\sum_j a_{kj}x_j=2(\mathcal{A}x)_k,$$
+using $a_{ij}=a_{ji}$. Differentiating $2\mathcal{A}x$ w.r.t.\ $x^\top$ gives $2\mathcal{A}$. $\qed$
+
+::: {.block}
+**Example 2.8:** $\mathcal{A}=\begin{pmatrix}3&2\\2&3\end{pmatrix}$: gradient $=\begin{pmatrix}6x_1+4x_2\\4x_1+6x_2\end{pmatrix}$, Hessian $=\begin{pmatrix}6&4\\4&6\end{pmatrix}$.
+:::
+
+## Exercises: \S2.4
+
+\small
+\begin{enumerate}[(1)]
+\item \textbf{(MLE for $\mu$.)} Use the gradient formula to show $\hat\mu_{\mathrm{MLE}}=\bar{X}$ from
+$\ell(\mu)\propto-\tfrac{n}{2}(\bar{X}-\mu)^\top\mathcal{S}^{-1}(\bar{X}-\mu)$.
+\item \textbf{(OLS via matrix calculus.)} Expand $S(\beta)=(y-\mathcal{X}\beta)^\top(y-\mathcal{X}\beta)$ and derive $\hat\beta=(\mathcal{X}^\top\mathcal{X})^{-1}\mathcal{X}^\top y$.
+\item \textbf{(Mahalanobis convexity.)} $f(\mu)=\tfrac{1}{2}(x-\mu)^\top\mathcal{S}^{-1}(x-\mu)$: compute $\nabla f$ and $\nabla^2 f$, confirm strict convexity, find the minimiser.
+\item \textbf{(Derivative of log-det.)} Show $\frac{\partial\log|\mathcal{S}|}{\partial\mathcal{S}}=\mathcal{S}^{-1}$ using cofactor expansion.
+\item \textbf{(Joint MLE.)} From $\ell(\mu,\mathcal{S})=-\tfrac{n}{2}\log|\mathcal{S}|-\tfrac{1}{2}\sum(X_i-\mu)^\top\mathcal{S}^{-1}(X_i-\mu)$, derive $\hat\mu=\bar{X}$ and $\widehat{\mathcal{S}}=\tfrac{1}{n}\sum(X_i-\bar{X})(X_i-\bar{X})^\top$.
+\end{enumerate}
+
+## Solutions: \S2.4
+
+\small
+\begin{enumerate}[(1)]
+\item Let $u=\bar{X}-\mu$: $\nabla_\mu\ell=n\mathcal{S}^{-1}(\bar{X}-\mu)$ (chain rule $\partial u/\partial\mu=-\mathcal{I}$, then $\partial(u^\top\mathcal{S}^{-1}u)/\partial u=2\mathcal{S}^{-1}u$). Setting $=0$: $\hat\mu=\bar{X}$. Hessian $=-n\mathcal{S}^{-1}<0$: maximum. $\checkmark$
+
+\item $S(\beta)=y^\top y-2\beta^\top\mathcal{X}^\top y+\beta^\top\mathcal{X}^\top\mathcal{X}\beta$. $\nabla_\beta S=-2\mathcal{X}^\top y+2\mathcal{X}^\top\mathcal{X}\beta=0\Rightarrow\hat\beta=(\mathcal{X}^\top\mathcal{X})^{-1}\mathcal{X}^\top y$. $\checkmark$
+
+\item $\nabla_\mu f=-\mathcal{S}^{-1}(x-\mu)$; $\nabla^2_\mu f=\mathcal{S}^{-1}>0$ (strictly convex). Setting gradient$=0$: $\hat\mu=x$. $\checkmark$
+
+\item From cofactor expansion $|\mathcal{S}|=\sum_j\mathcal{S}_{ij}C_{ij}$: $\frac{\partial|\mathcal{S}|}{\partial\mathcal{S}_{ij}}=C_{ij}=|\mathcal{S}|(\mathcal{S}^{-1})_{ij}$. Dividing: $\frac{\partial\log|\mathcal{S}|}{\partial\mathcal{S}_{ij}}=(\mathcal{S}^{-1})_{ij}$. $\checkmark$
+
+\item $\partial\ell/\partial\mu=\mathcal{S}^{-1}\sum(X_i-\mu)=0\Rightarrow\hat\mu=\bar{X}$. Writing $\ell$ in terms of $\mathcal{S}^{-1}$ and using result~(4): $\partial\ell/\partial\mathcal{S}^{-1}=0$ gives $\tfrac{n}{2}\mathcal{S}-\tfrac{n}{2}\widehat{\mathcal{S}}=0\Rightarrow\widehat{\mathcal{S}}_{\mathrm{MLE}}=\tfrac{1}{n}\sum(X_i-\bar{X})(X_i-\bar{X})^\top$. $\checkmark$
+\end{enumerate}
+
+# \S2.5 Partitioned Matrices {#sec-2-5}
+
+## Partitioned Matrices: Schur Complement and Block Inverse
+
+$$\mathcal{A}=\begin{pmatrix}\mathcal{A}_{11}&\mathcal{A}_{12}\\\mathcal{A}_{21}&\mathcal{A}_{22}\end{pmatrix},\qquad\mathcal{A}_{11\cdot2}=\mathcal{A}_{11}-\mathcal{A}_{12}\mathcal{A}_{22}^{-1}\mathcal{A}_{21}\;\text{(Schur complement)}.$$
+
+**Block inverse:**
+$$\mathcal{A}^{11}=(\mathcal{A}_{11\cdot2})^{-1},\quad\mathcal{A}^{12}=-(\mathcal{A}_{11\cdot2})^{-1}\mathcal{A}_{12}\mathcal{A}_{22}^{-1},\quad\mathcal{A}^{22}=\mathcal{A}_{22}^{-1}+\mathcal{A}_{22}^{-1}\mathcal{A}_{21}\mathcal{A}^{11}\mathcal{A}_{12}\mathcal{A}_{22}^{-1}.$$
+
+**Determinant:** $|\mathcal{A}|=|\mathcal{A}_{22}|\cdot|\mathcal{A}_{11\cdot2}|$.
+
+::: {.block}
+**Example 2.9:** $\mathcal{A}=\begin{pmatrix}3&1\\1&3\end{pmatrix}$: $\mathcal{A}_{11\cdot2}=3-\tfrac{1}{3}=\tfrac{8}{3}$; $\mathcal{A}^{-1}=\tfrac{1}{8}\begin{pmatrix}3&-1\\-1&3\end{pmatrix}$; $|\mathcal{A}|=8$; $\lambda_1=4,\lambda_2=2$. $\checkmark$
+:::
+
+## Sherman--Morrison, Theorem 2.6, and Corollary 2.2
+
+**Sherman--Morrison (rank-1 update):**
+$$(\mathcal{A}-ab^\top)^{-1}=\mathcal{A}^{-1}+\frac{\mathcal{A}^{-1}ab^\top\mathcal{A}^{-1}}{1-b^\top\mathcal{A}^{-1}a}.\quad\text{(Apply block inverse to }\begin{pmatrix}1&b^\top\\a&\mathcal{A}\end{pmatrix}\text{.)}$$
+
+::: {.theorem}
+**Theorem 2.6** Nonzero eigenvalues of $\mathcal{A}(n\times p)\mathcal{B}(p\times n)$ and $\mathcal{B}\mathcal{A}$ are identical. If $\mathcal{A}\mathcal{B}x=\lambda x$ ($\lambda\neq0$), then $y=\mathcal{B}x$ is eigenvector of $\mathcal{B}\mathcal{A}$.
+:::
+
+::: {.proof}
+From $|\mathcal{A}\mathcal{B}-\lambda\mathcal{I}_n|=(-\lambda)^{n-p}|\mathcal{B}\mathcal{A}-\lambda\mathcal{I}_p|$, nonzero eigenvalues coincide. Eigenvector: $\mathcal{B}\mathcal{A}(\mathcal{B}x)=\mathcal{B}(\lambda x)=\lambda(\mathcal{B}x)$. $\checkmark$
+:::
+
+::: {.corollary}
+**Corollary 2.2** $\operatorname{rank}(\mathcal{A}ab^\top\mathcal{B})\leq1$; nonzero eigenvalue $=b^\top\mathcal{B}\mathcal{A}a$, eigenvector $=\mathcal{A}a$.
+:::
+
+::: {.proof}
+Eigenvalues of $(\mathcal{A}a)(b^\top\mathcal{B})$ equal the scalar $(b^\top\mathcal{B})(\mathcal{A}a)=b^\top\mathcal{B}\mathcal{A}a=\lambda_1$. Confirmation: $(\mathcal{A}ab^\top\mathcal{B})(\mathcal{A}a)=\lambda_1(\mathcal{A}a)$. $\checkmark$
+:::
+
+## Exercises: \S2.5 (I)
+
+\small
+\begin{enumerate}[(1)]
+\item \textbf{(Conditional variance as Schur complement.)} In bivariate normal: $\var(X_1|X_2)=\sigma_{11\cdot2}$.
+\begin{enumerate}[(a)]
+  \item Compute $\sigma_{11\cdot2}$ for $\mathcal{S}=\begin{pmatrix}3&1\\1&3\end{pmatrix}$. \emph{(Answer: $8/3$.)}
+  \item Show $\sigma_{11\cdot2}\leq\sigma_{11}$, equality iff $\sigma_{12}=0$. Interpret.
+  \item Show $(\Sigma^{-1})_{11}=(\sigma_{11\cdot\text{rest}})^{-1}$ is the partial precision of $X_1$.
+\end{enumerate}
+\item \textbf{(Rank-1 covariance update.)} $\mathcal{A}=3\mathcal{I}_2$, $v=(1,1)^\top$, $\sigma^2=1$. Compute $(\mathcal{A}+vv^\top)^{-1}$ via Sherman--Morrison. \emph{(Answer: $\frac{1}{15}\begin{pmatrix}4&-1\\-1&4\end{pmatrix}$.)}
+\item \textbf{(Partitioned precision.)} $\mathcal{S}=\begin{pmatrix}3&1&0\\1&3&1\\0&1&3\end{pmatrix}$. Using $\mathcal{S}_{22}=\begin{pmatrix}3&1\\1&3\end{pmatrix}$:
+\begin{enumerate}[(a)]
+  \item Compute $|\mathcal{S}_{22}|=8$ and $\mathcal{S}_{22}^{-1}=\tfrac{1}{8}\begin{pmatrix}3&-1\\-1&3\end{pmatrix}$.
+  \item Find $\mathcal{S}_{11\cdot2}$ and $|\mathcal{S}|$. \emph{(Answer: $|\mathcal{S}|=21$.)}
+  \item Interpret $\mathcal{S}_{13}=0$ in the Gaussian graphical model.
+\end{enumerate}
+\end{enumerate}
+
+## Solutions: \S2.5 (I)
+
+\small
+\begin{enumerate}[(1)]
+\item (a) $\sigma_{11\cdot2}=3-1\cdot\tfrac{1}{3}\cdot1=\tfrac{8}{3}$. $\checkmark$
+
+(b) $\sigma_{11\cdot2}=\sigma_{11}-\sigma_{12}^2/\sigma_{22}\leq\sigma_{11}$ (nonneg.\ subtracted term); equality iff $\sigma_{12}=0$. Interpretation: conditioning on $X_2$ reduces variance of $X_1$ whenever they are correlated; more information never increases variance.
+
+(c) From the block inverse formula $\Sigma^{11}=(\Sigma_{11\cdot2})^{-1}$; recursively, $(\Sigma^{-1})_{11}=[\var(X_1|X_2,\dots,X_p)]^{-1}$---the partial precision (reciprocal of residual variance of $X_1$ after removing all other variables' linear effect).
+
+\item $\mathcal{A}^{-1}=\tfrac{1}{3}\mathcal{I}_2$; $v^\top\mathcal{A}^{-1}v=\tfrac{2}{3}$. Sherman--Morrison:
+$$(\mathcal{A}+vv^\top)^{-1}=\tfrac{1}{3}\mathcal{I}_2-\frac{\tfrac{1}{9}vv^\top}{1+\tfrac{2}{3}}=\tfrac{1}{3}\mathcal{I}_2-\tfrac{1}{15}vv^\top=\tfrac{1}{15}\begin{pmatrix}4&-1\\-1&4\end{pmatrix}.\quad\checkmark$$
+
+\item (a) $|\mathcal{S}_{22}|=9-1=8$; $\mathcal{S}_{22}^{-1}=\tfrac{1}{8}\begin{pmatrix}3&-1\\-1&3\end{pmatrix}$. $\checkmark$
+
+(b) $\mathcal{S}_{11\cdot2}=3-(1,0)\cdot\tfrac{1}{8}\begin{pmatrix}3\\-1\end{pmatrix}=3-\tfrac{3}{8}=\tfrac{21}{8}$. $|\mathcal{S}|=8\cdot\tfrac{21}{8}=21$. $\checkmark$
+
+(c) $\mathcal{S}_{13}=0$ means $X_1\perp\!\!\!\perp X_3\mid X_2$ in the Gaussian graphical model: once $X_2$ is known, $X_3$ provides no additional information about $X_1$.
+\end{enumerate}
+
+## Exercises: \S2.5 (II)
+
+\small
+\begin{enumerate}[(4)]
+\item \textbf{(Eigenvalues of $\mathcal{X}\mathcal{X}^\top$ and $\mathcal{X}^\top\mathcal{X}$ in PCA.)} $\mathcal{X}=\begin{pmatrix}1&2\\3&6\end{pmatrix}$.
+\begin{enumerate}[(a)]
+  \item Compute $\mathcal{X}\mathcal{X}^\top$ and $\mathcal{X}^\top\mathcal{X}$; verify both have nonzero eigenvalue $\lambda=50$.
+  \item Determine $\operatorname{rank}(\mathcal{X})$ and the singular values.
+  \item Argue why working with $\mathcal{X}^\top\mathcal{X}$ ($p\times p$) is preferable when $n\gg p$.
+\end{enumerate}
+\item \textbf{(Factor model rank.)} $\Sigma=\Lambda\Lambda^\top+\Psi$ with $\Lambda(p\times k)$. Use Corollary 2.2 to show $\operatorname{rank}(\Lambda\Lambda^\top)\leq k$. Interpret.
+\end{enumerate}
+
+## Solutions: \S2.5 (II)
+
+\small
+\begin{enumerate}[(4)]
+\item (a) $\mathcal{X}\mathcal{X}^\top=\begin{pmatrix}5&15\\15&45\end{pmatrix}$: eigenvalues $50$ and $0$. $\mathcal{X}^\top\mathcal{X}=\begin{pmatrix}10&20\\20&40\end{pmatrix}$: eigenvalues $50$ and $0$. Nonzero eigenvalue $=50$ in both, consistent with Theorem 2.6. $\checkmark$
+
+(b) $\operatorname{rank}(\mathcal{X})=1$ (row 2 = $3\times$ row 1). Singular values: $\sqrt{50}=5\sqrt{2}$ and $0$.
+
+(c) Theorem 2.6 guarantees both matrices have the same $p$ nonzero eigenvalues. For $n\gg p$, $\mathcal{X}^\top\mathcal{X}$ is $p\times p$ while $\mathcal{X}\mathcal{X}^\top$ is $n\times n$---computational cost $O(p^2)$ vs.\ $O(n^2)$. This is the key trick in the ``kernel PCA'' and thin SVD algorithms.
+
+\item Apply Theorem 2.6 to $\mathcal{A}=\Lambda(p\times k)$ and $\mathcal{B}=\Lambda^\top(k\times p)$: nonzero eigenvalues of $\Lambda\Lambda^\top$ equal those of $\Lambda^\top\Lambda$ ($k\times k$), which has at most $k$ nonzero eigenvalues. Hence $\operatorname{rank}(\Lambda\Lambda^\top)\leq k$. Interpretation: a $k$-factor model imposes a rank-$k$ constraint on the systematic covariance component---parsimony with $k\ll p$ parameters.
+\end{enumerate}
+
+# \S2.6 Geometrical Aspects {#sec-2-6}
+
+## Distance and Iso-Distance Ellipsoids
+
+A **distance** $d:\mathbb{R}^{2p}\to\mathbb{R}_+$ satisfies positivity, identity, and triangle inequality.
+
+$$d^2(x,y)=(x-y)^\top\mathcal{A}(x-y),\quad\mathcal{A}>0.\qquad\text{(Special case }\mathcal{A}=\mathcal{I}_p\text{: Euclidean.)}$$
+
+**Iso-distance set:** $E_d=\{x\mid(x-x_0)^\top\mathcal{A}(x-x_0)=d^2\}$ --- an **ellipsoid** when $\mathcal{A}>0$.
+
+::: {.columns}
+::: {.column width="50%"}
+\includegraphics[page=1,width=0.70\linewidth]{haerdle_02_figs.pdf}
+\centering\scriptsize Fig.\ 2.1: Euclidean distance
+:::
+::: {.column width="50%"}
+\includegraphics[page=2,width=0.65\linewidth]{haerdle_02_figs.pdf}
+\centering\scriptsize Fig.\ 2.2: Iso-distance sphere
+:::
+:::
+
+## Theorem 2.7: Geometry of the Ellipsoid
+
+::: {.columns}
+::: {.column width="42%"}
+\includegraphics[page=3,width=\linewidth]{haerdle_02_figs.pdf}
+\centering\scriptsize Fig.\ 2.3: Ellipsoid axes
+:::
+::: {.column width="58%"}
+::: {.theorem}
+**Theorem 2.7** Let $\gamma_i$ be orthonormal eigenvectors of $\mathcal{A}$, $\lambda_1\geq\cdots\geq\lambda_p$:
+
+(i) Principal axes of $E_d$ along $\gamma_i$
+
+(ii) Half-lengths: $\sqrt{d^2/\lambda_i}$
+
+(iii) Surrounding rectangle: $x_{0i}\pm\sqrt{d^2\,a^{ii}}$
+where $a^{ii}=(\mathcal{A}^{-1})_{ii}$
+:::
+:::
+:::
+
+## Proof of Theorem 2.7
+
+::: {.proof}
+**(i)--(ii):** $\mathcal{A}=\Gamma\Lambda\Gamma^\top$. Substitution $u=\Gamma^\top(x-x_0)$ transforms $E_d$ to:
+$$\left\{u\;\bigg|\;\sum_i\frac{u_i^2}{d^2/\lambda_i}=1\right\},$$
+a standard ellipsoid with semi-axes $\sqrt{d^2/\lambda_i}$ along coordinate directions. Back-transforming, axes are along $\gamma_i$ with half-lengths $\sqrt{d^2/\lambda_i}$. $\checkmark$
+
+**(iii):** Maximise $e_j^\top x$ subject to $(x-x_0)^\top\mathcal{A}(x-x_0)=d^2$. Lagrangian gives $e_j=2\lambda\mathcal{A}x$, i.e.\ $x=\frac{1}{2\lambda}\mathcal{A}^{-1}e_j$. Substituting into the constraint: $\frac{1}{4\lambda^2}a^{jj}=d^2$, so the extremal $j$-th coordinate is $x_j=\pm\sqrt{d^2\,a^{jj}}$. $\checkmark$
+:::
+
+## Angle, Correlation, and Projection
+
+::: {.columns}
+::: {.column width="55%"}
+**Angle:** $\cos\theta=\dfrac{x^\top y}{\|x\|\,\|y\|}$.
+
+For general metric $\mathcal{A}$: $\cos\theta=\dfrac{x^\top\mathcal{A}y}{\|x\|_{\mathcal{A}}\|y\|_{\mathcal{A}}}$.
+
+::: {.block}
+**Example 2.11** Centred data ($\bar x=\bar y=0$):
+$$r_{XY}=\frac{\sum x_iy_i}{\sqrt{\sum x_i^2\sum y_i^2}}=\cos\theta.$$
+**Correlation = cosine of angle.**
+:::
+
+**Projection** of $x$ on $y$:
+$$p_x=\frac{y^\top x}{\|y\|^2}\,y;\quad\|p_x\|=\|x\||\cos\theta|.$$
+:::
+::: {.column width="45%"}
+\includegraphics[page=4,width=\linewidth]{haerdle_02_figs.pdf}
+\centering\scriptsize Fig.\ 2.4: Angle $\theta$
+
+\vspace{0.3em}
+
+\includegraphics[page=5,width=\linewidth]{haerdle_02_figs.pdf}
+\centering\scriptsize Fig.\ 2.5: Projection $p_x$
+:::
+:::
+
+## Rotations and Projection Matrix
+
+**Rotation** ($2\times2$): $\Gamma=\begin{pmatrix}\cos\theta&\sin\theta\\-\sin\theta&\cos\theta\end{pmatrix}$, $\Gamma^\top\Gamma=\mathcal{I}_2$.
+
+Premultiplying by orthogonal $\Gamma$ **rotates axes** --- underpins PCA (Ch.\ 11) and factor analysis (Ch.\ 12).
+
+**Projection matrix:** $\mathcal{P}=\mathcal{P}^\top=\mathcal{P}^2$ (symmetric idempotent).
+$$\mathcal{P}=\mathcal{X}(\mathcal{X}^\top\mathcal{X})^{-1}\mathcal{X}^\top,\quad\mathcal{Q}=\mathcal{I}_n-\mathcal{P};\quad\mathcal{P}\mathcal{X}=\mathcal{X},\;\mathcal{Q}\mathcal{X}=0.$$
+
+::: {.theorem}
+**Theorem 2.8** (i) $x=\mathcal{P}b\Rightarrow x\in\mathcal{C}(\mathcal{X})$. (ii) $y=\mathcal{Q}b\Rightarrow y^\top x=0\;\forall x\in\mathcal{C}(\mathcal{X})$.
+:::
+
+::: {.proof}
+(i) $x=\mathcal{P}b=\mathcal{X}(\mathcal{X}^\top\mathcal{X})^{-1}\mathcal{X}^\top b=\mathcal{X}a\in\mathcal{C}(\mathcal{X})$. $\checkmark$
+
+(ii) $y^\top x=b^\top(\mathcal{I}-\mathcal{P})^\top\mathcal{X}a=b^\top(\mathcal{X}a-\mathcal{P}\mathcal{X}a)=b^\top(\mathcal{X}a-\mathcal{X}a)=0$. $\checkmark$
+:::
+
+## Exercises: \S2.6 (I)
+
+\small
+\begin{enumerate}[(1)]
+\item \textbf{(Mahalanobis confidence ellipse.)} $\mathcal{A}=\begin{pmatrix}5&4\\4&5\end{pmatrix}$, $\mathcal{A}^{-1}=\tfrac{1}{9}\begin{pmatrix}5&-4\\-4&5\end{pmatrix}$, $d^2=9$; $\lambda_1=9,\lambda_2=1$.
+\begin{enumerate}[(a)]
+  \item Apply Theorem 2.7: find principal axes, half-lengths, and surrounding rectangle.
+  \item Interpret $E_d$ as a $\chi^2_2$-based confidence region for $\mu$. Why is it elongated along $(1,-1)^\top$?
+\end{enumerate}
+\item \textbf{(Sample correlation as cosine.)} $x=(1,2,2)^\top$, $y=(2,2,1)^\top$ (centred observations).
+\begin{enumerate}[(a)]
+  \item Compute $\cos\theta=x^\top y/(\|x\|\|y\|)$. \emph{(Answer: $8/9$.)}
+  \item State $r_{XY}$ and interpret.
+  \item Construct $z$ orthogonal to $x$; what does $r_{XZ}=0$ mean geometrically?
+\end{enumerate}
+\end{enumerate}
+
+## Solutions: \S2.6 (I)
+
+\small
+\begin{enumerate}[(1)]
+\item (a) $\gamma_1=\tfrac{1}{\sqrt{2}}(1,1)^\top$ ($\lambda_1=9$), $\gamma_2=\tfrac{1}{\sqrt{2}}(1,-1)^\top$ ($\lambda_2=1$). Half-lengths: $\sqrt{9/9}=1$ along $\gamma_1$ and $\sqrt{9/1}=3$ along $\gamma_2$. Surrounding rectangle: $a^{11}=5/9$, so $x_1\in x_{0,1}\pm\sqrt{9\cdot5/9}=x_{0,1}\pm\sqrt{5}$; similarly for $x_2$.
+
+(b) In bivariate normal, $(X-\mu)^\top\mathcal{S}^{-1}(X-\mu)\sim\chi^2_2$, so $E_{d=3}$ is approximately $98.9\%$ confidence region. Elongation along $\gamma_2=(1,-1)^\top/\sqrt{2}$ (small $\lambda_2=1$, large half-length~3): the model is most uncertain about contrasts $X_1-X_2$. Along $\gamma_1=(1,1)^\top/\sqrt{2}$ ($\lambda_1=9$, half-length 1): $X_1+X_2$ is well-determined (tight region).
+
+\item (a) $x^\top y=2+4+2=8$; $\|x\|=\|y\|=3$. $\cos\theta=8/9$. $\checkmark$
+
+(b) $r_{XY}=8/9$ (Example 2.11: for centred vectors, $\cos\theta=r_{XY}$). Strong positive association.
+
+(c) Gram-Schmidt: $z=y-\tfrac{8}{9}x=(2,2,1)^\top-\tfrac{8}{9}(1,2,2)^\top=\tfrac{1}{9}(10,2,-7)^\top$. Check: $x^\top z=\tfrac{1}{9}(10+4-14)=0$. $\checkmark$ Zero correlation = orthogonal vectors in data space: no linear relationship.
+\end{enumerate}
+
+## Exercises: \S2.6 (II)
+
+\small
+\begin{enumerate}[(3)]
+\item \textbf{(OLS as orthogonal projection.)} Show: (a) $\hat y^\top e=0$; (b) $\|y\|^2=\|\hat y\|^2+\|e\|^2$; (c) $R^2=\cos^2\theta$ where $\theta$ is the angle between $y$ and $\hat y$.
+\item \textbf{(PC directions are orthogonal.)} $\gamma_1,\gamma_2$ eigenvectors of $\mathcal{S}$ for distinct eigenvalues. Show $\cov(\gamma_1^\top X,\gamma_2^\top X)=0$. Interpret via Example 2.11.
+\item \textbf{(Invariance of Mahalanobis distance.)} For invertible $\mathcal{T}$, show $(x-y)^\top\mathcal{S}^{-1}(x-y)=(\mathcal{T}x-\mathcal{T}y)^\top(\mathcal{T}\mathcal{S}\mathcal{T}^\top)^{-1}(\mathcal{T}x-\mathcal{T}y)$. Contrast with Euclidean distance under standardisation $\mathcal{T}=\mathcal{D}^{-1}$.
+\item \textbf{(Rotation and PCA.)} $\mathcal{S}=\begin{pmatrix}3&2\\2&3\end{pmatrix}$, $\Gamma=\tfrac{1}{\sqrt{2}}\begin{pmatrix}1&1\\1&-1\end{pmatrix}$, $y=\Gamma^\top x$. (a) Verify $y^\top\operatorname{diag}(5,1)y=x^\top\mathcal{S}x$. (b) Show the iso-distance ellipse of $\mathcal{S}$ becomes a circle in $y$-coordinates iff $\lambda_1=\lambda_2$.
+\end{enumerate}
+
+## Solutions: \S2.6 (II)
+
+\small
+\begin{enumerate}[(3)]
+\item (a) $\hat y^\top e=(\mathcal{P}y)^\top(\mathcal{Q}y)=y^\top\mathcal{P}\mathcal{Q}y=y^\top\mathcal{P}(\mathcal{I}-\mathcal{P})y=y^\top(\mathcal{P}-\mathcal{P}^2)y=0$ (using $\mathcal{P}^2=\mathcal{P}$). $\checkmark$
+
+(b) $\|y\|^2=\|\hat y+e\|^2=\|\hat y\|^2+2\hat y^\top e+\|e\|^2=\|\hat y\|^2+\|e\|^2$ (by~(a)). $\checkmark$
+
+(c) $\cos\theta=\hat y^\top y/(\|\hat y\|\|y\|)=\|\hat y\|^2/(\|\hat y\|\|y\|)=\|\hat y\|/\|y\|$ (since $\hat y^\top y=\|\hat y\|^2$). Thus $R^2=\|\hat y\|^2/\|y\|^2=\cos^2\theta$. $\checkmark$
+
+\item $\cov(\gamma_1^\top X,\gamma_2^\top X)=\gamma_1^\top\mathcal{S}\gamma_2=\gamma_1^\top(\lambda_2\gamma_2)=\lambda_2(\gamma_1^\top\gamma_2)=0$ (eigenvectors of symmetric matrix for distinct eigenvalues are orthogonal). By Example 2.11: zero covariance = perpendicular vectors in data space ($\cos\theta=r=0$).
+
+\item $(\mathcal{T}x-\mathcal{T}y)^\top(\mathcal{T}\mathcal{S}\mathcal{T}^\top)^{-1}(\mathcal{T}x-\mathcal{T}y)=(x-y)^\top\mathcal{T}^\top(\mathcal{T}^\top)^{-1}\mathcal{S}^{-1}\mathcal{T}^{-1}\mathcal{T}(x-y)=(x-y)^\top\mathcal{S}^{-1}(x-y)$. $\checkmark$ Euclidean: $\|\mathcal{D}^{-1}(x-y)\|^2=\sum(x_i-y_i)^2/s_i^2\neq\|x-y\|^2$. Mahalanobis is scale-invariant; Euclidean is not.
+
+\item (a) $y^\top\operatorname{diag}(5,1)y=(\Gamma^\top x)^\top\operatorname{diag}(5,1)(\Gamma^\top x)=x^\top\Gamma\operatorname{diag}(5,1)\Gamma^\top x=x^\top\mathcal{S}x$. $\checkmark$
+
+(b) In $y$-coords, $E_d=\{y:\lambda_1y_1^2+\lambda_2y_2^2=d^2\}$. This is a circle iff $\lambda_1=\lambda_2$ (equal semi-axes $\sqrt{d^2/\lambda}$). Equal eigenvalues $\Leftrightarrow$ spherical covariance: all directions have the same variance.
+\end{enumerate}
+
+\end{tabular}
