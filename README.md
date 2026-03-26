@@ -2,12 +2,15 @@
 
 ## 教科書
 
+教師編纂講義。
+
+| &nbsp;<a href="https://github.com/chang-ye-tu/mva/blob/master/note/mc.pdf">Matrix Calculus</a>&nbsp; | 
+
+
+## 參考書
 - [Härdle, W., Simar, L., 2015. Applied Multivariate Statistical Analysis. 4th ed., Springer.](https://link.springer.com/book/10.1007/978-3-662-45171-7)
+  - 範例原始碼：[MVA-ToDo: Quantlets to Update for MVA](https://github.com/QuantLet/MVA-ToDo/tree/master)
 - [Härdle, W., Hlávka, Z., 2019. Multivariate Statistics: Exercises and Solutions. 2nd ed., Springer.](https://link.springer.com/book/10.1007/978-3-642-36005-3)
-
-## 範例原始碼
-
-[MVA-ToDo: Quantlets to Update for MVA](https://github.com/QuantLet/MVA-ToDo/tree/master)
 
 ## 評分標準
 
@@ -17,6 +20,24 @@
 
 ## 授課時程
 
+| 上課時間 | 課程進度 |
+|----------|----------|
+| 03/06 | |
+| 03/13 | |
+| 03/20 | Multiple Linear Regression |
+| 03/27 | Matrix Calculus |
+| 04/10 | |
+| 04/17 | |
+| 04/24 | **期中考** |
+| 05/01 | |
+| 05/08 | |
+| 05/15 | |
+| 05/22 | |
+| 05/29 | |
+| 06/05 | |
+| 06/12 | **期末考** |
+
+<!--
 | 上課時間 | 課程進度 |
 |----------|----------|
 | 03/06 | **描述性技術 ＋ 矩陣代數（上）**（Ch 1 精選 + Ch 2 前半）<br>① Ch 1 多變量資料視覺化：Boxplots、Histograms、Kernel Densities（§1.1–1.3）；Scatterplots、Parallel Coordinates（§1.4, §1.7）；Boston Housing 資料導覽（§1.9）<br>② Ch 2 矩陣基本運算（§2.1）<br>③ Ch 2 譜分解與二次式（§2.2–2.3） |
@@ -33,6 +54,7 @@
 | 05/29 | **集群分析（下）＋ 判別分析**（Ch 13 §13.3–13.4 + Ch 14）<br>① Ch 13 集群演算法：階層式法（Single/Complete/Average Linkage）、K-means、群數選擇準則（§13.3）<br>② Ch 13 Boston Housing 實例（§13.4）；Ch 14 已知分配之分類法則：Bayes、Fisher 判別（§14.1）<br>③ Ch 14 實務判別法則、誤判率估計、Boston Housing（§14.2–14.3） |
 | 06/05 | **計算密集方法——SVM 與 CART**（Ch 20 精選）<br>① Ch 20 支持向量機（SVM）：最大間距分類器、核函數技巧、軟間距推廣（§20.4）<br>② Ch 20 分類與迴歸樹（CART）：遞迴分割、不純度準則（Gini / Entropy）、剪枝（§20.5）<br>③ Ch 20 Boston Housing 實例（§20.6）；與判別分析、集群分析之方法比較 |
 | 06/12 | **期末考**（範圍：Ch 7, 10–14, 20 精選） |
+-->
 
 <!--
 
