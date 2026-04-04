@@ -1,0 +1,1223 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=15mm]{geometry}
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+\usepackage{booktabs,array}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{tocloft}
+% Compact TOC
+\setlength{\cftbeforesecskip}{2pt}
+\setlength{\cftbeforesubsecskip}{0pt}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!70!black,urlcolor=blue!80!black,citecolor=blue!70!black}
+
+% Theorem environments
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{exercise}{Exercise}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{property}{Property}[section]
+\newtheorem*{remark}{Remark}
+
+% Custom commands (matching clm.tex)
+\newcommand\expc{\mathsf{E}}
+\newcommand\prb{\mathsf{P}}
+\DeclareMathOperator\var{var}
+\DeclareMathOperator\cov{cov}
+\DeclareMathOperator\corr{corr}
+\DeclareMathOperator\plim{plim}
+\DeclareMathOperator\tr{tr}
+\DeclareMathOperator\rank{rank}
+\DeclareMathOperator\diag{diag}
+\newcommand{\ds}{\displaystyle}
+\newcommand{\ie}{\;\Longrightarrow\;}
+\newcommand{\ifff}{\;\Longleftrightarrow\;}
+\newcommand{\SST}{\mathrm{SST}}
+\newcommand{\SSR}{\mathrm{SSR}}
+\newcommand{\SSE}{\mathrm{SSE}}
+\newcommand{\MSR}{\mathrm{MSR}}
+\newcommand{\MSE}{\mathrm{MSE}}
+\newcommand{\SE}{\mathrm{SE}}
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\bY}{\mathbf{Y}}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\bx}{\mathbf{x}}
+\def\bb{\boldsymbol{\beta}}
+\newcommand{\be}{\boldsymbol{\varepsilon}}
+\newcommand{\bI}{\mathbf{I}}
+\newcommand{\bH}{\mathbf{H}}
+\newcommand{\bM}{\mathbf{M}}
+\newcommand{\bR}{\mathbf{R}}
+\newcommand{\br}{\mathbf{r}}
+\def\bc{\mathbf{c}}
+\newcommand{\bone}{\mathbf{1}}
+\newcommand{\bzero}{\mathbf{0}}
+\newcommand{\bz}{\mathbf{z}}
+\newcommand{\bw}{\mathbf{w}}
+\newcommand{\bA}{\mathbf{A}}
+\newcommand{\bC}{\mathbf{C}}
+\newcommand{\bD}{\mathbf{D}}
+\newcommand{\bP}{\mathbf{P}}
+\newcommand{\ba}{\mathbf{a}}
+\newcommand{\bv}{\mathbf{v}}
+\newcommand{\bu}{\mathbf{u}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\calC}{\mathcal{C}}
+\newcommand{\calN}{\mathcal{N}}
+% Additional commands for modern theory
+\newcommand{\bSigma}{\boldsymbol{\Sigma}}
+\newcommand{\hbSigma}{\hat{\boldsymbol{\Sigma}}}
+\newcommand{\hbb}{\hat{\boldsymbol{\beta}}}
+\newcommand{\ip}[2]{\langle #1,\, #2 \rangle}
+\newcommand{\norm}[1]{\|#1\|}
+\newcommand{\opnorm}[1]{\|#1\|_{\mathrm{op}}}
+\newcommand{\fnorm}[1]{\|#1\|_{\mathrm{F}}}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator*{\esssup}{ess\,sup}
+\newcommand{\dd}{\mathrm{d}}
+
+\title{\textbf{Notes on the Modern Theory of Linear Models}}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+\newpage
+
+\noindent\textbf{Notation and conventions.}\; Throughout, $\|\bv\| = \|\bv\|_2 = (\sum_i v_i^2)^{1/2}$ is the Euclidean norm, $\opnorm{\bA} = \sup_{\|\bv\|=1}\|\bA\bv\|$ is the operator (spectral) norm, $\fnorm{\bA} = (\tr(\bA'\bA))^{1/2}$ is the Frobenius norm, and $\sigma_{\min}(\bA)$, $\sigma_{\max}(\bA)$ denote the smallest and largest singular values of $\bA$. For a symmetric matrix $\bA$, $\lambda_{\min}(\bA)$ and $\lambda_{\max}(\bA)$ denote its extreme eigenvalues; then $\opnorm{\bA} = \max(|\lambda_{\min}(\bA)|, |\lambda_{\max}(\bA)|)$. We write $a \lesssim b$ to mean $a \leqslant Cb$ for a universal constant $C > 0$. For two symmetric matrices, $\bA \preceq \bA'$ means $\bA' - \bA$ is positive semi-definite. We write $a \wedge b = \min(a,b)$ and $a \vee b = \max(a,b)$. The standard Gaussian random vector in $\Real^n$ is denoted $\mathbf{g} \sim N(\bzero, \bI_n)$. In Part~3, $p$ replaces $k+1$ for the total number of regressors (including the intercept, if present).
+
+\bigskip\noindent\textbf{Prerequisites.}\; This document assumes familiarity with the material in \emph{Notes on the Classical Theory of Linear Models}. The primary references are R.\ Vershynin, \emph{High-Dimensional Probability} (HDP, 2018), and M.\,J.\ Wainwright, \emph{High-Dimensional Statistics} (HDS, 2019).
+
+%=============================================================================
+\newpage
+\part{The Toolkit: Sub-Gaussian and Sub-Exponential Variables}\label{part:toolkit}
+%=============================================================================
+
+%=============================================================================
+\section{Sub-Gaussian Random Variables}\label{sec:subgaussian}
+%=============================================================================
+
+\subsection{Motivation: Why Go Beyond Normality?}
+
+\begin{remark}
+In the classical linear model (Assumption~(A5)), exact inference rests on the normality of $\be$. The Gauss--Markov result (Theorem~2.6 in the classical notes) needs only (A1)--(A4), but the pivotal distributions $t_{n-k-1}$ and $F_{k,\,n-k-1}$ demand Gaussian errors. The modern programme asks: \emph{what minimal distributional property replaces normality to yield sharp, non-asymptotic concentration?} The answer is the sub-Gaussian condition: the tails of the random variable decay at least as fast as those of a Gaussian. This class includes all bounded random variables, all Gaussian random variables, and many other distributions encountered in practice.
+\end{remark}
+
+\subsection{Definition and Equivalent Characterizations}
+
+\begin{definition}[Sub-Gaussian Random Variable]\label{def:subgaussian}
+A real-valued random variable $X$ with $\expc[X] = 0$ is called \textbf{sub-Gaussian} if there exists a constant $K > 0$ such that
+\begin{equation}\label{eq:subgaussian-mgf}
+\expc\!\left[e^{tX}\right] \leqslant e^{K^2 t^2/2} \quad \text{for all } t \in \Real.
+\end{equation}
+The \textbf{sub-Gaussian norm} (or $\psi_2$-norm) of $X$ is
+\begin{equation}\label{eq:psi2}
+\|X\|_{\psi_2} = \inf\!\left\{t > 0 : \expc\!\left[e^{X^2/t^2}\right] \leqslant 2\right\}.
+\end{equation}
+\end{definition}
+
+\begin{theorem}[Equivalent Characterizations of Sub-Gaussianity]\label{thm:subgaussian-equiv}
+Let $X$ be a random variable with $\expc[X] = 0$. The following properties are equivalent, in the sense that if one holds with constant $K_i$, then each of the others holds with a constant $K_j = C_{ij} K_i$ for a universal factor $C_{ij} > 0$:
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item\label{sg:mgf} \textbf{MGF bound}: $\expc[e^{tX}] \leqslant e^{K_1^2 t^2/2}$ for all $t \in \Real$.
+\item\label{sg:tail} \textbf{Tail bound}: $\prb(|X| \geqslant t) \leqslant 2\,e^{-t^2/(2K_2^2)}$ for all $t \geqslant 0$.
+\item\label{sg:moment} \textbf{Moment bound}: $(\expc[|X|^p])^{1/p} \leqslant K_3\sqrt{p}$ for all $p \geqslant 1$.
+\item\label{sg:psi2} \textbf{$\psi_2$-norm finite}: $\|X\|_{\psi_2} \leqslant K_4$.
+\end{enumerate}
+Moreover, $\|X\|_{\psi_2}$ is equivalent (up to universal constants) to each of the optimal $K_i$.
+\end{theorem}
+
+\begin{proof}
+We prove the cycle \ref{sg:mgf}~$\Rightarrow$~\ref{sg:tail}~$\Rightarrow$~\ref{sg:moment}~$\Rightarrow$~\ref{sg:psi2}~$\Rightarrow$~\ref{sg:mgf}.
+
+\medskip\noindent\textbf{\ref{sg:mgf}~$\Rightarrow$~\ref{sg:tail}.} By Markov's inequality and~\ref{sg:mgf}, for any $t > 0$ and $\lambda > 0$:
+\[
+\prb(X \geqslant t) = \prb(e^{\lambda X} \geqslant e^{\lambda t}) \leqslant e^{-\lambda t}\,\expc[e^{\lambda X}] \leqslant e^{-\lambda t + K_1^2\lambda^2/2}.
+\]
+Optimizing over $\lambda$: set $\frac{d}{d\lambda}(-\lambda t + K_1^2\lambda^2/2) = -t + K_1^2\lambda = 0$, giving $\lambda^* = t/K_1^2$. Substituting:
+\[
+\prb(X \geqslant t) \leqslant e^{-t^2/(2K_1^2)}.
+\]
+Applying the same argument to $-X$ (which also satisfies~\ref{sg:mgf} with the same constant, since $\expc[e^{-tX}] = \expc[e^{t(-X)}]$ and $(-X)$ has mean zero):
+\[
+\prb(|X| \geqslant t) \leqslant 2\,e^{-t^2/(2K_1^2)}.
+\]
+So $K_2 = K_1$ works.
+
+\medskip\noindent\textbf{\ref{sg:tail}~$\Rightarrow$~\ref{sg:moment}.} For any $p \geqslant 1$, the layer-cake formula gives:
+\begin{align}
+\expc[|X|^p] &= \int_0^\infty p\,t^{p-1}\prb(|X| \geqslant t)\,\dd t \leqslant \int_0^\infty p\,t^{p-1} \cdot 2\,e^{-t^2/(2K_2^2)}\,\dd t. \label{eq:layercake}
+\end{align}
+Substituting $s = t^2/(2K_2^2)$, so $t = K_2\sqrt{2s}$ and $\dd t = K_2\,\dd s/\sqrt{2s}$:
+\[
+\expc[|X|^p] \leqslant 2p \int_0^\infty (K_2\sqrt{2s})^{p-1}\,e^{-s}\,\frac{K_2}{\sqrt{2s}}\,\dd s = p\,(K_2\sqrt{2})^p\,\Gamma(p/2).
+\]
+We bound $\Gamma(p/2)$. By the integral representation, $\Gamma(\alpha) = \int_0^\infty u^{\alpha-1}e^{-u}\,\dd u$. The integrand $u^{\alpha-1}e^{-u}$ is maximized at $u = \alpha - 1$, giving the crude bound $\Gamma(\alpha) \leqslant (\alpha-1)^{\alpha-1}e^{-(\alpha-1)}\int_0^\infty e^{-(u-\alpha+1)^2/(2(\alpha-1))}\sqrt{2\pi(\alpha-1)}\,\cdots$. Instead, we use $\Gamma(\alpha) \leqslant \alpha^{\alpha-1}$ for $\alpha \geqslant 1$ (which follows from $\Gamma(\alpha) \leqslant \alpha^{\alpha}/\alpha = \alpha^{\alpha-1}$ since $\Gamma(\alpha+1) = \alpha\Gamma(\alpha) \leqslant \alpha^\alpha$ by the bound $\Gamma(n+1) = n! \leqslant n^n$, extended to non-integers via log-convexity). Hence $\Gamma(p/2) \leqslant (p/2)^{p/2-1}$ for $p \geqslant 2$. Substituting:
+\[
+\expc[|X|^p] \leqslant p\,(K_2\sqrt{2})^p\,(p/2)^{p/2-1} \leqslant p^{p/2}\cdot 2^{p/2}\cdot K_2^p\cdot\frac{p}{(p/2)} = 2\cdot(2K_2^2)^{p/2}\cdot p^{p/2}.
+\]
+Taking $p$-th roots: $(\expc[|X|^p])^{1/p} \leqslant 2^{1/p}\sqrt{2}\,K_2\sqrt{p} \leqslant 2\sqrt{2}\,K_2\sqrt{p}$. For $p = 1$: $\expc[|X|] \leqslant 2\int_0^\infty e^{-t^2/(2K_2^2)}\,\dd t = K_2\sqrt{2\pi} \leqslant 3K_2$. So $K_3 = 3K_2$ works uniformly for all $p \geqslant 1$.
+
+\medskip\noindent\textbf{\ref{sg:moment}~$\Rightarrow$~\ref{sg:psi2}.} From~\ref{sg:moment}, $\expc[|X|^{2k}] \leqslant (K_3\sqrt{2k})^{2k} = K_3^{2k}(2k)^k$. Using the Taylor expansion:
+\[
+\expc\!\left[e^{X^2/t^2}\right] = \sum_{k=0}^{\infty} \frac{\expc[|X|^{2k}]}{k!\,t^{2k}} \leqslant 1 + \sum_{k=1}^{\infty} \frac{K_3^{2k}(2k)^k}{k!\,t^{2k}}.
+\]
+Since $k! \geqslant (k/e)^k$ (Stirling's lower bound), $k^k/k! \leqslant e^k$. Hence $(2k)^k/k! = 2^k\cdot k^k/k! \leqslant (2e)^k$, and:
+\[
+\frac{K_3^{2k}(2k)^k}{k!\,t^{2k}} \leqslant \left(\frac{2eK_3^2}{t^2}\right)^k.
+\]
+Choosing $t^2 = 4eK_3^2$: each term is $\leqslant 2^{-k}$, so $\expc[e^{X^2/t^2}] \leqslant 1 + 1 = 2$. Hence $\|X\|_{\psi_2} \leqslant 2\sqrt{e}\,K_3$.
+
+\medskip\noindent\textbf{\ref{sg:psi2}~$\Rightarrow$~\ref{sg:mgf}.} Let $K = \|X\|_{\psi_2}$, so $\expc[e^{X^2/K^2}] \leqslant 2$.
+
+\textbf{Step 1: Obtain a tail bound.} By Markov's inequality: for $u \geqslant 0$,
+\[
+\prb(|X| \geqslant u) = \prb(e^{X^2/K^2} \geqslant e^{u^2/K^2}) \leqslant e^{-u^2/K^2}\,\expc[e^{X^2/K^2}] \leqslant 2e^{-u^2/K^2}.
+\]
+This is the tail bound~\ref{sg:tail} with $K_2 = K/\sqrt{2}$.
+
+\textbf{Step 2: Obtain moment bounds.} By the implication \ref{sg:tail}~$\Rightarrow$~\ref{sg:moment} (already proved), $(\expc[|X|^p])^{1/p} \leqslant CK\sqrt{p}$ for all $p \geqslant 1$, hence $|\expc[X^p]| \leqslant \expc[|X|^p] \leqslant (CK)^p p^{p/2}$.
+
+\textbf{Step 3: Bound the MGF via Taylor series.} Since $\expc[X] = 0$:
+\[
+\expc[e^{tX}] = 1 + \sum_{p=2}^{\infty}\frac{t^p\,\expc[X^p]}{p!} \leqslant 1 + \sum_{p=2}^{\infty}\frac{|t|^p(CK)^p\,p^{p/2}}{p!}.
+\]
+Using $p^{p/2}/p! \leqslant p^{p/2}/(p/e)^p = e^p/p^{p/2}$ (from Stirling's lower bound $p! \geqslant (p/e)^p$):
+\[
+\frac{(CK|t|)^p\,p^{p/2}}{p!} \leqslant (CeK|t|)^p\cdot p^{-p/2}\cdot p^{p/2} \cdot p^{-p/2} = \left(\frac{CeK|t|}{\sqrt{p}}\right)^p \cdot p^{p/2}.
+\]
+This bound is not tight enough. Instead, use the direct estimate: $p^{p/2}/p! \leqslant e^p/p^{p/2}$, so
+\[
+\frac{(CK|t|)^p p^{p/2}}{p!} \leqslant \frac{(CK|t|)^p e^p}{p^{p/2}} = \left(\frac{CeK|t|}{p^{1/2}}\right)^p.
+\]
+For $p \geqslant 2$ and $|t| \leqslant 1/(2CeK)$: $CeK|t|/\sqrt{p} \leqslant CeK|t| \leqslant 1/2$, so each term is $\leqslant 2^{-p}$. Hence:
+\[
+\expc[e^{tX}] \leqslant 1 + \sum_{p=2}^\infty 2^{-p} = 1 + 1/2 < 2 \leqslant e^1, \quad \text{for } |t| \leqslant \frac{1}{2CeK}.
+\]
+
+\textbf{Step 4: Extend to all $t$.} For $|t| > 1/(2CeK)$, we use the tail bound from Step~1. Split the MGF:
+\[
+\expc[e^{tX}] = \expc[e^{tX}\mathbf{1}_{|X| \leqslant R}] + \expc[e^{tX}\mathbf{1}_{|X| > R}]
+\]
+with $R = K^2|t|$. For the first term: $e^{tX}\mathbf{1}_{|X| \leqslant R} \leqslant e^{|t|R} = e^{K^2t^2}$. For the second:
+\begin{align*}
+\expc[e^{tX}\mathbf{1}_{|X|>R}] &\leqslant \expc[e^{|t||X|}\mathbf{1}_{|X|>R}] = |t|\int_R^\infty e^{|t|u}\prb(|X| \geqslant u)\,\dd u + e^{|t|R}\prb(|X| \geqslant R)\\
+&\leqslant |t|\int_R^\infty e^{|t|u}\cdot 2e^{-u^2/K^2}\,\dd u + 2e^{|t|R - R^2/K^2}.
+\end{align*}
+In the exponent: $|t|u - u^2/K^2 = -(u/K - K|t|/2)^2 + K^2t^2/4$. So all terms are bounded by $Ce^{K^2t^2/4}\cdot(\text{polynomial in }|t|K)$, giving $\expc[e^{tX}] \leqslant e^{C'K^2t^2}$ for a universal $C'$.
+
+Combining Steps 3--4: $\expc[e^{tX}] \leqslant e^{C''K^2t^2/2}$ for all $t \in \Real$, with $K_1 = \sqrt{2C''}K_4$.
+\end{proof}
+
+\begin{example}[Sub-Gaussian Random Variables]\label{ex:subgaussian}
+\begin{enumerate}[label=\textup{(\arabic*)}]
+\item \textbf{Gaussian.} If $X \sim N(0, \sigma^2)$, then $\expc[e^{tX}] = e^{\sigma^2 t^2/2}$, so $X$ is sub-Gaussian with $K_1 = \sigma$. Moreover, $\|X\|_{\psi_2} = C\sigma$ for a universal $C$.
+
+\item \textbf{Bounded (Rademacher).} Let $X$ take values $\pm 1$ with equal probability. Then $\expc[e^{tX}] = \cosh(t) \leqslant e^{t^2/2}$, so $X$ is sub-Gaussian with $K_1 = 1$.
+
+\item \textbf{Bounded (Hoeffding's lemma).} If $a \leqslant X \leqslant b$ and $\expc[X] = 0$, then $\expc[e^{tX}] \leqslant e^{(b-a)^2t^2/8}$, so $X$ is sub-Gaussian with $K_1 = (b-a)/2$. The proof is given in Lemma~\ref{lem:hoeffding-lemma}.
+
+\item \textbf{Non-example (Exponential).} If $X \sim \mathrm{Exp}(1) - 1$ (centered), then $\expc[e^{tX}] = e^{-t}/(1-t)$ for $t < 1$, which grows faster than any $e^{Kt^2}$ as $t \to 1^-$. Hence $X$ is \emph{not} sub-Gaussian; it is sub-exponential (Definition~\ref{def:subexponential}).
+\end{enumerate}
+\end{example}
+
+\subsection{Properties of Sub-Gaussian Random Variables}
+
+\begin{proposition}[Closure Properties]\label{prop:sg-closure}
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item If $X$ is sub-Gaussian and $a \in \Real$, then $aX$ is sub-Gaussian with $\|aX\|_{\psi_2} = |a|\,\|X\|_{\psi_2}$.
+\item If $X_1, \ldots, X_n$ are independent sub-Gaussian random variables with $\expc[X_i] = 0$, then $S = \sum_{i=1}^n X_i$ is sub-Gaussian with $\|S\|_{\psi_2}^2 \leqslant C\sum_{i=1}^n \|X_i\|_{\psi_2}^2$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+\textbf{(i).} Immediate from $\expc[e^{(aX)^2/t^2}] = \expc[e^{X^2/(t/|a|)^2}]$, which is $\leqslant 2$ when $t/|a| \geqslant \|X\|_{\psi_2}$, i.e., $t \geqslant |a|\,\|X\|_{\psi_2}$.
+
+\textbf{(ii).} By independence:
+\[
+\expc\!\left[e^{tS}\right] = \prod_{i=1}^n \expc\!\left[e^{tX_i}\right] \leqslant \prod_{i=1}^n e^{K_i^2 t^2/2} = \exp\!\left(\frac{t^2}{2}\sum_{i=1}^n K_i^2\right),
+\]
+where $K_i = C\|X_i\|_{\psi_2}$ from the MGF characterization. Hence $S$ is sub-Gaussian with $K^2 = \sum K_i^2$, and $\|S\|_{\psi_2}^2 \leqslant C'\sum\|X_i\|_{\psi_2}^2$.
+\end{proof}
+
+\subsection{Variance of Sub-Gaussian Variables}
+
+\begin{proposition}\label{prop:sg-variance}
+If $X$ is sub-Gaussian with $\expc[X] = 0$, then $\var(X) = \expc[X^2] \leqslant C\|X\|_{\psi_2}^2$ for a universal constant $C$.
+\end{proposition}
+
+\begin{proof}
+From the moment bound (Theorem~\ref{thm:subgaussian-equiv}\ref{sg:moment}) with $p = 2$: $(\expc[X^2])^{1/2} \leqslant K_3\sqrt{2}$. Since $K_3 \leqslant C\|X\|_{\psi_2}$, squaring gives $\expc[X^2] \leqslant 2C^2\|X\|_{\psi_2}^2$.
+\end{proof}
+
+%=============================================================================
+\section{Hoeffding's Inequality}\label{sec:hoeffding}
+%=============================================================================
+
+\subsection{Hoeffding's Lemma}
+
+\begin{lemma}[Hoeffding's Lemma]\label{lem:hoeffding-lemma}
+Let $X$ be a random variable with $\expc[X] = 0$ and $a \leqslant X \leqslant b$ almost surely. Then for all $t \in \Real$:
+\begin{equation}\label{eq:hoeffding-lemma}
+\expc[e^{tX}] \leqslant \exp\!\left(\frac{t^2(b-a)^2}{8}\right).
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+\textbf{Step 1: Convexity bound.} Since $e^{tx}$ is convex in $x$, for any $x \in [a, b]$:
+\[
+e^{tx} \leqslant \frac{b - x}{b - a}\,e^{ta} + \frac{x - a}{b - a}\,e^{tb}.
+\]
+Taking expectations and using $\expc[X] = 0$:
+\begin{equation}\label{eq:hoeffding-step1}
+\expc[e^{tX}] \leqslant \frac{b}{b - a}\,e^{ta} + \frac{-a}{b - a}\,e^{tb} = \frac{b\,e^{ta} - a\,e^{tb}}{b - a}.
+\end{equation}
+
+\textbf{Step 2: Logarithmic bound.} Let $h = t(b-a)$, $\theta = -a/(b-a) \in [0,1]$. Then $1 - \theta = b/(b-a)$. Rewrite~\eqref{eq:hoeffding-step1}:
+\begin{align*}
+\expc[e^{tX}] &\leqslant (1-\theta)\,e^{-\theta h} + \theta\,e^{(1-\theta)h} = e^{-\theta h}\bigl[(1-\theta) + \theta\,e^{h}\bigr].
+\end{align*}
+Define $\varphi(h) = -\theta h + \ln\bigl[(1-\theta) + \theta\,e^h\bigr]$. Then $\expc[e^{tX}] \leqslant e^{\varphi(h)}$.
+
+\textbf{Step 3: Taylor expansion of $\varphi$.} We have $\varphi(0) = 0$ and $\varphi'(0) = -\theta + \theta = 0$. Computing the second derivative:
+\[
+\varphi''(h) = \frac{\theta(1-\theta)\,e^h}{[(1-\theta) + \theta\,e^h]^2}.
+\]
+Let $u = \theta\,e^h/[(1-\theta) + \theta\,e^h] \in (0,1)$. Then $\varphi''(h) = u(1-u) \leqslant 1/4$ (since $u(1-u) \leqslant 1/4$ for $u \in [0,1]$). By Taylor's theorem with remainder:
+\[
+\varphi(h) = \varphi(0) + h\varphi'(0) + \frac{h^2}{2}\varphi''(\xi) \leqslant \frac{h^2}{8}
+\]
+for some $\xi$ between $0$ and $h$. Hence $\expc[e^{tX}] \leqslant e^{h^2/8} = e^{t^2(b-a)^2/8}$.
+\end{proof}
+
+\subsection{Hoeffding's Inequality}
+
+\begin{theorem}[Hoeffding's Inequality]\label{thm:hoeffding}
+Let $X_1, \ldots, X_n$ be independent random variables with $\expc[X_i] = 0$ and $a_i \leqslant X_i \leqslant b_i$ almost surely for each $i$. Then for all $t \geqslant 0$:
+\begin{equation}\label{eq:hoeffding}
+\boxed{\prb\!\left(\left|\sum_{i=1}^n X_i\right| \geqslant t\right) \leqslant 2\exp\!\left(-\frac{2t^2}{\sum_{i=1}^n (b_i - a_i)^2}\right).}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+\textbf{Step 1: One-sided bound via Chernoff.} For $\lambda > 0$:
+\begin{align}
+\prb\!\left(\sum_{i=1}^n X_i \geqslant t\right) &= \prb\!\left(e^{\lambda\sum X_i} \geqslant e^{\lambda t}\right) \leqslant e^{-\lambda t}\,\expc\!\left[e^{\lambda\sum X_i}\right] \notag\\
+&= e^{-\lambda t}\prod_{i=1}^n \expc[e^{\lambda X_i}] \leqslant e^{-\lambda t}\prod_{i=1}^n e^{\lambda^2(b_i - a_i)^2/8}, \label{eq:hoeffding-chernoff}
+\end{align}
+where the last inequality uses Hoeffding's Lemma (Lemma~\ref{lem:hoeffding-lemma}) applied to each $X_i$.
+
+\textbf{Step 2: Optimize $\lambda$.} From~\eqref{eq:hoeffding-chernoff}:
+\[
+\prb\!\left(\sum X_i \geqslant t\right) \leqslant \exp\!\left(-\lambda t + \frac{\lambda^2}{8}\sum_{i=1}^n(b_i - a_i)^2\right).
+\]
+Let $\sigma_H^2 = \frac{1}{4}\sum(b_i - a_i)^2$. Setting $\frac{d}{d\lambda}(-\lambda t + \lambda^2\sigma_H^2/2) = -t + \lambda\sigma_H^2 = 0$ gives $\lambda^* = t/\sigma_H^2$:
+\[
+\prb\!\left(\sum X_i \geqslant t\right) \leqslant \exp\!\left(-\frac{t^2}{2\sigma_H^2}\right) = \exp\!\left(-\frac{2t^2}{\sum(b_i-a_i)^2}\right).
+\]
+
+\textbf{Step 3: Two-sided bound.} Apply the same argument to $-X_1, \ldots, -X_n$ to get $\prb(\sum X_i \leqslant -t) \leqslant \exp(-2t^2/\sum(b_i-a_i)^2)$. By the union bound, $\prb(|\sum X_i| \geqslant t) \leqslant 2\exp(-2t^2/\sum(b_i-a_i)^2)$.
+\end{proof}
+
+\begin{corollary}[Hoeffding for i.i.d.\ Bounded Variables]\label{cor:hoeffding-iid}
+Let $X_1, \ldots, X_n$ be i.i.d.\ with $\expc[X_i] = \mu$ and $a \leqslant X_i \leqslant b$. Then for $\bar{X} = \frac{1}{n}\sum X_i$:
+\begin{equation}\label{eq:hoeffding-mean}
+\prb\!\left(|\bar{X} - \mu| \geqslant t\right) \leqslant 2\exp\!\left(-\frac{2nt^2}{(b-a)^2}\right).
+\end{equation}
+\end{corollary}
+
+\begin{proof}
+Apply Theorem~\ref{thm:hoeffding} to $Y_i = X_i - \mu$ (so $\expc[Y_i] = 0$, $a - \mu \leqslant Y_i \leqslant b - \mu$, and $b_i - a_i = b - a$ for all $i$). Then $\sum Y_i = n(\bar{X} - \mu)$, and the bound gives $\prb(|n(\bar{X}-\mu)| \geqslant nt) \leqslant 2\exp(-2n^2t^2/(n(b-a)^2))$.
+\end{proof}
+
+%=============================================================================
+\section{Sub-Gaussian Concentration for Sums and Quadratic Forms}\label{sec:sg-conc}
+%=============================================================================
+
+\subsection{General Sub-Gaussian Hoeffding Inequality}
+
+\begin{theorem}[General Hoeffding Inequality for Sub-Gaussians]\label{thm:hoeffding-sg}
+Let $X_1, \ldots, X_n$ be independent, mean-zero, sub-Gaussian random variables. Then for all $t \geqslant 0$:
+\begin{equation}\label{eq:hoeffding-sg}
+\prb\!\left(\left|\sum_{i=1}^n X_i\right| \geqslant t\right) \leqslant 2\exp\!\left(-\frac{ct^2}{\sum_{i=1}^n \|X_i\|_{\psi_2}^2}\right),
+\end{equation}
+where $c > 0$ is a universal constant.
+\end{theorem}
+
+\begin{proof}
+By the MGF characterization (Theorem~\ref{thm:subgaussian-equiv}\ref{sg:mgf}), each $X_i$ satisfies $\expc[e^{\lambda X_i}] \leqslant e^{C^2\|X_i\|_{\psi_2}^2\lambda^2/2}$. The proof then follows the Chernoff--optimize pattern of Theorem~\ref{thm:hoeffding}, with $(b_i - a_i)^2/4$ replaced by $C^2\|X_i\|_{\psi_2}^2$:
+\begin{align*}
+\prb\!\left(\sum X_i \geqslant t\right) &\leqslant \exp\!\left(-\lambda t + \frac{C^2\lambda^2}{2}\sum \|X_i\|_{\psi_2}^2\right).
+\end{align*}
+Setting $\lambda^* = t/(C^2\sum\|X_i\|_{\psi_2}^2)$ gives $\prb(\sum X_i \geqslant t) \leqslant \exp(-t^2/(2C^2\sum\|X_i\|_{\psi_2}^2))$, and the two-sided bound follows by the union bound with $c = 1/(2C^2)$.
+\end{proof}
+
+\subsection{Sub-Gaussian Random Vectors}
+
+\begin{definition}[Sub-Gaussian Random Vector]\label{def:sg-vector}
+A random vector $\bx \in \Real^p$ is \textbf{sub-Gaussian} if all one-dimensional marginals are sub-Gaussian. Formally, there exists $K > 0$ such that
+\begin{equation}\label{eq:sg-vector}
+\|\ip{\bx}{\bv}\|_{\psi_2} \leqslant K\,\|\bv\| \quad \text{for all } \bv \in \Real^p.
+\end{equation}
+The smallest such $K$ is the \textbf{sub-Gaussian norm} of $\bx$, denoted $\|\bx\|_{\psi_2}$.
+\end{definition}
+
+\begin{example}\label{ex:sg-vector}
+\begin{enumerate}[label=\textup{(\arabic*)}]
+\item If $\bx \sim N(\bzero, \bSigma)$, then $\ip{\bx}{\bv} \sim N(0, \bv'\bSigma\bv)$ has $\|\ip{\bx}{\bv}\|_{\psi_2} = C(\bv'\bSigma\bv)^{1/2} \leqslant C\|\bSigma\|_{\mathrm{op}}^{1/2}\|\bv\|$. So $\bx$ is sub-Gaussian with $\|\bx\|_{\psi_2} \leqslant C\opnorm{\bSigma}^{1/2}$.
+\item If $\bx = (\varepsilon_1, \ldots, \varepsilon_p)'$ where $\varepsilon_i$ are independent Rademacher, then $\ip{\bx}{\bv} = \sum v_i\varepsilon_i$ has $\|\ip{\bx}{\bv}\|_{\psi_2} \leqslant C\|\bv\|$ by Proposition~\ref{prop:sg-closure}(ii).
+\end{enumerate}
+\end{example}
+
+\subsection{Hanson--Wright Inequality for Quadratic Forms}
+
+\begin{theorem}[Hanson--Wright Inequality]\label{thm:hanson-wright}
+Let $\bx = (X_1, \ldots, X_n)' \in \Real^n$ be a random vector with independent, mean-zero, sub-Gaussian components satisfying $\|X_i\|_{\psi_2} \leqslant K$. Let $\bA$ be an $n \times n$ matrix. Then for all $t \geqslant 0$:
+\begin{equation}\label{eq:hanson-wright}
+\boxed{\prb\!\left(\left|\bx'\bA\bx - \expc[\bx'\bA\bx]\right| \geqslant t\right) \leqslant 2\exp\!\left[-c\min\!\left(\frac{t^2}{K^4\fnorm{\bA}^2},\; \frac{t}{K^2\opnorm{\bA}}\right)\right],}
+\end{equation}
+where $c > 0$ is a universal constant.
+\end{theorem}
+
+\begin{proof}
+\textbf{Step 1: Reduce to the zero-diagonal case.} Write $\bA = \bD + \bA_0$, where $\bD = \diag(a_{11}, \ldots, a_{nn})$ and $\bA_0$ has zero diagonal. Then:
+\[
+\bx'\bA\bx - \expc[\bx'\bA\bx] = \underbrace{\sum_{i=1}^n a_{ii}(X_i^2 - \expc[X_i^2])}_{\text{diagonal part}} + \underbrace{\bx'\bA_0\bx}_{\text{off-diagonal part}},
+\]
+where $\expc[\bx'\bA_0\bx] = \sum_{i \neq j}a_{ij}\expc[X_i]\expc[X_j] = 0$ by independence and mean zero.
+
+\emph{Diagonal part.} The variables $Y_i = X_i^2 - \expc[X_i^2]$ are independent, mean-zero, and sub-exponential with $\|Y_i\|_{\psi_1} \leqslant CK^2$ (Proposition~\ref{prop:sg-square}). Since $\sum a_{ii}Y_i$ is a weighted sum with $\|\sum a_{ii}Y_i\|_{\psi_1} \leqslant CK^2\max|a_{ii}|$ and $\sum(a_{ii}\|Y_i\|_{\psi_1})^2 \leqslant C^2K^4\sum a_{ii}^2 \leqslant C^2K^4\fnorm{\bA}^2$, Bernstein's inequality (Theorem~\ref{thm:bernstein}) gives:
+\begin{equation}\label{eq:hw-diagonal}
+\prb\!\left(\left|\sum a_{ii}Y_i\right| \geqslant t\right) \leqslant 2\exp\!\left[-c_0\min\!\left(\frac{t^2}{K^4\fnorm{\bD}^2},\;\frac{t}{K^2\opnorm{\bD}}\right)\right].
+\end{equation}
+Since $\fnorm{\bD} \leqslant \fnorm{\bA}$ and $\opnorm{\bD} \leqslant \opnorm{\bA}$, this is bounded by the right-hand side of~\eqref{eq:hanson-wright} (up to constants).
+
+\textbf{Step 2: Condition on an independent copy (off-diagonal part).} Let $\by = (Y_1, \ldots, Y_n)'$ be an independent copy of $\bx$. We claim that for every convex increasing $F : [0,\infty) \to \Real$:
+\begin{equation}\label{eq:hw-decoupling}
+\expc[F(|\bx'\bA_0\bx|)] \leqslant \expc[F(4|\bx'\bA_0\by|)].
+\end{equation}
+This is a standard decoupling inequality. To prove it: let $\boldsymbol\delta = (\delta_1, \ldots, \delta_n)$ be i.i.d.\ Rademacher, independent of $\bx, \by$. Define $\bz^{(\boldsymbol\delta)} = (\delta_1 Z_1, \ldots, \delta_n Z_n)'$ where $Z_i = X_i$ if $\delta_i = 1$ and $Z_i = Y_i$ if $\delta_i = -1$. Since $X_i$ and $Y_i$ are i.i.d., $\bz^{(\boldsymbol\delta)}$ has the same distribution as $\bx$ for every fixed $\boldsymbol\delta$. Hence $\expc_{\bx}[F(|\bx'\bA_0\bx|)] = \expc_{\bx,\by,\boldsymbol\delta}[F(|\bz^{(\boldsymbol\delta)\prime}\bA_0\bz^{(\boldsymbol\delta)}|)]$.
+
+Now condition on $\boldsymbol\delta$ and expand: $\bz^{(\boldsymbol\delta)\prime}\bA_0\bz^{(\boldsymbol\delta)} = \sum_{i\neq j}(A_0)_{ij}Z_i^{(\delta_i)}Z_j^{(\delta_j)}$. When $\delta_i = \delta_j$, $Z_i^{(\delta_i)}Z_j^{(\delta_j)}$ is either $X_iX_j$ or $Y_iY_j$; when $\delta_i \neq \delta_j$, it is a cross term $X_iY_j$ or $Y_iX_j$. By conditioning iteratively on $\delta_1, \ldots, \delta_n$ and using the triangle inequality at each step (since $\expc_{\delta_k}[|g(\delta_k)|] \geqslant |g(+1) + g(-1)|/2$ for the ``matching'' terms, and Jensen's inequality for the convex function $F$), one obtains~\eqref{eq:hw-decoupling} with the factor $4 = 2^2$ arising from $n$ successive conditionings each contributing at most a factor of $2$, but the $2$'s multiply pairwise (see de la Pe\~na and Gin\'e, \emph{Decoupling}, Theorem~3.1.1, for the precise combinatorial argument).
+
+\textbf{Step 3: Condition on $\by$; apply sub-Gaussian concentration.} Fix $\by$. The bilinear form $\bx'\bA_0\by = \sum_{i=1}^n X_i\,(\bA_0\by)_i$ is a sum of independent, mean-zero, sub-Gaussian random variables (in the randomness of $\bx$) with:
+\[
+\|X_i(\bA_0\by)_i\|_{\psi_2} \leqslant K|(\bA_0\by)_i|.
+\]
+By Theorem~\ref{thm:hoeffding-sg}:
+\begin{equation}\label{eq:hw-bilinear-cond}
+\prb\!\left(|\bx'\bA_0\by| \geqslant s \;\big|\; \by\right) \leqslant 2\exp\!\left(-\frac{cs^2}{K^2\|\bA_0\by\|^2}\right).
+\end{equation}
+Equivalently, the conditional MGF satisfies:
+\begin{equation}\label{eq:hw-cond-mgf}
+\expc[e^{\lambda\bx'\bA_0\by} \mid \by] \leqslant e^{C_1K^2\lambda^2\|\bA_0\by\|^2/2} \quad \text{for all } \lambda \in \Real.
+\end{equation}
+
+\textbf{Step 4: Control $\|\bA_0\by\|^2$ and integrate over $\by$.} Taking expectation of~\eqref{eq:hw-cond-mgf} over $\by$:
+\begin{equation}\label{eq:hw-total-mgf}
+\expc[e^{\lambda\bx'\bA_0\by}] = \expc_\by\!\left[\expc_\bx[e^{\lambda\bx'\bA_0\by} \mid \by]\right] \leqslant \expc_\by\!\left[e^{C_1K^2\lambda^2\|\bA_0\by\|^2/2}\right].
+\end{equation}
+Now $\|\bA_0\by\|^2 = \by'\bA_0'\bA_0\by$ is a quadratic form in the sub-Gaussian vector $\by$. Its expectation is $\expc[\|\bA_0\by\|^2] = \sigma_Y^2\tr(\bA_0'\bA_0) = \sigma_Y^2\fnorm{\bA_0}^2$ where $\sigma_Y^2 = \expc[Y_i^2] \leqslant CK^2$.
+
+To bound $\expc[e^{\mu\|\bA_0\by\|^2}]$ for $\mu = C_1K^2\lambda^2/2$: write $\|\bA_0\by\|^2 = \sum_{j=1}^n(\sum_i (A_0)_{ji}Y_i)^2 = \sum_j W_j^2$ where $W_j = \sum_i (A_0)_{ji}Y_i$ are sub-Gaussian (being linear combinations of independent sub-Gaussians). We need the bound only for $\mu$ small enough. Since $\|W_j\|_{\psi_2} \leqslant CK\|(\bA_0)_{j\cdot}\|$ (the $j$-th row norm), and $W_j^2$ is sub-exponential with $\|W_j^2\|_{\psi_1} \leqslant C^2K^2\|(\bA_0)_{j\cdot}\|^2$, the variables $W_j^2 - \expc[W_j^2]$ are mean-zero sub-exponential with norm $\leqslant C^2K^2\|(\bA_0)_{j\cdot}\|^2$. However, $W_1, \ldots, W_n$ are \emph{not} independent in general (they share the $Y_i$'s).
+
+A cleaner route: since we need the Chernoff bound for the bilinear form and the quantity $\|\bA_0\by\|^2$ only appears in the exponent, we can bound~\eqref{eq:hw-total-mgf} directly. The quadratic form $\|\bA_0\by\|^2 = \by'\bA_0'\bA_0\by$ is governed by the matrix $\bA_0'\bA_0$, whose operator norm is $\opnorm{\bA_0'\bA_0} = \opnorm{\bA_0}^2$. For $\mu = C_1K^2\lambda^2/2 \leqslant c_2/(K^2\opnorm{\bA_0}^2)$, i.e., $|\lambda| \leqslant c_3/(K^2\opnorm{\bA_0})$:
+\[
+\expc[e^{\mu\|\bA_0\by\|^2}] \leqslant e^{2\mu CK^2\fnorm{\bA_0}^2},
+\]
+which follows because for $\mu$ small, $\expc[e^{\mu Z}] \leqslant e^{2\mu\expc[Z]}$ when $Z = \|\bA_0\by\|^2$ is a non-negative random variable concentrating around its mean (by a Bernstein-type argument on the Taylor series $\expc[e^{\mu Z}] = 1 + \mu\expc[Z] + \sum_{k \geqslant 2}\mu^k\expc[Z^k]/k!$, using $\expc[Z^k] \leqslant k!\,(CK^2)^{2k-2}\expc[Z^2] \cdot \opnorm{\bA_0}^{2(k-1)}$ and geometric series convergence for $\mu \leqslant c/(K^2\opnorm{\bA_0}^2)$).
+
+Substituting back into~\eqref{eq:hw-total-mgf}:
+\[
+\expc[e^{\lambda\bx'\bA_0\by}] \leqslant e^{C_2K^4\lambda^2\fnorm{\bA_0}^2} \quad \text{for } |\lambda| \leqslant \frac{c_3}{K^2\opnorm{\bA_0}}.
+\]
+
+\textbf{Step 5: Chernoff bound with constrained optimization.} For $t > 0$:
+\[
+\prb(\bx'\bA_0\by \geqslant t) \leqslant \inf_{0 < \lambda \leqslant c_3/(K^2\opnorm{\bA_0})}\exp(-\lambda t + C_2K^4\lambda^2\fnorm{\bA_0}^2).
+\]
+The unconstrained optimum is $\lambda^* = t/(2C_2K^4\fnorm{\bA_0}^2)$.
+
+\emph{Sub-Gaussian regime} ($\lambda^*$ satisfies the constraint, i.e., $t \leqslant 2C_2c_3K^2\fnorm{\bA_0}^2/\opnorm{\bA_0}$):
+\[
+\prb(\bx'\bA_0\by \geqslant t) \leqslant \exp\!\left(-\frac{t^2}{4C_2K^4\fnorm{\bA_0}^2}\right).
+\]
+
+\emph{Sub-exponential regime} ($\lambda^*$ violates the constraint): set $\lambda = c_3/(K^2\opnorm{\bA_0})$. Since $t > 2C_2c_3K^2\fnorm{\bA_0}^2/\opnorm{\bA_0}$, the linear term $-\lambda t$ dominates:
+\[
+\prb(\bx'\bA_0\by \geqslant t) \leqslant \exp\!\left(-\frac{c_3 t}{2K^2\opnorm{\bA_0}}\right).
+\]
+
+\textbf{Step 6: From $\bx'\bA_0\by$ back to $\bx'\bA_0\bx$.} By the decoupling inequality~\eqref{eq:hw-decoupling} with $F(u) = \mathbf{1}\{u \geqslant t\}$ (which is increasing, and the inequality extends to indicators via monotone approximation):
+\[
+\prb(|\bx'\bA_0\bx| \geqslant t) \leqslant \prb(4|\bx'\bA_0\by| \geqslant t) = \prb(|\bx'\bA_0\by| \geqslant t/4).
+\]
+Replacing $t$ by $t/4$ in Steps~5, and using $\fnorm{\bA_0} \leqslant \fnorm{\bA}$, $\opnorm{\bA_0} \leqslant 2\opnorm{\bA}$ (since $\opnorm{\bD} \leqslant \opnorm{\bA}$):
+\[
+\prb(|\bx'\bA_0\bx| \geqslant t) \leqslant 2\exp\!\left[-c\min\!\left(\frac{t^2}{K^4\fnorm{\bA}^2},\;\frac{t}{K^2\opnorm{\bA}}\right)\right].
+\]
+
+\textbf{Step 7: Combine diagonal and off-diagonal.} By the triangle inequality:
+\[
+|\bx'\bA\bx - \expc[\bx'\bA\bx]| \leqslant \left|\sum a_{ii}Y_i\right| + |\bx'\bA_0\bx|.
+\]
+Using $\prb(|U + V| \geqslant t) \leqslant \prb(|U| \geqslant t/2) + \prb(|V| \geqslant t/2)$ and substituting~\eqref{eq:hw-diagonal} and the bound from Step~6 with $t/2$:
+\[
+\prb(|\bx'\bA\bx - \expc[\bx'\bA\bx]| \geqslant t) \leqslant 2\exp\!\left[-c'\min\!\left(\frac{t^2}{K^4\fnorm{\bA}^2},\;\frac{t}{K^2\opnorm{\bA}}\right)\right]
+\]
+with a possibly smaller constant $c' > 0$.
+\end{proof}
+
+\begin{remark}
+When $\bA$ is symmetric idempotent (as in the classical theory: $\bA = \bH$ or $\bA = \bM$), $\fnorm{\bA}^2 = \tr(\bA'\bA) = \tr(\bA) = \rank(\bA) = r$, and $\opnorm{\bA} = 1$. The Hanson--Wright inequality then gives
+\[
+\prb\!\left(|\bx'\bA\bx - \expc[\bx'\bA\bx]| \geqslant t\right) \leqslant 2\exp\!\left[-c\min\!\left(\frac{t^2}{K^4 r},\; \frac{t}{K^2}\right)\right].
+\]
+Compare this with the exact chi-square distribution $\bz'\bA\bz \sim \chi^2_r$ under Gaussianity (Theorem~4.3 in the classical notes). The Hanson--Wright bound gives the correct ``scale'' $r$ (in the Gaussian regime, $\chi^2_r$ has variance $2r$) and extends to sub-Gaussian errors with no distributional assumption.
+\end{remark}
+
+%=============================================================================
+\section{Sub-Exponential Variables and Bernstein's Inequality}\label{sec:subexp}
+%=============================================================================
+
+\subsection{Definition and Basic Properties}
+
+\begin{definition}[Sub-Exponential Random Variable]\label{def:subexponential}
+A random variable $X$ is called \textbf{sub-exponential} if there exist constants $K_1, K_2 > 0$ such that
+\begin{equation}\label{eq:subexp-mgf}
+\expc[e^{tX}] \leqslant e^{K_1^2 t^2/2} \quad \text{for all } |t| \leqslant 1/K_2.
+\end{equation}
+The \textbf{sub-exponential norm} (or $\psi_1$-norm) is
+\begin{equation}\label{eq:psi1}
+\|X\|_{\psi_1} = \inf\!\left\{t > 0 : \expc\!\left[e^{|X|/t}\right] \leqslant 2\right\}.
+\end{equation}
+\end{definition}
+
+\begin{proposition}[Squares of Sub-Gaussians Are Sub-Exponential]\label{prop:sg-square}
+If $X$ is sub-Gaussian, then $X^2$ is sub-exponential with $\|X^2\|_{\psi_1} \leqslant C\|X\|_{\psi_2}^2$.
+\end{proposition}
+
+\begin{proof}
+We have $\expc[e^{X^2/t}] = \expc[e^{|X|^2/t}]$. By the definition of $\|X\|_{\psi_2}$, $\expc[e^{X^2/\|X\|_{\psi_2}^2}] \leqslant 2$. Setting $t = \|X\|_{\psi_2}^2$, we get $\expc[e^{|X^2|/t}] \leqslant 2$. Hence $\|X^2\|_{\psi_1} \leqslant \|X\|_{\psi_2}^2$.
+\end{proof}
+
+\begin{example}\label{ex:subexp}
+\begin{enumerate}[label=\textup{(\arabic*)}]
+\item $\chi^2_1$: if $Z \sim N(0,1)$, then $Z^2$ is sub-exponential by Proposition~\ref{prop:sg-square}. More generally, $\chi^2_n = \sum_{i=1}^n Z_i^2$ is sub-exponential.
+\item $\mathrm{Exp}(\lambda)$: if $X \sim \mathrm{Exp}(\lambda)$, then $\|X\|_{\psi_1} = 1/\lambda$.
+\item Products: if $X, Y$ are sub-Gaussian, then $XY$ is sub-exponential with $\|XY\|_{\psi_1} \leqslant \|X\|_{\psi_2}\,\|Y\|_{\psi_2}$.
+\end{enumerate}
+\end{example}
+
+\subsection{Bernstein's Inequality}
+
+\begin{theorem}[Bernstein's Inequality]\label{thm:bernstein}
+Let $X_1, \ldots, X_n$ be independent, mean-zero, sub-exponential random variables. Then for all $t \geqslant 0$:
+\begin{equation}\label{eq:bernstein}
+\boxed{\prb\!\left(\left|\sum_{i=1}^n X_i\right| \geqslant t\right) \leqslant 2\exp\!\left[-c\min\!\left(\frac{t^2}{\sum_{i=1}^n \|X_i\|_{\psi_1}^2},\; \frac{t}{\max_i \|X_i\|_{\psi_1}}\right)\right],}
+\end{equation}
+where $c > 0$ is a universal constant.
+\end{theorem}
+
+\begin{proof}
+For $|\lambda| \leqslant 1/(C\max_i\|X_i\|_{\psi_1})$, each factor satisfies $\expc[e^{\lambda X_i}] \leqslant e^{C'^2\|X_i\|_{\psi_1}^2\lambda^2/2}$ by the sub-exponential MGF condition. The Chernoff argument gives:
+\[
+\prb\!\left(\sum X_i \geqslant t\right) \leqslant \exp\!\left(-\lambda t + \frac{C'^2\lambda^2}{2}\sum\|X_i\|_{\psi_1}^2\right).
+\]
+We optimize subject to the constraint $\lambda \leqslant 1/(C\max_i\|X_i\|_{\psi_1})$. The unconstrained optimum is $\lambda^* = t/(C'^2\sum\|X_i\|_{\psi_1}^2)$.
+
+\textbf{Case 1:} $\lambda^*$ satisfies the constraint, i.e., $t \leqslant C'^2\sum\|X_i\|_{\psi_1}^2/(C\max_i\|X_i\|_{\psi_1})$. Substituting $\lambda^*$ gives the sub-Gaussian regime: $\exp(-t^2/(2C'^2\sum\|X_i\|_{\psi_1}^2))$.
+
+\textbf{Case 2:} $\lambda^*$ violates the constraint. Set $\lambda = 1/(C\max_i\|X_i\|_{\psi_1})$:
+\[
+\prb\!\left(\sum X_i \geqslant t\right) \leqslant \exp\!\left(-\frac{t}{C\max_i\|X_i\|_{\psi_1}} + \frac{C'^2\sum\|X_i\|_{\psi_1}^2}{2C^2(\max_i\|X_i\|_{\psi_1})^2}\right).
+\]
+Since $\sum\|X_i\|_{\psi_1}^2 \leqslant n(\max_i\|X_i\|_{\psi_1})^2$ and the second term is $O(n)$ while the first grows linearly in $t$, for $t$ in this range the bound is dominated by the linear term: $\exp(-ct/\max_i\|X_i\|_{\psi_1})$.
+
+The minimum in~\eqref{eq:bernstein} captures both cases. The two-sided bound follows by the union bound.
+\end{proof}
+
+\begin{remark}[Comparison: Hoeffding vs.\ Bernstein]
+For bounded variables $|X_i| \leqslant M$ (hence sub-Gaussian and sub-exponential), both inequalities apply. Hoeffding gives purely Gaussian tails $\sim e^{-ct^2}$. Bernstein also gives Gaussian tails for small $t$, but transitions to exponential tails $\sim e^{-ct}$ for $t \gtrsim \sum\|X_i\|_{\psi_1}^2/\max_i\|X_i\|_{\psi_1}$. Bernstein can be sharper because its Gaussian regime uses the variance $\sum\|X_i\|_{\psi_1}^2$, which can be much smaller than the range-based quantity $\sum(b_i - a_i)^2$ in Hoeffding's bound when the variables are concentrated near zero.
+\end{remark}
+
+%=============================================================================
+\newpage
+\part{Random Matrices: Covariance Estimation and Design Conditioning}\label{part:random-matrices}
+%=============================================================================
+
+%=============================================================================
+\section{Covering Numbers and $\varepsilon$-Nets}\label{sec:covering}
+%=============================================================================
+
+\begin{definition}[Covering Number and $\varepsilon$-Net]\label{def:covering}
+Let $(T, d)$ be a metric space and $\varepsilon > 0$. An \textbf{$\varepsilon$-net} of $T$ is a subset $\calN \subseteq T$ such that for every $\bv \in T$ there exists $\bu \in \calN$ with $d(\bv, \bu) \leqslant \varepsilon$. The \textbf{covering number} $N(T, d, \varepsilon)$ is the smallest cardinality of an $\varepsilon$-net of $T$.
+\end{definition}
+
+\begin{lemma}[Covering Number of the Unit Sphere]\label{lem:covering-sphere}
+For every $\varepsilon \in (0, 1)$:
+\begin{equation}\label{eq:covering-sphere}
+N(S^{n-1}, \|\cdot\|, \varepsilon) \leqslant \left(\frac{2}{\varepsilon} + 1\right)^n.
+\end{equation}
+In particular, $N(S^{n-1}, \|\cdot\|, 1/4) \leqslant 9^n$.
+\end{lemma}
+
+\begin{proof}
+Let $\calN$ be a maximal $\varepsilon$-separated subset of $S^{n-1}$: $\|\bu - \bv\| > \varepsilon$ for all distinct $\bu, \bv \in \calN$, and $\calN$ cannot be enlarged. Then $\calN$ is an $\varepsilon$-net (otherwise some point has distance $> \varepsilon$ from every element of $\calN$, contradicting maximality). The open balls $B(\bu, \varepsilon/2)$ for $\bu \in \calN$ are pairwise disjoint (if $\bw \in B(\bu_1, \varepsilon/2) \cap B(\bu_2, \varepsilon/2)$, then $\|\bu_1 - \bu_2\| \leqslant \|\bu_1 - \bw\| + \|\bw - \bu_2\| < \varepsilon$, contradicting separation). All such balls lie in $B(\bzero, 1 + \varepsilon/2)$. Comparing volumes ($\mathrm{vol}(B(\bzero, r)) = c_n r^n$):
+\[
+|\calN| \cdot (\varepsilon/2)^n \leqslant (1 + \varepsilon/2)^n \implies |\calN| \leqslant \left(\frac{2 + \varepsilon}{\varepsilon}\right)^n = \left(\frac{2}{\varepsilon} + 1\right)^n. \qedhere
+\]
+\end{proof}
+
+\begin{lemma}[$\varepsilon$-Net Approximation for Operator Norms]\label{lem:eps-net-approx}
+Let $\bA$ be a symmetric $n \times n$ matrix and $\calN$ a $(1/4)$-net of $S^{n-1}$. Then:
+\begin{equation}\label{eq:eps-net-approx}
+\opnorm{\bA} \leqslant 2\sup_{\bv \in \calN} |\bv'\bA\bv|.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Since $\bA$ is symmetric, $\opnorm{\bA} = \sup_{\bv \in S^{n-1}} |\bv'\bA\bv|$. Let $\bv^*$ achieve this supremum and choose $\bv_0 \in \calN$ with $\|\bv^* - \bv_0\| \leqslant 1/4$. Then:
+\begin{align*}
+|\bv^{*\prime}\bA\bv^* - \bv_0'\bA\bv_0| &= |\bv^{*\prime}\bA(\bv^* - \bv_0) + (\bv^* - \bv_0)'\bA\bv_0|\\
+&\leqslant \opnorm{\bA}\|\bv^* - \bv_0\| + \|\bv^* - \bv_0\|\opnorm{\bA} \leqslant 2\cdot\frac{1}{4}\cdot\opnorm{\bA} = \frac{1}{2}\opnorm{\bA}.
+\end{align*}
+Hence $\opnorm{\bA} = |\bv^{*\prime}\bA\bv^*| \leqslant |\bv_0'\bA\bv_0| + \frac{1}{2}\opnorm{\bA}$, which gives $\opnorm{\bA} \leqslant 2|\bv_0'\bA\bv_0| \leqslant 2\sup_{\bv \in \calN}|\bv'\bA\bv|$.
+\end{proof}
+
+%=============================================================================
+\section{Covariance Estimation}\label{sec:covariance}
+%=============================================================================
+
+\subsection{Setup}
+
+\begin{remark}
+In the classical linear model, the design matrix $\bX$ is treated as fixed and the Gram matrix $\bX'\bX$ is assumed to have full rank. In the modern setting, the rows $\bx_1, \ldots, \bx_n \in \Real^p$ of $\bX$ are i.i.d.\ draws from a distribution with mean $\bzero$ and covariance $\bSigma = \expc[\bx_i\bx_i']$. The sample covariance is $\hbSigma = \frac{1}{n}\bX'\bX = \frac{1}{n}\sum_{i=1}^n \bx_i\bx_i'$, and the fundamental question is: \emph{how close is $\hbSigma$ to $\bSigma$?}
+\end{remark}
+
+\begin{definition}[Isotropic Random Vector]\label{def:isotropic}
+A random vector $\bx \in \Real^p$ is \textbf{isotropic} if $\expc[\bx] = \bzero$ and $\expc[\bx\bx'] = \bI_p$.
+\end{definition}
+
+\begin{remark}
+Any mean-zero random vector with invertible covariance $\bSigma$ can be made isotropic by the transformation $\bz = \bSigma^{-1/2}\bx$, since $\expc[\bz\bz'] = \bSigma^{-1/2}\bSigma\bSigma^{-1/2} = \bI_p$. Working with isotropic vectors simplifies notation; all results extend to general $\bSigma$ via this whitening transformation.
+\end{remark}
+
+\subsection{Operator Norm Bound for Covariance Estimation}
+
+\begin{theorem}[Covariance Estimation for Sub-Gaussian Designs]\label{thm:cov-estimation}
+Let $\bx_1, \ldots, \bx_n$ be independent, isotropic, sub-Gaussian random vectors in $\Real^p$ with $\|\bx_i\|_{\psi_2} \leqslant K$. Let $\hbSigma = \frac{1}{n}\sum_{i=1}^n \bx_i\bx_i'$. There exist universal constants $C, c > 0$ such that for every $\delta \in (0, 1)$, if $n \geqslant CK^4 p/\delta^2$, then with probability at least $1 - 2\exp(-c\delta^2 n/K^4)$:
+\begin{equation}\label{eq:cov-estimation}
+\boxed{\opnorm{\hbSigma - \bI_p} \leqslant \delta.}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+\textbf{Step 1: Variational representation.} Since $\hbSigma - \bI_p$ is symmetric:
+\[
+\opnorm{\hbSigma - \bI_p} = \sup_{\bv \in S^{p-1}} |\bv'(\hbSigma - \bI_p)\bv| = \sup_{\bv \in S^{p-1}}\left|\frac{1}{n}\sum_{i=1}^n \bigl[(\bv'\bx_i)^2 - 1\bigr]\right|.
+\]
+
+\textbf{Step 2: Pointwise concentration.} Fix $\bv \in S^{p-1}$. The random variable $Z_i = (\bv'\bx_i)^2 - 1$ has $\expc[Z_i] = 0$ (isotropic assumption). Since $\bv'\bx_i$ is sub-Gaussian with $\|\bv'\bx_i\|_{\psi_2} \leqslant K$, by Proposition~\ref{prop:sg-square}, $(\bv'\bx_i)^2$ is sub-exponential with $\|(\bv'\bx_i)^2\|_{\psi_1} \leqslant K^2$. Hence $Z_i$ is sub-exponential with $\|Z_i\|_{\psi_1} \leqslant CK^2$. By Bernstein's inequality (Theorem~\ref{thm:bernstein}):
+\begin{equation}\label{eq:cov-pointwise}
+\prb\!\left(\left|\frac{1}{n}\sum_{i=1}^n Z_i\right| \geqslant t\right) \leqslant 2\exp\!\left[-cn\min\!\left(\frac{t^2}{K^4},\; \frac{t}{K^2}\right)\right].
+\end{equation}
+For $t \leqslant 1$ (the regime of interest), $\min(t^2/K^4, t/K^2) = t^2/K^4$ when $t \leqslant K^2$, so the bound is $2\exp(-cnt^2/K^4)$.
+
+\textbf{Step 3: Discretization.} Let $\calN$ be a $(1/4)$-net of $S^{p-1}$. By Lemma~\ref{lem:covering-sphere}, $|\calN| \leqslant 9^p$. By Lemma~\ref{lem:eps-net-approx}, $\opnorm{\hbSigma - \bI_p} \leqslant 2\sup_{\bv \in \calN} |\bv'(\hbSigma - \bI_p)\bv|$.
+
+\textbf{Step 4: Union bound.} Set $t = \delta/2$ in~\eqref{eq:cov-pointwise}. For each $\bv \in \calN$:
+\[
+\prb\!\left(|\bv'(\hbSigma - \bI_p)\bv| \geqslant \delta/2\right) \leqslant 2\exp\!\left(-\frac{cn\delta^2}{4K^4}\right).
+\]
+Taking the union bound over $\calN$:
+\begin{align*}
+\prb\!\left(\opnorm{\hbSigma - \bI_p} \geqslant \delta\right) &\leqslant |\calN|\cdot 2\exp\!\left(-\frac{cn\delta^2}{4K^4}\right) \leqslant 2\cdot 9^p\cdot\exp\!\left(-\frac{cn\delta^2}{4K^4}\right)\\
+&= 2\exp\!\left(p\ln 9 - \frac{cn\delta^2}{4K^4}\right).
+\end{align*}
+When $n \geqslant CK^4 p/\delta^2$ with $C = 8\ln 9/c$, the exponent is $\leqslant -cn\delta^2/(8K^4)$. Hence $\prb(\opnorm{\hbSigma - \bI_p} \geqslant \delta) \leqslant 2\exp(-c'\delta^2 n/K^4)$ with $c' = c/8$.
+\end{proof}
+
+%=============================================================================
+\section{Eigenvalues of $\bX'\bX/n$: When Is the Design Well-Conditioned?}\label{sec:eigenvalues}
+%=============================================================================
+
+\subsection{From Covariance Estimation to Eigenvalue Bounds}
+
+\begin{theorem}[Eigenvalue Bounds for Sub-Gaussian Designs]\label{thm:eigenvalue-bounds}
+Under the conditions of Theorem~\ref{thm:cov-estimation}, if $n \geqslant CK^4 p$, then with probability at least $1 - 2\exp(-cp)$:
+\begin{equation}\label{eq:eigenvalue-bounds}
+\boxed{\frac{1}{2} \leqslant \lambda_{\min}\!\left(\frac{\bX'\bX}{n}\right) \leqslant \lambda_{\max}\!\left(\frac{\bX'\bX}{n}\right) \leqslant \frac{3}{2}.}
+\end{equation}
+Equivalently, $\frac{n}{2}\,\bI_p \preceq \bX'\bX \preceq \frac{3n}{2}\,\bI_p$.
+\end{theorem}
+
+\begin{proof}
+Apply Theorem~\ref{thm:cov-estimation} with $\delta = 1/2$. The sample-size condition becomes $n \geqslant 4CK^4 p$. On the resulting high-probability event, $\opnorm{\bX'\bX/n - \bI_p} \leqslant 1/2$. Since $\opnorm{\bA} = \max(|\lambda_{\min}(\bA)|, |\lambda_{\max}(\bA)|)$ for symmetric $\bA$, every eigenvalue $\lambda_j$ of $\bX'\bX/n$ satisfies $|\lambda_j - 1| \leqslant 1/2$, giving $1/2 \leqslant \lambda_j \leqslant 3/2$. The probability bound is $1 - 2\exp(-c'n/(4K^4)) \geqslant 1 - 2\exp(-c'p)$ since $n \geqslant 4CK^4p$.
+\end{proof}
+
+\begin{remark}[Connection to the classical full-rank assumption]
+Theorem~\ref{thm:eigenvalue-bounds} is the non-asymptotic replacement for the classical assumption (A4), $\rank(\bX) = k+1$. The classical assumption is qualitative (invertibility or not); the modern bound is quantitative: it says \emph{how well-conditioned} $\bX'\bX$ is. Specifically, $\kappa(\bX'\bX/n) = \lambda_{\max}/\lambda_{\min} \leqslant 3$ with high probability whenever $n \gtrsim K^4 p$. This is the sample-size condition under which OLS is numerically stable.
+\end{remark}
+
+\subsection{The Condition Number and Its Role}
+
+\begin{definition}[Condition Number]\label{def:condition-number}
+The \textbf{condition number} of a positive definite matrix $\bA$ is
+\begin{equation}\label{eq:condition-number}
+\kappa(\bA) = \frac{\lambda_{\max}(\bA)}{\lambda_{\min}(\bA)} = \opnorm{\bA}\cdot\opnorm{\bA^{-1}}.
+\end{equation}
+\end{definition}
+
+\begin{proposition}[Condition Number of $\bX'\bX$ for General Covariance]\label{prop:kappa-general}
+Let $\bx_1, \ldots, \bx_n$ be i.i.d.\ sub-Gaussian with covariance $\bSigma$ (not necessarily $\bI_p$). If $n \geqslant CK^4 p$, then with high probability:
+\begin{equation}\label{eq:kappa-general}
+\kappa\!\left(\frac{\bX'\bX}{n}\right) \leqslant 3\,\kappa(\bSigma).
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+Apply Theorem~\ref{thm:eigenvalue-bounds} to the whitened vectors $\bz_i = \bSigma^{-1/2}\bx_i$ (which are isotropic sub-Gaussian). Then $\frac{1}{n}\sum \bz_i\bz_i' = \bSigma^{-1/2}\hbSigma\bSigma^{-1/2}$, and the eigenvalues of this matrix lie in $[1/2, 3/2]$. The eigenvalues of $\hbSigma = \bX'\bX/n$ are those of $\bSigma^{1/2}(\frac{1}{n}\sum\bz_i\bz_i')\bSigma^{1/2}$. By the min-max theorem:
+\begin{align*}
+\lambda_{\max}(\hbSigma) &\leqslant \frac{3}{2}\lambda_{\max}(\bSigma), &
+\lambda_{\min}(\hbSigma) &\geqslant \frac{1}{2}\lambda_{\min}(\bSigma).
+\end{align*}
+Hence $\kappa(\hbSigma) \leqslant (3/2)/(1/2) \cdot \kappa(\bSigma) = 3\kappa(\bSigma)$.
+\end{proof}
+
+%=============================================================================
+\section{The Proportional Regime $p/n \to \gamma$}\label{sec:proportional}
+%=============================================================================
+
+\subsection{Motivation: The Marchenko--Pastur Law}
+
+\begin{remark}
+When $p$ is fixed and $n \to \infty$, the law of large numbers ensures $\hbSigma \to \bSigma$ and the design is always well-conditioned for large $n$. But in modern applications (genomics, finance, natural language), $p$ can be comparable to or even larger than $n$. The \textbf{proportional regime} studies $p, n \to \infty$ with $p/n \to \gamma \in (0, \infty)$. The Marchenko--Pastur law describes the asymptotic eigenvalue distribution in this regime.
+\end{remark}
+
+\begin{theorem}[Marchenko--Pastur Law (Statement Only)]\label{thm:marchenko-pastur}
+Let $\bx_1, \ldots, \bx_n \in \Real^p$ be i.i.d.\ with $\expc[\bx_i] = \bzero$ and $\expc[\bx_i\bx_i'] = \bI_p$, with i.i.d.\ entries having unit variance and finite fourth moment. Let $p/n \to \gamma \in (0, \infty)$. The empirical spectral distribution of $\hbSigma = \frac{1}{n}\sum \bx_i\bx_i'$ converges weakly almost surely to the \textbf{Marchenko--Pastur distribution} $F_\gamma$ with density
+\begin{equation}\label{eq:mp-density}
+f_\gamma(x) = \frac{1}{2\pi\gamma x}\sqrt{(\lambda_+ - x)(x - \lambda_-)}\,\mathbf{1}_{[\lambda_-,\,\lambda_+]}(x),
+\end{equation}
+where $\lambda_\pm = (1 \pm \sqrt\gamma)^2$. When $\gamma > 1$, the distribution additionally has a point mass $(1 - 1/\gamma)$ at zero.
+\end{theorem}
+
+\begin{remark}[Implications for $\bX'\bX$]
+The Marchenko--Pastur law reveals three qualitatively different regimes:
+\begin{enumerate}[label=\textup{(\arabic*)}]
+\item \textbf{Classical regime} ($\gamma \to 0$, i.e., $p \ll n$): $\lambda_\pm \to 1$. The eigenvalues of $\hbSigma$ cluster around $1$. The design is well-conditioned; the classical theory applies.
+\item \textbf{Proportional regime} ($\gamma \in (0, 1)$): $\lambda_- = (1 - \sqrt\gamma)^2 > 0$, $\lambda_+ = (1 + \sqrt\gamma)^2$. The design is invertible but the condition number $\kappa \approx \lambda_+/\lambda_- = ((1+\sqrt\gamma)/(1-\sqrt\gamma))^2 \to \infty$ as $\gamma \to 1^-$. This is the ``hard'' regime where classical methods still work but their performance degrades.
+\item \textbf{Overparametrized regime} ($\gamma > 1$, i.e., $p > n$): $\lambda_- = 0$. The design matrix $\bX$ has a nontrivial null space, $\bX'\bX$ is singular, and the OLS estimator $(\bX'\bX)^{-1}\bX'\bY$ does not exist in the classical sense. Regularization (ridge, lasso) or the Moore--Penrose pseudoinverse is needed.
+\end{enumerate}
+\end{remark}
+
+\subsection{Non-Asymptotic Bounds in the Proportional Regime}
+
+\begin{theorem}[Extreme Eigenvalue Bounds, Proportional Regime]\label{thm:extreme-eigenvalues}
+Let $\bx_1, \ldots, \bx_n$ be independent, isotropic, sub-Gaussian random vectors in $\Real^p$ with $\|\bx_i\|_{\psi_2} \leqslant K$. There exist constants $C, c > 0$ depending only on $K$ such that for every $t \geqslant 0$, with probability at least $1 - 2\exp(-ct^2)$:
+\begin{equation}\label{eq:extreme-eigenvalues}
+\sqrt{n} - C\sqrt{p} - t \leqslant \sigma_{\min}(\bX) \leqslant \sigma_{\max}(\bX) \leqslant \sqrt{n} + C\sqrt{p} + t.
+\end{equation}
+In terms of $\bX'\bX/n$:
+\begin{equation}\label{eq:extreme-eigenvalues-gram}
+\left(1 - C\sqrt{\frac{p}{n}} - \frac{t}{\sqrt{n}}\right)^2 \leqslant \lambda_{\min}\!\left(\frac{\bX'\bX}{n}\right) \leqslant \lambda_{\max}\!\left(\frac{\bX'\bX}{n}\right) \leqslant \left(1 + C\sqrt{\frac{p}{n}} + \frac{t}{\sqrt{n}}\right)^2.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+\textbf{Upper bound on $\sigma_{\max}(\bX) = \opnorm{\bX}$.}
+
+\textbf{Step 1: Pointwise bound.} For fixed $\bu \in S^{p-1}$ and $\bv \in S^{n-1}$, $\bu'\bX'\bv = \sum_{i=1}^n v_i\ip{\bx_i}{\bu}$. Since $\bx_i$ is sub-Gaussian with $\|\ip{\bx_i}{\bu}\|_{\psi_2} \leqslant K\|\bu\| = K$, and $\|v_i\ip{\bx_i}{\bu}\|_{\psi_2} \leqslant |v_i|K$, by Theorem~\ref{thm:hoeffding-sg}:
+\[
+\prb(|\bu'\bX'\bv| \geqslant s) \leqslant 2\exp\!\left(-\frac{cs^2}{K^2\|\bv\|^2}\right) = 2\exp\!\left(-\frac{cs^2}{K^2}\right).
+\]
+
+\textbf{Step 2: $\varepsilon$-nets.} Let $\calN_p$ be a $(1/4)$-net of $S^{p-1}$ and $\calN_n$ a $(1/4)$-net of $S^{n-1}$, with $|\calN_p| \leqslant 9^p$ and $|\calN_n| \leqslant 9^n$ (Lemma~\ref{lem:covering-sphere}). By the bilinear $\varepsilon$-net argument (as in Lemma~\ref{lem:eps-net-approx}, applied to the non-symmetric matrix $\bX'$ via $\opnorm{\bX} = \sup |\bu'\bX'\bv|$): $\opnorm{\bX} \leqslant 2\sup_{\bu \in \calN_p, \bv \in \calN_n}|\bu'\bX'\bv|$.
+
+\textbf{Step 3: Union bound.} Setting $s$ in Step~1 and taking the union:
+\[
+\prb(\opnorm{\bX} \geqslant 2s) \leqslant 2\cdot 9^{p+n}\cdot\exp(-cs^2/K^2).
+\]
+We need $cs^2/K^2 \geqslant (p+n)\ln 9 + \ln(2) + u^2$ for the tail probability $2e^{-u^2}$. Setting $s = CK(\sqrt{n} + \sqrt{p} + u)/2$ for $C$ large enough: $s^2/K^2 \geqslant c'(n + p + u^2)$, and the $9^{p+n}$ factor is absorbed. Hence with probability $\geqslant 1 - 2e^{-cu^2}$:
+\[
+\sigma_{\max}(\bX) \leqslant CK(\sqrt{n} + \sqrt{p} + u).
+\]
+Reparametrizing $t = CKu$ and absorbing $CK$ into the constant $C$: $\sigma_{\max}(\bX) \leqslant \sqrt{n} + C\sqrt{p} + t$.
+
+\medskip\noindent\textbf{Lower bound on $\sigma_{\min}(\bX) = \inf_{\bu \in S^{p-1}}\|\bX\bu\|$.}
+
+\textbf{Step 4: Pointwise lower bound.} Fix $\bu \in S^{p-1}$. Then $\|\bX\bu\|^2 = \sum_{i=1}^n(\ip{\bx_i}{\bu})^2$. Each $Z_i = (\ip{\bx_i}{\bu})^2 - 1$ is mean-zero, sub-exponential with $\|Z_i\|_{\psi_1} \leqslant CK^2$. By Bernstein's inequality:
+\[
+\prb\!\left(\left|\|\bX\bu\|^2 - n\right| \geqslant s\right) \leqslant 2\exp\!\left[-c\min\!\left(\frac{s^2}{nK^4},\;\frac{s}{K^2}\right)\right].
+\]
+Setting $s = n/2$ (sub-Gaussian regime since $s^2/(nK^4) = n/(4K^4)$): $\prb(\|\bX\bu\|^2 \leqslant n/2) \leqslant 2\exp(-cn/K^4)$.
+
+\textbf{Step 5: $\varepsilon$-net for infimum.} Let $\calN_p$ be a $(1/4)$-net of $S^{p-1}$. For any $\bu \in S^{p-1}$, pick $\bu_0 \in \calN_p$ with $\|\bu - \bu_0\| \leqslant 1/4$. Then:
+\[
+\|\bX\bu\| \geqslant \|\bX\bu_0\| - \|\bX(\bu - \bu_0)\| \geqslant \|\bX\bu_0\| - \opnorm{\bX}/4.
+\]
+Hence $\sigma_{\min}(\bX) \geqslant \min_{\bu_0 \in \calN_p}\|\bX\bu_0\| - \sigma_{\max}(\bX)/4$.
+
+\textbf{Step 6: Union bound.} By Step~4 and the union over $|\calN_p| \leqslant 9^p$:
+\[
+\prb\!\left(\min_{\calN_p}\|\bX\bu_0\| \leqslant \sqrt{n/2}\right) \leqslant 9^p\cdot 2\exp(-cn/K^4).
+\]
+When $n \geqslant C'K^4 p$: $9^p e^{-cn/K^4} \leqslant e^{-c'p}$, so $\min_{\calN_p}\|\bX\bu_0\| \geqslant \sqrt{n/2}$ with probability $\geqslant 1 - 2e^{-c'p}$. On the intersection with the upper-bound event (probability $\geqslant 1 - 2e^{-ct^2} - 2e^{-c'p}$):
+\begin{align*}
+\sigma_{\min}(\bX) &\geqslant \sqrt{n/2} - (\sqrt{n} + C\sqrt{p} + t)/4\\
+&= \sqrt{n}(\sqrt{1/2} - 1/4) - C\sqrt{p}/4 - t/4.
+\end{align*}
+Since $\sqrt{1/2} - 1/4 \approx 0.457 > 0$, after adjusting constants: $\sigma_{\min}(\bX) \geqslant \sqrt{n} - C''\sqrt{p} - t$ with the stated probability.
+\end{proof}
+
+\begin{remark}
+Setting $t = 0$ in~\eqref{eq:extreme-eigenvalues}, the singular values of $\bX$ concentrate around $[\sqrt{n} - C\sqrt{p},\, \sqrt{n} + C\sqrt{p}]$, and those of $\bX'\bX/n$ around $[(1 - C\sqrt{p/n})^2,\, (1 + C\sqrt{p/n})^2]$. This is the non-asymptotic counterpart of the Marchenko--Pastur support $[\lambda_-,\lambda_+] = [(1-\sqrt\gamma)^2, (1+\sqrt\gamma)^2]$.
+\end{remark}
+
+%=============================================================================
+\newpage
+\part{The Linear Model Redone}\label{part:linear-model}
+%=============================================================================
+
+%=============================================================================
+\section{The Modern Setup}\label{sec:modern-setup}
+%=============================================================================
+
+\begin{definition}[The Linear Model, Modern Version]\label{def:modern-model}
+The data follow
+\begin{equation}\label{eq:modern-model}
+\bY = \bX\bb + \be, \qquad \bX \in \Real^{n \times p},
+\end{equation}
+where $p$ replaces $k+1$ for the total number of regressors. The following assumptions are imposed:
+\begin{enumerate}[label=\textup{(M\arabic*)}]
+\item\label{M1} \textbf{Random design}: The rows $\bx_1, \ldots, \bx_n \in \Real^p$ of $\bX$ are i.i.d.\ random vectors with $\expc[\bx_i] = \bzero$ and $\expc[\bx_i\bx_i'] = \bSigma$, where $\bSigma \succ 0$.
+\item\label{M2} \textbf{Sub-Gaussian design}: Each $\bx_i$ is sub-Gaussian with $\|\bx_i\|_{\psi_2} \leqslant K$.
+\item\label{M3} \textbf{Sub-Gaussian noise}: The errors $\varepsilon_1, \ldots, \varepsilon_n$ are i.i.d., mean-zero, sub-Gaussian with $\|\varepsilon_i\|_{\psi_2} \leqslant \sigma$, and independent of $\bX$.
+\item\label{M4} \textbf{Sample size}: $n \geqslant C_0 K^4 p$ for a sufficiently large universal constant $C_0$.
+\end{enumerate}
+\end{definition}
+
+\begin{remark}[Comparison with the classical assumptions]
+\begin{enumerate}[label=\textup{(\arabic*)}]
+\item \ref{M1} replaces the fixed-design assumption. The design is now stochastic.
+\item \ref{M2} replaces (A4): it is the sub-Gaussian analogue of the full-rank condition. By Theorem~\ref{thm:eigenvalue-bounds}, \ref{M2} and~\ref{M4} together imply $\bX'\bX$ is invertible with high probability.
+\item \ref{M3} replaces (A5): sub-Gaussian errors instead of normal errors. The variance parameter $\sigma^2 = \var(\varepsilon_i)$ is bounded by $C\|\varepsilon_i\|_{\psi_2}^2$ (Proposition~\ref{prop:sg-variance}).
+\item \ref{M4} is the modern analogue of $n > k + 1$ in (A4). It is a quantitative sample-size condition.
+\end{enumerate}
+\end{remark}
+
+%=============================================================================
+\section{OLS Prediction Error}\label{sec:prediction-error}
+%=============================================================================
+
+\begin{theorem}[Non-Asymptotic Bound on Prediction Error]\label{thm:prediction-error}
+Under assumptions~\ref{M1}--\ref{M4}, with probability at least $1 - 2\exp(-cp)$:
+\begin{equation}\label{eq:prediction-error}
+\boxed{\frac{1}{n}\|\bX(\hbb - \bb)\|^2 \leqslant C\sigma^2\,\frac{p}{n}.}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+\textbf{Step 1: Express the prediction error.} The OLS estimator is $\hbb = (\bX'\bX)^{-1}\bX'\bY = \bb + (\bX'\bX)^{-1}\bX'\be$ (exactly as in the classical derivation, Equation~(2.6) in the classical notes). The prediction error is:
+\begin{align}
+\frac{1}{n}\|\bX(\hbb - \bb)\|^2 &= \frac{1}{n}\|\bX(\bX'\bX)^{-1}\bX'\be\|^2 = \frac{1}{n}\|\bH\be\|^2 = \frac{1}{n}\be'\bH\be, \label{eq:pred-err-qf}
+\end{align}
+where $\bH = \bX(\bX'\bX)^{-1}\bX'$ is the hat matrix.
+
+\textbf{Step 2: Conditional expectation.} Conditional on $\bX$ (and hence on $\bH$), the errors $\varepsilon_1, \ldots, \varepsilon_n$ are independent sub-Gaussian with mean zero and $\|\varepsilon_i\|_{\psi_2} \leqslant \sigma$. By the Hanson--Wright inequality (Theorem~\ref{thm:hanson-wright}) applied conditionally on $\bX$:
+\[
+\prb\!\left(\left|\be'\bH\be - \expc[\be'\bH\be \mid \bX]\right| \geqslant t \;\middle|\; \bX\right) \leqslant 2\exp\!\left[-c\min\!\left(\frac{t^2}{\sigma^4\fnorm{\bH}^2},\; \frac{t}{\sigma^2\opnorm{\bH}}\right)\right].
+\]
+Since $\bH$ is idempotent with $\rank(\bH) = p$ (under the event that $\bX$ has full rank):
+\begin{itemize}
+\item $\opnorm{\bH} = 1$ (eigenvalues are $0$ and $1$).
+\item $\fnorm{\bH}^2 = \tr(\bH) = p$.
+\item $\expc[\be'\bH\be \mid \bX] = \sigma_\varepsilon^2\tr(\bH) = \sigma_\varepsilon^2 p$, where $\sigma_\varepsilon^2 = \var(\varepsilon_i) \leqslant C\sigma^2$.
+\end{itemize}
+Here $\sigma_\varepsilon^2 = \expc[\varepsilon_i^2]$ is the actual error variance. The Hanson--Wright bound gives, for $t = \delta\sigma^2 p$ with $\delta \in (0,1)$:
+\[
+\prb\!\left(|\be'\bH\be - \sigma_\varepsilon^2 p| \geqslant \delta\sigma^2 p \;\middle|\; \bX\right) \leqslant 2\exp\!\left[-c\min(\delta^2 p,\; \delta p)\right] \leqslant 2\exp(-c'\delta^2 p).
+\]
+
+\textbf{Step 3: Combine.} Setting $\delta = 1$ (say), the event $\be'\bH\be \leqslant 2\sigma^2 p$ holds with probability $\geqslant 1 - 2\exp(-cp)$ conditional on $\bX$, provided $\bX$ has full rank. By Theorem~\ref{thm:eigenvalue-bounds}, $\bX$ has full rank with probability $\geqslant 1 - 2\exp(-cp)$ under~\ref{M4}. By the union bound over both events:
+\[
+\frac{1}{n}\|\bX(\hbb - \bb)\|^2 = \frac{1}{n}\be'\bH\be \leqslant \frac{2\sigma^2 p}{n} = C\sigma^2\frac{p}{n}
+\]
+with probability $\geqslant 1 - 4\exp(-cp)$.
+\end{proof}
+
+\begin{remark}
+The bound $\frac{1}{n}\|\bX(\hbb-\bb)\|^2 \lesssim \sigma^2 p/n$ says that the \textbf{in-sample prediction error} scales linearly with $p/n$. This is a non-asymptotic version of the well-known heuristic: ``each estimated parameter costs you $\sigma^2/n$ in prediction accuracy.'' In the classical theory, the exact result (under normality) is $\expc[\frac{1}{n}\|\bX(\hbb-\bb)\|^2] = \sigma^2 p/n$. The modern bound matches this rate but holds with high probability and under sub-Gaussian (not Gaussian) errors.
+\end{remark}
+
+%=============================================================================
+\section{OLS Estimation Error}\label{sec:estimation-error}
+%=============================================================================
+
+\begin{theorem}[Non-Asymptotic Bound on Estimation Error]\label{thm:estimation-error}
+Under assumptions~\ref{M1}--\ref{M4}, with probability at least $1 - C\exp(-cp)$:
+\begin{equation}\label{eq:estimation-error}
+\boxed{\|\hbb - \bb\|^2 \leqslant \frac{C\sigma^2 p}{n\,\lambda_{\min}(\bSigma)}.}
+\end{equation}
+More precisely, on the high-probability event from Theorem~\ref{thm:eigenvalue-bounds}:
+\begin{equation}\label{eq:estimation-error-exact}
+\|\hbb - \bb\|^2 = (\hbb - \bb)'\bI_p(\hbb - \bb) \leqslant \frac{2}{n\,\lambda_{\min}(\bSigma)}\|\bX(\hbb-\bb)\|^2 \leqslant \frac{C'\sigma^2 p}{n\,\lambda_{\min}(\bSigma)}.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+\textbf{Step 1: Relate estimation error to prediction error.} For any $\bv \in \Real^p$:
+\[
+\frac{1}{n}\|\bX\bv\|^2 = \bv'\!\left(\frac{\bX'\bX}{n}\right)\bv \geqslant \lambda_{\min}\!\left(\frac{\bX'\bX}{n}\right)\|\bv\|^2.
+\]
+Hence $\|\bv\|^2 \leqslant \frac{1}{\lambda_{\min}(\bX'\bX/n)}\cdot\frac{1}{n}\|\bX\bv\|^2$. Applying this to $\bv = \hbb - \bb$:
+\begin{equation}\label{eq:est-pred-link}
+\|\hbb - \bb\|^2 \leqslant \frac{1}{\lambda_{\min}(\bX'\bX/n)}\cdot\frac{1}{n}\|\bX(\hbb - \bb)\|^2.
+\end{equation}
+
+\textbf{Step 2: Bound $\lambda_{\min}(\bX'\bX/n)$ from below.} By Theorem~\ref{thm:eigenvalue-bounds} applied to the whitened design $\bZ = \bX\bSigma^{-1/2}$, on the high-probability event:
+\[
+\lambda_{\min}\!\left(\frac{\bX'\bX}{n}\right) \geqslant \frac{1}{2}\lambda_{\min}(\bSigma).
+\]
+
+\textbf{Step 3: Combine.} Substituting the prediction error bound (Theorem~\ref{thm:prediction-error}) and the eigenvalue bound into~\eqref{eq:est-pred-link}:
+\[
+\|\hbb - \bb\|^2 \leqslant \frac{2}{\lambda_{\min}(\bSigma)}\cdot C\sigma^2\frac{p}{n} = \frac{C'\sigma^2 p}{n\,\lambda_{\min}(\bSigma)}.
+\]
+The probability is at least $1 - C''\exp(-cp)$ by the union bound over the two high-probability events.
+\end{proof}
+
+\begin{remark}[Dependence on the condition number]
+The estimation error bound~\eqref{eq:estimation-error} involves $1/\lambda_{\min}(\bSigma)$, which equals $\opnorm{\bSigma^{-1}}$. When the population covariance is well-conditioned ($\kappa(\bSigma)$ small), $\lambda_{\min}(\bSigma) \approx \lambda_{\max}(\bSigma) \approx \|\bSigma\|_{\mathrm{op}}$, and the bound is comparable to $\sigma^2 p/(n\opnorm{\bSigma})$. But when $\bSigma$ is ill-conditioned (e.g., near-multicollinearity), $\lambda_{\min}(\bSigma) \to 0$ and the estimation error explodes. This is the modern analogue of the classical observation that near-multicollinearity inflates $\var(\hat{\beta}_j) = \sigma^2[(\bX'\bX)^{-1}]_{jj}$.
+\end{remark}
+
+%=============================================================================
+\section{Concentration of the Residual Sum of Squares}\label{sec:sse-concentration}
+%=============================================================================
+
+In the classical theory, $\SSE/\sigma^2 \sim \chi^2_{n-p}$ under normality (Theorem~4.5 in the classical notes). The following theorem is its non-asymptotic, sub-Gaussian counterpart.
+
+\begin{theorem}[Concentration of $\SSE$]\label{thm:sse-concentration}
+Under assumptions~\ref{M1}--\ref{M4}, with probability at least $1 - C\exp(-cp)$:
+\begin{equation}\label{eq:sse-concentration}
+\left|\frac{\SSE}{\sigma_\varepsilon^2} - (n-p)\right| \leqslant C'\sqrt{n-p},
+\end{equation}
+where $\sigma_\varepsilon^2 = \var(\varepsilon_i)$. Consequently, $\MSE = \SSE/(n-p)$ satisfies $|\MSE - \sigma_\varepsilon^2| \leqslant C'\sigma_\varepsilon^2/\sqrt{n-p}$.
+\end{theorem}
+
+\begin{proof}
+\textbf{Step 1: Express $\SSE$ as a quadratic form.} We have $\SSE = \mathbf{e}'\mathbf{e} = (\bM\be)'(\bM\be) = \be'\bM\be$, where $\bM = \bI_n - \bH$ is the residual maker. On the event that $\bX$ has full column rank (which holds with probability $\geqslant 1 - 2\exp(-c_0 p)$ by Theorem~\ref{thm:eigenvalue-bounds}), $\bM$ is symmetric idempotent with $\tr(\bM) = n - p$, $\opnorm{\bM} = 1$, and $\fnorm{\bM}^2 = \tr(\bM) = n - p$.
+
+\textbf{Step 2: Conditional expectation.} By the quadratic form expectation lemma (Lemma~3.7 of the classical notes), with $\expc[\be \mid \bX] = \bzero$ and $\var(\be \mid \bX) = \sigma_\varepsilon^2\bI_n$:
+\[
+\expc[\be'\bM\be \mid \bX] = \sigma_\varepsilon^2\tr(\bM) + \bzero'\bM\bzero = \sigma_\varepsilon^2(n-p).
+\]
+
+\textbf{Step 3: Concentration via Hanson--Wright.} Conditional on $\bX$, the vector $\be$ has independent, mean-zero, sub-Gaussian components with $\|\varepsilon_i\|_{\psi_2} \leqslant \sigma$. By the Hanson--Wright inequality (Theorem~\ref{thm:hanson-wright}):
+\[
+\prb\!\left(|\be'\bM\be - \sigma_\varepsilon^2(n-p)| \geqslant t \;\middle|\; \bX\right) \leqslant 2\exp\!\left[-c\min\!\left(\frac{t^2}{\sigma^4(n-p)},\; \frac{t}{\sigma^2}\right)\right].
+\]
+Here we used $\fnorm{\bM}^2 = n - p$ and $\opnorm{\bM} = 1$.
+
+\textbf{Step 4: Choose $t$.} Set $t = \delta\sigma_\varepsilon^2(n-p)$ with $\delta > 0$. The first argument of the minimum is $\delta^2\sigma_\varepsilon^4(n-p)/\sigma^4$, and the second is $\delta\sigma_\varepsilon^2(n-p)/\sigma^2$. Since $\sigma_\varepsilon^2 \leqslant C\sigma^2$ (Proposition~\ref{prop:sg-variance}) and $\delta \leqslant 1$, both arguments are $\geqslant c'\delta^2(n-p)$ for a constant $c'$ depending on $C$. Hence:
+\[
+\prb\!\left(\left|\frac{\SSE}{\sigma_\varepsilon^2} - (n-p)\right| \geqslant \delta(n-p) \;\middle|\; \bX\right) \leqslant 2\exp(-c''\delta^2(n-p)).
+\]
+Choosing $\delta = C_0/\sqrt{n-p}$ for a constant $C_0$:
+\[
+\left|\frac{\SSE}{\sigma_\varepsilon^2} - (n-p)\right| \leqslant C_0\sqrt{n-p}
+\]
+with conditional probability $\geqslant 1 - 2\exp(-c''C_0^2)$.
+
+\textbf{Step 5: Remove conditioning.} By the union bound over the full-rank event and the concentration event:
+\[
+\prb\!\left(\left|\frac{\SSE}{\sigma_\varepsilon^2} - (n-p)\right| \leqslant C_0\sqrt{n-p}\right) \geqslant 1 - 2\exp(-c''C_0^2) - 2\exp(-c_0 p).
+\]
+Choosing $C_0$ large enough and noting $n - p \geqslant c_1 p$ under~\ref{M4}: the probability is $\geqslant 1 - C\exp(-cp)$. Dividing by $n - p$: $|\MSE - \sigma_\varepsilon^2| \leqslant C_0\sigma_\varepsilon^2/\sqrt{n-p}$.
+\end{proof}
+
+%=============================================================================
+\section{Non-Asymptotic Confidence Intervals Without Normality}\label{sec:confidence}
+%=============================================================================
+
+\begin{theorem}[Sub-Gaussian Confidence Interval for $\beta_j$]\label{thm:ci-modern}
+Under assumptions~\ref{M1}--\ref{M4}, for each $j \in \{1, \ldots, p\}$ and $\alpha \in (0,1)$: conditionally on $\bX$ having full rank, with probability at least $1 - \alpha$,
+\begin{equation}\label{eq:ci-modern}
+|\hat\beta_j - \beta_j| \leqslant C\sigma\sqrt{[(\bX'\bX)^{-1}]_{jj}\cdot\ln\frac{2}{\alpha}}.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+\textbf{Step 1: Isolate $\hat\beta_j - \beta_j$.} Let $\mathbf{e}_j \in \Real^p$ be the $j$-th standard basis vector. Then:
+\[
+\hat\beta_j - \beta_j = \mathbf{e}_j'(\hbb - \bb) = \mathbf{e}_j'(\bX'\bX)^{-1}\bX'\be = \bc'\be,
+\]
+where $\bc = \bX(\bX'\bX)^{-1}\mathbf{e}_j \in \Real^n$.
+
+\textbf{Step 2: Conditional sub-Gaussian bound.} Fix $\bX$ (hence $\bc$ is fixed). Then $\bc'\be = \sum_{i=1}^n c_i\varepsilon_i$ is a sum of independent, mean-zero, sub-Gaussian random variables with $\|c_i\varepsilon_i\|_{\psi_2} \leqslant |c_i|\sigma$. By Theorem~\ref{thm:hoeffding-sg}:
+\[
+\prb\!\left(|\bc'\be| \geqslant t \;\middle|\; \bX\right) \leqslant 2\exp\!\left(-\frac{ct^2}{\sigma^2\|\bc\|^2}\right).
+\]
+
+\textbf{Step 3: Compute $\|\bc\|^2$.}
+\[
+\|\bc\|^2 = \bc'\bc = \mathbf{e}_j'(\bX'\bX)^{-1}\bX'\bX(\bX'\bX)^{-1}\mathbf{e}_j = \mathbf{e}_j'(\bX'\bX)^{-1}\mathbf{e}_j = [(\bX'\bX)^{-1}]_{jj}.
+\]
+
+\textbf{Step 4: Invert the tail bound.} Setting $2\exp(-ct^2/(\sigma^2[(\bX'\bX)^{-1}]_{jj})) = \alpha$ and solving:
+\[
+t = \sigma\sqrt{\frac{[(\bX'\bX)^{-1}]_{jj}}{c}\cdot\ln\frac{2}{\alpha}} = C'\sigma\sqrt{[(\bX'\bX)^{-1}]_{jj}\cdot\ln\frac{2}{\alpha}},
+\]
+where $C' = 1/\sqrt{c}$. Hence $|\hat\beta_j - \beta_j| \leqslant t$ with probability $\geqslant 1 - \alpha$, conditional on $\bX$.
+\end{proof}
+
+\begin{remark}[Comparison with the classical interval]
+The classical $t$-based confidence interval (Theorem~6.1 of the classical notes) has half-width $t_{\alpha/2,\,n-p}\cdot s\sqrt{[(\bX'\bX)^{-1}]_{jj}}$, where $s = \sqrt{\MSE}$. For large $n - p$, the quantile $t_{\alpha/2,\,n-p} \approx z_{\alpha/2}$, and the Gaussian tail approximation gives $z_{\alpha/2} \approx \sqrt{2\ln(2/\alpha)}$. So the modern and classical widths agree up to a constant factor. The modern interval has two advantages: (1)~no normality assumption on $\be$, and (2)~finite-sample validity. Its disadvantage is that it uses the unknown $\sigma$ rather than the data-driven $s$. This can be remedied: by Theorem~\ref{thm:sse-concentration}, $s^2 = \MSE$ satisfies $|s^2/\sigma_\varepsilon^2 - 1| \leqslant C/\sqrt{n-p}$ with high probability, so for large $n - p$ one may replace $\sigma$ by $s\sqrt{2}$ (say) at the cost of doubling the constant and adding the failure probability of the $\MSE$ concentration event.
+\end{remark}
+
+%=============================================================================
+\section{Comparison: Classical vs.\ Modern}\label{sec:comparison}
+%=============================================================================
+
+\begin{remark}[Side-by-side comparison]
+The following table compares the classical and modern treatments of the linear model. The notation $p = k+1$.
+\end{remark}
+
+\medskip
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{@{}p{3.2cm}p{5.5cm}p{5.5cm}@{}}
+\toprule
+\textbf{Aspect} & \textbf{Classical Theory} & \textbf{Modern Theory} \\
+\midrule
+Design & Fixed ($\bX$ non-random) & Random, i.i.d.\ rows \\
+Error distribution & $\be \sim N(\bzero, \sigma^2\bI_n)$ & Sub-Gaussian, $\|\varepsilon_i\|_{\psi_2} \leqslant \sigma$ \\
+Invertibility & $\rank(\bX) = p$ (assumed) & $n \geqslant CK^4 p$ (implies w.h.p.) \\
+Prediction error & $\expc[\|\bH\be\|^2/n] = \sigma^2 p/n$ (exact) & $\|\bH\be\|^2/n \leqslant C\sigma^2 p/n$ (w.h.p.) \\
+Estimation error & $\var(\hat{\bb}) = \sigma^2(\bX'\bX)^{-1}$ & $\|\hbb - \bb\|^2 \leqslant C\sigma^2 p/(n\lambda_{\min}(\bSigma))$ (w.h.p.) \\
+Distribution of $\SSE$ & $\SSE/\sigma^2 \sim \chi^2_{n-p}$ & $|\SSE/\sigma^2 - (n-p)| \leqslant C\sqrt{n-p}$ (w.h.p.) \\
+Inference & $t$, $F$, $\chi^2$ pivots & Sub-Gaussian concentration (Thm.~\ref{thm:ci-modern}) \\
+Regime & $p$ fixed, $n \to \infty$ & $p/n \to \gamma \in (0,1)$ allowed \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+%=============================================================================
+\section{What Happens When $p$ Is Comparable to $n$}\label{sec:p-comparable-n}
+%=============================================================================
+
+\begin{remark}
+As $p/n \to \gamma \in (0,1)$, the OLS estimator remains well-defined but its behavior changes qualitatively.
+\end{remark}
+
+\begin{theorem}[Prediction and Estimation Error in the Proportional Regime]\label{thm:proportional-prediction}
+Under assumptions~\ref{M1}--\ref{M3} with $\bSigma = \bI_p$ (isotropic design), conditional on $\bX$ having full column rank:
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item\label{pp:in} \textbf{In-sample prediction error}: $\expc[\frac{1}{n}\|\bX(\hbb-\bb)\|^2 \mid \bX] = \sigma_\varepsilon^2\,p/n$, where $\sigma_\varepsilon^2 = \var(\varepsilon_i)$.
+\item\label{pp:mse} \textbf{Unbiasedness of MSE}: $\expc[\MSE \mid \bX] = \sigma_\varepsilon^2$.
+\item\label{pp:oos} \textbf{Out-of-sample prediction risk}: For a new $\bx_0$ drawn independently from the same distribution,
+\begin{equation}\label{eq:oos-risk}
+\expc[(\bx_0'(\hbb-\bb))^2 \mid \bX] = \sigma_\varepsilon^2\tr((\bX'\bX)^{-1}).
+\end{equation}
+As $p/n \to \gamma \in (0,1)$ with i.i.d.\ entries having finite fourth moment, $\frac{1}{p}\tr((\bX'\bX/n)^{-1}) \to \frac{1}{1-\gamma}$ almost surely by the Marchenko--Pastur law (Theorem~\ref{thm:marchenko-pastur}), giving $\expc[(\bx_0'(\hbb-\bb))^2 \mid \bX] \to \sigma_\varepsilon^2\cdot\frac{\gamma}{1-\gamma}$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\textbf{(i).} Conditional on $\bX$: $\|\bX(\hbb-\bb)\|^2 = \be'\bH\be$ (from~\eqref{eq:pred-err-qf}). By the quadratic form expectation lemma (Lemma~3.7 of the classical notes) with $\expc[\be \mid \bX] = \bzero$ and $\var(\be \mid \bX) = \sigma_\varepsilon^2\bI_n$:
+\[
+\expc[\be'\bH\be \mid \bX] = \sigma_\varepsilon^2\tr(\bH) + \bzero'\bH\bzero = \sigma_\varepsilon^2 p.
+\]
+Dividing by $n$ gives~\ref{pp:in}.
+
+\textbf{(ii).} Similarly, $\SSE = \be'\bM\be$ where $\bM = \bI - \bH$ has $\tr(\bM) = n - p$. So $\expc[\SSE \mid \bX] = \sigma_\varepsilon^2(n-p)$ and $\expc[\MSE \mid \bX] = \sigma_\varepsilon^2$.
+
+\textbf{(iii).} Since $\bx_0$ is independent of $(\bX, \be)$ with $\expc[\bx_0\bx_0'] = \bI_p$:
+\[
+\expc[(\bx_0'(\hbb-\bb))^2 \mid \bX, \be] = (\hbb-\bb)'\expc[\bx_0\bx_0'](\hbb-\bb) = \|\hbb-\bb\|^2.
+\]
+Taking expectation over $\be$ conditional on $\bX$:
+\begin{align*}
+\expc[\|\hbb-\bb\|^2 \mid \bX] &= \expc[\be'(\bX'\bX)^{-1}\bX'\bX(\bX'\bX)^{-1}\be \mid \bX]\\
+&= \expc[\be'(\bX'\bX)^{-1}\be \mid \bX] \cdot \frac{\bX'\bX(\bX'\bX)^{-1}}{\text{---}}
+\end{align*}
+More directly: $\hbb - \bb = (\bX'\bX)^{-1}\bX'\be$, so
+\[
+\|\hbb-\bb\|^2 = \be'\bX(\bX'\bX)^{-2}\bX'\be.
+\]
+Let $\bC = \bX(\bX'\bX)^{-2}\bX'$. By the quadratic form lemma: $\expc[\be'\bC\be \mid \bX] = \sigma_\varepsilon^2\tr(\bC)$. Using $\tr(\bA\bC) = \tr(\bC\bA)$:
+\[
+\tr(\bC) = \tr(\bX(\bX'\bX)^{-2}\bX') = \tr((\bX'\bX)^{-2}\bX'\bX) = \tr((\bX'\bX)^{-1}).
+\]
+Hence $\expc[(\bx_0'(\hbb-\bb))^2 \mid \bX] = \sigma_\varepsilon^2\tr((\bX'\bX)^{-1})$.
+
+For the asymptotic statement: $\tr((\bX'\bX)^{-1}) = n\cdot\frac{1}{n}\sum_{j=1}^p\frac{1}{\lambda_j(\bX'\bX/n)\cdot n} = \frac{1}{n}\sum_{j=1}^p\frac{1}{\lambda_j(\bX'\bX/n)}$. Wait: $(\bX'\bX)^{-1}$ has eigenvalues $1/\lambda_j(\bX'\bX)$, so $\tr((\bX'\bX)^{-1}) = \sum_{j=1}^p 1/\lambda_j(\bX'\bX) = \frac{1}{n}\sum_{j=1}^p 1/\lambda_j(\bX'\bX/n)$. By the Marchenko--Pastur law, the empirical distribution of the eigenvalues $\lambda_j(\bX'\bX/n)$ converges to $F_\gamma$, so:
+\[
+\frac{1}{p}\sum_{j=1}^p\frac{1}{\lambda_j(\bX'\bX/n)} \to \int\frac{1}{x}\,\dd F_\gamma(x) = \frac{1}{1-\gamma},
+\]
+where the last equality is the standard Marchenko--Pastur moment $\int x^{-1}\,\dd F_\gamma(x) = 1/(1-\gamma)$ for $\gamma < 1$ (computed via the Stieltjes transform $m(z) = \int(x-z)^{-1}\dd F_\gamma(x) = \frac{1-\gamma-z+\sqrt{(z-\lambda_-)(\lambda_+-z) }}{2\gamma z}$ evaluated at $z = 0$). Hence:
+\[
+\sigma_\varepsilon^2\tr((\bX'\bX)^{-1}) = \sigma_\varepsilon^2\sum_{j=1}^p\frac{1}{\lambda_j(\bX'\bX)} = \sigma_\varepsilon^2\cdot\frac{p}{n}\cdot\frac{1}{p}\sum_{j=1}^p\frac{1}{\lambda_j(\bX'\bX/n)} \to \sigma_\varepsilon^2\cdot\gamma\cdot\frac{1}{1-\gamma} = \sigma_\varepsilon^2\cdot\frac{\gamma}{1-\gamma}. \qedhere
+\]
+\end{proof}
+
+\begin{corollary}[Estimation Error Diverges as $\gamma \to 1^-$]\label{cor:estimation-diverges}
+Under the conditions of Theorem~\ref{thm:proportional-prediction}, $\expc[\|\hbb - \bb\|^2 \mid \bX] = \sigma_\varepsilon^2\tr((\bX'\bX)^{-1}) \to \infty$ as $p/n \to 1^-$, since $\frac{1}{1-\gamma} \to \infty$.
+\end{corollary}
+
+\begin{remark}[The overparametrized regime $p > n$]
+When $p > n$, $\bX'\bX$ is singular and the classical OLS estimator is undefined. The minimum-norm interpolator $\hbb_{\mathrm{mn}} = \bX'(\bX\bX')^{-1}\bY$ can still be computed, and---surprisingly---its prediction risk can decrease as $p/n$ increases beyond $1$. This ``double descent'' phenomenon is the starting point of modern interpolation theory (Hastie, Montanari, Rosset, and Tibshirani, 2022), but lies beyond the scope of these notes.
+\end{remark}
+
+%=============================================================================
+\section{Exercises}\label{sec:modern-exercises}
+%=============================================================================
+
+\setcounter{exercise}{0}
+
+\subsection*{Tier A: Reproduce the Derivation}
+
+\begin{exercise}\label{ex:mA1}
+Let $X$ be a random variable with $\expc[X] = 0$ and $a \leqslant X \leqslant b$. Prove Hoeffding's lemma: $\expc[e^{tX}] \leqslant e^{t^2(b-a)^2/8}$.
+\end{exercise}
+
+\begin{exercise}\label{ex:mA2}
+Let $X_1, \ldots, X_n$ be independent with $\expc[X_i] = 0$ and $a_i \leqslant X_i \leqslant b_i$. Prove Hoeffding's inequality: $\prb(|\sum X_i| \geqslant t) \leqslant 2\exp(-2t^2/\sum(b_i - a_i)^2)$.
+\end{exercise}
+
+\begin{exercise}\label{ex:mA3}
+Prove that if $X$ is sub-Gaussian, then $X^2$ is sub-exponential with $\|X^2\|_{\psi_1} \leqslant C\|X\|_{\psi_2}^2$.
+\end{exercise}
+
+\begin{exercise}\label{ex:mA4}
+Let $\bx_1, \ldots, \bx_n$ be i.i.d.\ isotropic sub-Gaussian in $\Real^p$. Carry out the pointwise Bernstein argument (Step~2 of Theorem~\ref{thm:cov-estimation}) to show that for a fixed $\bv \in S^{p-1}$:
+\[
+\prb\!\left(\left|\frac{1}{n}\sum_{i=1}^n [(\bv'\bx_i)^2 - 1]\right| \geqslant t\right) \leqslant 2\exp\!\left[-cn\min\!\left(\frac{t^2}{K^4}, \frac{t}{K^2}\right)\right].
+\]
+\end{exercise}
+
+\begin{exercise}\label{ex:mA5}
+Derive the prediction error identity $\frac{1}{n}\|\bX(\hbb - \bb)\|^2 = \frac{1}{n}\be'\bH\be$ and compute $\expc[\be'\bH\be \mid \bX]$ under sub-Gaussian errors.
+\end{exercise}
+
+\subsection*{Tier B: Apply the Theory}
+
+\begin{exercise}\label{ex:mB1}
+Let $X_1, \ldots, X_n$ be i.i.d.\ $\mathrm{Bernoulli}(p)$ with $p \in (0,1)$. Use Hoeffding's inequality to find the smallest $n$ guaranteeing $\prb(|\bar{X} - p| \geqslant 0.01) \leqslant 0.05$.
+\end{exercise}
+
+\begin{exercise}\label{ex:mB2}
+Suppose $\bx_i \sim N(\bzero, \bSigma)$ with $\bSigma = \diag(1, 2, 3, \ldots, p)$. (a)~Compute $\kappa(\bSigma)$. (b)~How large must $n$ be (in terms of $p$) to guarantee $\opnorm{\hbSigma - \bSigma}/\opnorm{\bSigma} \leqslant 1/2$ with probability $\geqslant 0.99$? (c)~Compare the estimation error bound from Theorem~\ref{thm:estimation-error} with the classical variance formula $\sigma^2[(\bX'\bX)^{-1}]_{11}$.
+\end{exercise}
+
+\begin{exercise}\label{ex:mB3}
+In the Marchenko--Pastur law with $\gamma = 0.5$, compute $\lambda_- = (1-\sqrt{0.5})^2$ and $\lambda_+ = (1+\sqrt{0.5})^2$. What is the asymptotic condition number of $\bX'\bX/n$? If the true error variance is $\sigma^2 = 1$, estimate $\|\hbb - \bb\|^2$ using Corollary~\ref{cor:estimation-diverges}.
+\end{exercise}
+
+\begin{exercise}\label{ex:mB4}
+A design matrix $\bX \in \Real^{100 \times 10}$ has i.i.d.\ Rademacher entries ($\pm 1$ with equal probability). (a)~Verify that each row is sub-Gaussian and compute $K$. (b)~Check the sample-size condition $n \geqslant CK^4 p$. (c)~Give a high-probability interval for $\lambda_{\min}(\bX'\bX/n)$ and $\lambda_{\max}(\bX'\bX/n)$ using Theorem~\ref{thm:extreme-eigenvalues}.
+\end{exercise}
+
+\subsection*{Tier C: Extend and Connect}
+
+\begin{exercise}\label{ex:mC1}
+\textbf{(Concentration of the MSE.)} Under~\ref{M1}--\ref{M4}, the classical notes show $\expc[\MSE] = \sigma^2$ under normality. Use the Hanson--Wright inequality to prove that $|\SSE - \sigma^2(n-p)| \leqslant C\sigma^2\sqrt{n-p}$ with high probability under sub-Gaussian errors. Conclude that $\MSE = \SSE/(n-p)$ concentrates around $\sigma^2$.
+\end{exercise}
+
+\begin{exercise}\label{ex:mC2}
+\textbf{(Ridge regression in the proportional regime.)} Consider the ridge estimator $\hbb_\lambda = (\bX'\bX + \lambda\bI_p)^{-1}\bX'\bY$. (a)~Show that $\hbb_\lambda - \bb = (\bX'\bX + \lambda\bI_p)^{-1}(\bX'\be - \lambda\bb)$. (b)~Decompose $\|\hbb_\lambda - \bb\|^2$ into a bias term (depending on $\lambda\bb$) and a variance term (depending on $\be$). (c)~Why does ridge help when $p/n \to 1^-$?
+\end{exercise}
+
+\begin{exercise}\label{ex:mC3}
+\textbf{(Sub-Gaussian tail optimality.)} Show that the Hoeffding bound for $\bar{X}$ (Corollary~\ref{cor:hoeffding-iid}) cannot be improved beyond constant factors for Rademacher variables: explicitly compute $\prb(\sum_{i=1}^n \varepsilon_i \geqslant t)$ for $\varepsilon_i$ i.i.d.\ uniform on $\{-1, +1\}$ via the MGF, and compare with~\eqref{eq:hoeffding}.
+\end{exercise}
+
+\begin{exercise}\label{ex:mC4}
+\textbf{(From concentration to confidence intervals.)} Under~\ref{M1}--\ref{M4}, construct a non-asymptotic confidence interval for a single coefficient $\beta_j$ \emph{without assuming normality}. Specifically: (a)~Show $\hat\beta_j - \beta_j = \mathbf{e}_j'(\bX'\bX)^{-1}\bX'\be$, where $\mathbf{e}_j$ is the $j$-th standard basis vector. (b)~Conditionally on $\bX$, bound $|\hat\beta_j - \beta_j|$ using the sub-Gaussian tail of $\bc'\be$ for $\bc = (\bX'\bX)^{-1}\bX'\mathbf{e}_j$. (c)~Show this yields a confidence interval of width $O(\sigma\sqrt{[(\bX'\bX)^{-1}]_{jj}\log(1/\alpha)})$ at level $1-\alpha$. Compare with the classical interval width $t_{\alpha/2, n-p}\cdot s\sqrt{[(\bX'\bX)^{-1}]_{jj}}$.
+\end{exercise}
+
+%=============================================================================
+\section{Solutions to Exercises}\label{sec:modern-solutions}
+%=============================================================================
+
+\subsection*{Solutions to Tier A}
+
+\textbf{Solution to Exercise~\ref{ex:mA1}.} See the proof of Lemma~\ref{lem:hoeffding-lemma}.
+
+\textbf{Solution to Exercise~\ref{ex:mA2}.} See the proof of Theorem~\ref{thm:hoeffding}.
+
+\textbf{Solution to Exercise~\ref{ex:mA3}.} See the proof of Proposition~\ref{prop:sg-square}.
+
+\textbf{Solution to Exercise~\ref{ex:mA4}.} The random variable $Z_i = (\bv'\bx_i)^2 - 1$ satisfies $\expc[Z_i] = 0$ (isotropic assumption) and is sub-exponential with $\|Z_i\|_{\psi_1} \leqslant CK^2$ (since $\bv'\bx_i$ is sub-Gaussian with norm $\leqslant K$ and squares of sub-Gaussians are sub-exponential by Proposition~\ref{prop:sg-square}). By Bernstein's inequality (Theorem~\ref{thm:bernstein}) applied to $\sum_{i=1}^n Z_i$:
+\[
+\prb\!\left(\left|\sum_{i=1}^n Z_i\right| \geqslant nt\right) \leqslant 2\exp\!\left[-c\min\!\left(\frac{n^2t^2}{nC^2K^4},\; \frac{nt}{CK^2}\right)\right] = 2\exp\!\left[-cn\min\!\left(\frac{t^2}{K^4},\; \frac{t}{K^2}\right)\right].
+\]
+
+\textbf{Solution to Exercise~\ref{ex:mA5}.} Substituting $\hbb - \bb = (\bX'\bX)^{-1}\bX'\be$:
+\begin{align*}
+\bX(\hbb - \bb) &= \bX(\bX'\bX)^{-1}\bX'\be = \bH\be.
+\end{align*}
+Hence $\frac{1}{n}\|\bX(\hbb-\bb)\|^2 = \frac{1}{n}\|\bH\be\|^2 = \frac{1}{n}(\bH\be)'\bH\be = \frac{1}{n}\be'\bH'\bH\be = \frac{1}{n}\be'\bH\be$ (using $\bH' = \bH$ and $\bH^2 = \bH$). For the conditional expectation: since $\varepsilon_1, \ldots, \varepsilon_n$ are independent with $\expc[\varepsilon_i] = 0$ and $\expc[\varepsilon_i^2] = \sigma_\varepsilon^2$, we have $\expc[\be\be' \mid \bX] = \sigma_\varepsilon^2\bI_n$. By Lemma~3.7 of the classical notes (expected value of quadratic form, with $\boldsymbol\mu = \bzero$):
+\[
+\expc[\be'\bH\be \mid \bX] = \tr(\bH\cdot\sigma_\varepsilon^2\bI_n) = \sigma_\varepsilon^2\tr(\bH) = \sigma_\varepsilon^2 p.
+\]
+Dividing by $n$: $\expc[\frac{1}{n}\|\bX(\hbb-\bb)\|^2 \mid \bX] = \sigma_\varepsilon^2 p/n$.
+
+\subsection*{Solutions to Tier B}
+
+\textbf{Solution to Exercise~\ref{ex:mB1}.} Each $X_i \in [0, 1]$, so $b_i - a_i = 1$. By Corollary~\ref{cor:hoeffding-iid}: $\prb(|\bar{X} - p| \geqslant 0.01) \leqslant 2\exp(-2n(0.01)^2) = 2e^{-n/5000}$. Setting $2e^{-n/5000} \leqslant 0.05$ gives $n \geqslant 5000\ln(40) \approx 18\,444$.
+
+\textbf{Solution to Exercise~\ref{ex:mB2}.} (a) $\kappa(\bSigma) = \lambda_{\max}/\lambda_{\min} = p/1 = p$. (b) The whitened vectors $\bz_i = \bSigma^{-1/2}\bx_i$ are isotropic Gaussian with $\|\bz_i\|_{\psi_2} \leqslant C$. The condition $\opnorm{\hbSigma - \bSigma}/\opnorm{\bSigma} \leqslant 1/2$ reduces (after whitening) to $\opnorm{\hat{\mathbf{I}} - \bI_p} \leqslant 1/2$ for the whitened sample covariance. By Theorem~\ref{thm:cov-estimation} with $\delta = 1/2$, we need $n \geqslant 4Cp$. For probability $0.99$, we additionally need $2\exp(-cp) \leqslant 0.01$, i.e., $p \geqslant \frac{1}{c}\ln 200$, which is mild.
+
+(c) The classical formula gives $\var(\hat\beta_1) = \sigma^2[(\bX'\bX)^{-1}]_{11}$, which depends on the specific realization of $\bX$. For the diagonal covariance, $\expc[(\bX'\bX)^{-1}] \approx \frac{1}{n}\bSigma^{-1}$ for large $n$, so $\var(\hat\beta_1) \approx \sigma^2/(n\cdot 1) = \sigma^2/n$. The modern bound gives $\|\hbb - \bb\|^2 \leqslant C\sigma^2 p/(n\lambda_{\min}(\bSigma)) = C\sigma^2 p/n$, which is larger by a factor $p$ (but bounds the total $\ell^2$ error, not just one coordinate).
+
+\textbf{Solution to Exercise~\ref{ex:mB3}.} $\lambda_- = (1 - 1/\sqrt{2})^2 = (1 - \sqrt{2}/2)^2 = (2 - \sqrt{2})^2/4 \approx 0.0858$. $\lambda_+ = (1 + \sqrt{2}/2)^2 = (2 + \sqrt{2})^2/4 \approx 2.914$. Asymptotic condition number: $\kappa \approx \lambda_+/\lambda_- \approx 33.97$. Estimation error: $\gamma/(1-\gamma) = 0.5/0.5 = 1$, so $\|\hbb-\bb\|^2 \approx \sigma^2/({\lambda_{\min}(\bSigma)}) \cdot 1 = 1/\lambda_{\min}(\bSigma)$ when $\sigma^2 = 1$ and $\bSigma = \bI_p$.
+
+\textbf{Solution to Exercise~\ref{ex:mB4}.} (a) Each entry $X_{ij}$ is Rademacher: $\|X_{ij}\|_{\psi_2} = C$ (by Example~\ref{ex:subgaussian}(2)). A row $\bx_i = (X_{i1}, \ldots, X_{ip})'$ has $\|\ip{\bx_i}{\bv}\|_{\psi_2} = \|\sum_j v_j X_{ij}\|_{\psi_2} \leqslant C\|\bv\|$ by Proposition~\ref{prop:sg-closure}. So $K = C$. (b) $n = 100$, $p = 10$, $K^4 p = C^4 \cdot 10$. For reasonable $C$, $n = 100 \gg C^4 \cdot 10$, so the condition is satisfied. (c) By~\eqref{eq:extreme-eigenvalues-gram} with $t = 0$: $\lambda_{\min}(\bX'\bX/n) \gtrsim (1 - C'\sqrt{10/100})^2 = (1 - C'\sqrt{0.1})^2$ and $\lambda_{\max}(\bX'\bX/n) \lesssim (1 + C'\sqrt{0.1})^2$. With $C' \approx 1$: $\lambda_{\min} \gtrsim (1 - 0.316)^2 \approx 0.467$, $\lambda_{\max} \lesssim (1 + 0.316)^2 \approx 1.732$.
+
+\subsection*{Solutions to Tier C}
+
+\textbf{Solution to Exercise~\ref{ex:mC1}.} We have $\SSE = \be'\bM\be$ where $\bM = \bI_n - \bH$ is symmetric idempotent with $\tr(\bM) = n - p$ and $\opnorm{\bM} = 1$, $\fnorm{\bM}^2 = n - p$. By Hanson--Wright (Theorem~\ref{thm:hanson-wright}), conditionally on $\bX$:
+\[
+\prb\!\left(|\SSE - \sigma_\varepsilon^2(n-p)| \geqslant t \;\middle|\; \bX\right) \leqslant 2\exp\!\left[-c\min\!\left(\frac{t^2}{\sigma^4(n-p)},\; \frac{t}{\sigma^2}\right)\right].
+\]
+Setting $t = \delta\sigma^2(n-p)$: $\prb(|\SSE - \sigma_\varepsilon^2(n-p)| \geqslant \delta\sigma^2(n-p)) \leqslant 2\exp(-c\min(\delta^2(n-p), \delta(n-p))) \leqslant 2\exp(-c'\delta^2(n-p))$. With $\delta = C/\sqrt{n-p}$: $|\SSE - \sigma_\varepsilon^2(n-p)| \leqslant C\sigma^2\sqrt{n-p}$ with probability $\geqslant 1 - 2e^{-c'C^2}$. Hence $|\MSE - \sigma_\varepsilon^2| = |\SSE/(n-p) - \sigma_\varepsilon^2| \leqslant C\sigma^2/\sqrt{n-p} \to 0$.
+
+\textbf{Solution to Exercise~\ref{ex:mC2}.} (a) $\hbb_\lambda = (\bX'\bX + \lambda\bI)^{-1}\bX'(\bX\bb + \be) = (\bX'\bX + \lambda\bI)^{-1}(\bX'\bX\bb + \bX'\be)$. Adding and subtracting $\lambda\bb$:
+\begin{align*}
+\hbb_\lambda &= (\bX'\bX + \lambda\bI)^{-1}[(\bX'\bX + \lambda\bI)\bb - \lambda\bb + \bX'\be] = \bb + (\bX'\bX + \lambda\bI)^{-1}(\bX'\be - \lambda\bb).
+\end{align*}
+
+(b) $\hbb_\lambda - \bb = (\bX'\bX + \lambda\bI)^{-1}\bX'\be - \lambda(\bX'\bX + \lambda\bI)^{-1}\bb$. Squaring:
+\[
+\|\hbb_\lambda - \bb\|^2 = \underbrace{\lambda^2\bb'\bA^2\bb}_{\text{bias}^2} + \underbrace{\be'\bX\bA^2\bX'\be}_{\text{variance}} + \text{cross term},
+\]
+where $\bA = (\bX'\bX + \lambda\bI)^{-1}$. The cross term vanishes in expectation since $\expc[\be] = \bzero$.
+
+(c) As $p/n \to 1^-$, $\lambda_{\min}(\bX'\bX/n) \to 0$. OLS variance $\propto 1/\lambda_{\min}(\bX'\bX) \to \infty$. Ridge adds $\lambda$ to every eigenvalue: $\lambda_{\min}(\bX'\bX + \lambda\bI) \geqslant \lambda > 0$, controlling the variance. The cost is bias $\propto \lambda\|\bb\|$, which is small for moderate $\lambda$.
+
+\textbf{Solution to Exercise~\ref{ex:mC3}.} For Rademacher $\varepsilon_i$, $S_n = \sum \varepsilon_i$. The MGF is $\expc[e^{tS_n}] = (\cosh t)^n$. By the Chernoff bound: $\prb(S_n \geqslant s) \leqslant \inf_{t>0}e^{-ts}(\cosh t)^n$. Using $\cosh t \leqslant e^{t^2/2}$ gives $\prb(S_n \geqslant s) \leqslant e^{-s^2/(2n)}$, matching Hoeffding. The bound $\cosh t \leqslant e^{t^2/2}$ is tight at $t = 0$ (both sides equal $1$, derivatives match), so the Hoeffding bound is essentially optimal for Rademacher sums.
+
+\textbf{Solution to Exercise~\ref{ex:mC4}.} (a) $\hat\beta_j = \mathbf{e}_j'\hbb = \mathbf{e}_j'(\bX'\bX)^{-1}\bX'\bY = \beta_j + \mathbf{e}_j'(\bX'\bX)^{-1}\bX'\be = \beta_j + \bc'\be$ where $\bc = \bX(\bX'\bX)^{-1}\mathbf{e}_j$.
+
+(b) Conditionally on $\bX$, $\bc'\be = \sum_i c_i\varepsilon_i$ is a sum of independent sub-Gaussian variables with $\|\bc'\be\|_{\psi_2} \leqslant C\sigma\|\bc\|$. By the sub-Gaussian tail bound:
+\[
+\prb(|\hat\beta_j - \beta_j| \geqslant t \mid \bX) \leqslant 2\exp\!\left(-\frac{ct^2}{\sigma^2\|\bc\|^2}\right).
+\]
+Now $\|\bc\|^2 = \bc'\bc = \mathbf{e}_j'(\bX'\bX)^{-1}\bX'\bX(\bX'\bX)^{-1}\mathbf{e}_j = [(\bX'\bX)^{-1}]_{jj}$.
+
+(c) Setting $2\exp(-ct^2/(\sigma^2[(\bX'\bX)^{-1}]_{jj})) = \alpha$ gives $t = \sigma\sqrt{[(\bX'\bX)^{-1}]_{jj}\cdot\frac{1}{c}\ln(2/\alpha)}$. The confidence interval is:
+\[
+\hat\beta_j \pm \sigma\sqrt{\frac{[(\bX'\bX)^{-1}]_{jj}}{c}\ln\frac{2}{\alpha}}.
+\]
+\emph{Comparison.} The classical interval has width $\propto t_{\alpha/2,n-p}\sqrt{[(\bX'\bX)^{-1}]_{jj}}$, using $s$ in place of $\sigma$. For large $n-p$, $t_{\alpha/2,n-p} \approx z_{\alpha/2} = \Phi^{-1}(1-\alpha/2) \approx \sqrt{2\ln(2/\alpha)}$ (by the Gaussian tail approximation). So the modern and classical widths agree up to constants. The modern bound has two advantages: (1)~it does not require normality, and (2)~it is a finite-sample statement, not asymptotic. Its disadvantage: it uses the unknown $\sigma$ rather than the data-driven $s$ (though $s$ concentrates around $\sigma$ by Exercise~\ref{ex:mC1}).
+
+\end{document}

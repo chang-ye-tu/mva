@@ -4,13 +4,19 @@
 
 教師編纂講義。
 
-| &nbsp;<a href="https://github.com/chang-ye-tu/mva/blob/master/note/mc.pdf">Matrix Calculus</a>&nbsp; | 
+| &nbsp;<a href="https://github.com/chang-ye-tu/mva/blob/master/note/clm.pdf">Classical Linear Models</a>&nbsp; | &nbsp;<a href="https://github.com/chang-ye-tu/mva/blob/master/note/mc.pdf">Matrix Calculus</a>&nbsp; | &nbsp;<a href="https://github.com/chang-ye-tu/mva/blob/master/note/qa_mid.pdf">Problems and Solutions: Midterm</a>&nbsp; | &nbsp;<a href="https://github.com/chang-ye-tu/mva/blob/master/note/mlm.pdf">Modern Linear Models</a>&nbsp; |
 
 
 ## 參考書
+
+<!--
 - [Härdle, W., Simar, L., 2015. Applied Multivariate Statistical Analysis. 4th ed., Springer.](https://link.springer.com/book/10.1007/978-3-662-45171-7)
   - 範例原始碼：[MVA-ToDo: Quantlets to Update for MVA](https://github.com/QuantLet/MVA-ToDo/tree/master)
 - [Härdle, W., Hlávka, Z., 2019. Multivariate Statistics: Exercises and Solutions. 2nd ed., Springer.](https://link.springer.com/book/10.1007/978-3-642-36005-3)
+-->
+
+- [Harville, D., 2001. Matrix Algebra: Exercises and Solutions. Springer.](https://link.springer.com/book/10.1007/978-1-4613-0181-3)
+- [Harville, D., 1997. Matrix Algebra From a Statistician's Perspective. Springer.](https://link.springer.com/book/10.1007/b98818)
 
 ## 評分標準
 
@@ -20,22 +26,22 @@
 
 ## 授課時程
 
-| 上課時間 | 課程進度 |
-|----------|----------|
-| 03/06 | |
-| 03/13 | |
-| 03/20 | Multiple Linear Regression |
-| 03/27 | Matrix Calculus |
-| 04/10 | |
-| 04/17 | |
-| 04/24 | **期中考** |
-| 05/01 | |
-| 05/08 | |
-| 05/15 | |
-| 05/22 | |
-| 05/29 | |
-| 06/05 | |
-| 06/12 | **期末考** |
+| 上課時間 |   課程進度               |
+|----------|--------------------------|
+| 03/06    | Classical Linear Models  |
+| 03/13    | Classical Linear Models  |
+| 03/20    | Classical Linear Models  |
+| 03/27    | Matrix Calculus          |
+| 04/10    | Matrix Calculus          |
+| 04/17    | Matrix Calculus          |
+| 04/24    | **期中考**               |
+| 05/01    | Modern Linear Models     |
+| 05/08    | Modern Linear Models     |
+| 05/15    | Modern Linear Models     |
+| 05/22    |                          |
+| 05/29    |                          |
+| 06/05    |                          |
+| 06/12    | **期末考** |
 
 <!--
 | 上課時間 | 課程進度 |

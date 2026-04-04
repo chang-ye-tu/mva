@@ -1,0 +1,1989 @@
+% ============================================================
+% LaTeX conversion of:
+%   "A gentle introduction to matrix calculus"
+%   by Jan R. Magnus
+%   Journal of Econometrics 244 (2024) 105862
+%
+% Pre-conversion analysis:
+%   - Numbering format: Pure counter N for all objects
+%     (Proposition 1, Exercise 1, Eq. (1), etc.) % [cite: 1]
+%   - Counter sharing: Propositions and Exercises independent
+%   - Reset level: Continuous throughout (no reset per section)
+%   - Document class: article (no chapters)
+%
+% Preamble changes from default template:
+%   1. \documentclass{article} instead of {report}
+%   2. All \newtheorem without [section] (continuous numbering)
+%   3. Removed \numberwithin{equation}{section} % [cite: 2]
+%   4. Removed \counterwithin{figure}{section}
+%   5. Added \newenvironment{solution} with \| end symbol % [cite: 3]
+%   6. Exercise uses standard \newtheorem (not exstyle)
+% ============================================================
+\documentclass[14pt]{extarticle}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[shortlabels]{enumitem}
+\usepackage{mathtools}
+\usepackage[margin=15mm]{geometry}
+\DeclareMathOperator\prb{\mathsf{P}}
+\DeclareMathOperator\expc{\mathsf{E}}
+\DeclareMathOperator\var{var}
+\DeclareMathOperator\cor{cor}
+
+\theoremstyle{definition}
+% Continuous numbering (no [section] reset) to match original PDF
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\newtheorem{axiom}{Assumption}
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+\newtheorem{remark}{Remark}
+\newtheorem{exercise}{Exercise}
+
+% Solution environment: ends with \| instead of \qedsymbol % [cite: 4]
+\newenvironment{solution}{%
+  \begin{proof}[Solution]%\renewcommand{\qedsymbol}{$\|$}%
+}{%
+  \end{proof}%
+}
+
+% equation numbering: continuous (no section prefix)
+% (intentionally omitting \numberwithin{equation}{section})
+
+\usepackage{parskip}
+\usepackage{etoolbox}
+\AtBeginEnvironment{definition}{\vspace{\parskip}}
+\AtBeginEnvironment{example}{\vspace{\parskip}}
+\AtBeginEnvironment{lemma}{\vspace{\parskip}}
+\AtBeginEnvironment{theorem}{\vspace{\parskip}}
+\AtBeginEnvironment{corollary}{\vspace{\parskip}}
+\AtBeginEnvironment{proposition}{\vspace{\parskip}}
+\AtBeginEnvironment{remark}{\vspace{\parskip}}
+\AtBeginEnvironment{exercise}{\vspace{\parskip}}
+
+\usepackage{xcolor}
+\usepackage{cancel}
+
+% Convenient macros for this paper
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\vech}{vech}
+\DeclareMathOperator{\avec}{vec}
+\DeclareMathOperator{\rank}{r}
+\newcommand{\dd}{\mathrm{d}}
+
+\usepackage{titling}
+\newcommand{\subtitle}[1]{%
+	\posttitle{%
+		\par\end{center}
+	\begin{center}\large#1\end{center}
+	\vskip0.1em}}%
+
+\begin{document}
+
+\title{Introduction to Matrix Calculus}
+\subtitle{Expanded ``A Gentle Introduction to Matrix Calculus'' by Jan R. Magnus}
+\author{}
+%\title{A gentle introduction to matrix calculus}
+%\author{Jan R.\ Magnus\\[6pt]
+%\small Department of Econometrics \& Data Science,\\
+%\small Vrije Universiteit Amsterdam, and Tinbergen Institute, Amsterdam, The Netherlands}
+\date{}
+\maketitle
+
+%\begin{abstract}
+%Matrix calculus is an important tool when we wish to optimize functions involving matrices or perform sensitivity analyses. This tutorial is designed to make matrix calculus more accessible to graduate students and young researchers. % [cite: 5]
+%It contains the theory that would suffice in most applications, many fully worked-out exercises and examples, and presents some of the `tacit knowledge' that is prevalent in this field. % [cite: 6]
+%\end{abstract}
+
+%% ============================================================
+\section{Introduction}\label{sec:1}
+
+%The purpose of this paper is to make matrix calculus more accessible to graduate students and young researchers. % [cite: 8]
+%It is written as a stand-alone tutorial with minimal references to underlying results, so that it can be used in an advanced undergraduate course and as an aid to graduate and Ph.D.\ students in one of their courses or projects. Matrix calculus is much used in economics, statistics, mathematics, psychology, control theory, engineering, and elsewhere, and it is required whenever we wish to optimize functions involving matrices or perform sensitivity analyses. % [cite: 9]
+%
+%Heinz Neudecker and I started to work on our monograph \emph{Matrix Differential Calculus with Applications in Statistics and Econometrics} in the early 1980s, and the book came out in 1988. It went through several revisions and new editions, and I regard the 2019 third edition, which I wrote after Heinz' death, as the definitive text. % [cite: 10]
+%Not everyone is willing to struggle through a 450-page monograph, and it is for those people that the current tutorial may be of some use. % [cite: 11]
+%It contains the essence of matrix calculus, leaving out the subtleties that are not used in most applications, such as how to differentiate eigenvalues or Moore--Penrose inverses. % [cite: 12]
+%
+%Obviously, the tutorial provides less information than the monograph, but in two directions it provides more. First, the monograph contains many exercises, but there exists no answer book, so there are no model answers. % [cite: 14]
+%The current tutorial also contains many exercises, but they all come with fully worked-out solutions. % [cite: 15]
+%Second, while the emphasis in the monograph is primarily on the theory, the emphasis in this tutorial is primarily on the practice, and I have included suggestions on shortcuts, warnings for pitfalls, and certain `tricks' that are useful to know when doing matrix calculus in practice. % [cite: 16]
+
+Matrix calculus rests on two pillars and it requires six tools. % [cite: 17]
+The tools are presented in Section~\ref{sec:2} and consist of some basic results on the trace and linear and quadratic functions, some less basic results on the Kronecker product and the vec operator, and finally some more advanced results on the commutation and duplication matrix. Almost all these results will be proved using only elementary mathematics. % [cite: 18, 19]
+
+The two pillars are discussed in Sections~\ref{sec:3} and~\ref{sec:4}. The first pillar is the definition of a matrix derivative, presented in Section~\ref{sec:3}. % [cite: 20]
+Suppose that we have a matrix function, say $F(X) = X^{-1}$. The derivative $DF(X)$ will be a matrix, but how are the elements in this matrix to be organized? This seemingly simple question was not fully resolved until the mid-1980s. It will be shown that there exists only one correct definition of a matrix derivative. % [cite: 22, 23, 24]
+
+Section~\ref{sec:4} introduces the concept of a differential, the second pillar on which matrix calculus rests. % [cite: 25]
+The key advantage of the differential over the more common derivative is the following. Consider an $m \times 1$ vector function $f$, for example $f(x) = Ax$ where $A$ is an $m \times n$ matrix of constants. Then the derivative $Df(x)$ is an $m \times n$ matrix, in this case the matrix $A$. But the differential $\dd f(x)$ remains an $m \times 1$ vector. % [cite: 27, 28, 29]
+The differential $\dd f(x)$ has the same dimension as $f$, irrespective of the dimension of the vector $x$. The advantage is even larger for matrices. The differential $\dd F(X)$ of a matrix function $F(X)$ has the same dimension as $F$, irrespective of the dimension of the matrix $X$. % [cite: 30, 31]
+
+The practical importance of working with differentials will be demonstrated through many examples. Section~\ref{sec:5} discusses optimization, leading to our first example (least squares) in Section~\ref{sec:6}, both with and without constraints. % [cite: 32, 33]
+Section~\ref{sec:7} introduces matrix calculus, showing how the previous results can be straightforwardly generalized from vector calculus to matrix calculus, at least if one employs the correct definition of matrix derivative. % [cite: 34]
+Section~\ref{sec:8} contains exercises, and Sections~\ref{sec:9}--\ref{sec:11} are devoted to the second differential with associated exercises in Section~\ref{sec:12}. Sections~\ref{sec:13}--\ref{sec:15} contain three further (more advanced) examples on how to apply matrix calculus. % [cite: 35, 36]
+
+The concluding Section~\ref{sec:16} provides some hints from practical experience in an attempt to transform tacit (unwritten) knowledge into explicit (written) knowledge. % [cite: 37]
+The following notation is used. Lower-case symbols ($a$, $x$) denote scalars or vectors, upper-case symbols ($A$, $X$) denote matrices. Thus, $f$ denotes a scalar or vector function, and $F$ a matrix function. We write $A'$, $A^{-1}$, $\tr A$, $|A|$ for the transpose, inverse, trace, and determinant of $A$. All functions and variables are real. Parentheses are used sparingly. % [cite: 38, 39, 40, 41]
+We write $\dd X$, $\tr X$, and $\avec X$ without parentheses, and also $\dd XY$, $\tr XY$, and $\avec XY$ instead of $\dd(XY)$, $\tr(XY)$, and $\avec(XY)$. However, we write $\vech(X)$ with parentheses for historical reasons. % [cite: 42, 43]
+
+%% ============================================================
+\section{The tools}\label{sec:2}
+
+We present six tools that are indispensable in matrix calculus. % [cite: 44]
+
+\subsection{The trace}\label{sec:2.1}
+
+An important function of a square matrix $A = (a_{ij})$ is the trace, defined as the sum of its diagonal elements: $\tr A = \sum_i a_{ii}$. % [cite: 45]
+Since a matrix and its transpose contain the same diagonal elements, we have
+\begin{equation}\label{eq:1}
+\tr A' = \tr A.
+\end{equation}
+Somewhat less trivial is
+
+\begin{proposition}\label{prp:1}
+For any two matrices $A$ and $B$ of the same order,
+\[
+\tr A'B = \tr BA'.
+\]
+\end{proposition}
+
+\begin{proof}
+This follows because
+\[
+\tr A'B = \sum_j (A'B)_{jj} = \sum_j \sum_i a_{ij} b_{ij}
+= \sum_i \sum_j b_{ij} a_{ij} = \sum_i (BA')_{ii} = \tr BA'.
+\]
+\end{proof}
+
+The proposition implies that $\tr ABC = \tr CAB = \tr BCA$, because the proposition allows cyclical permutations of the matrices. But the proposition does not imply that $\tr ABC = \tr ACB$, which is not cyclical. % [cite: 48, 49]
+
+\subsection{Linear and quadratic forms}\label{sec:2.2}
+
+A linear form is an expression such as $Ax$. When $Ax = 0$, this does not imply that either $A = 0$ or $x = 0$. % [cite: 50, 51]
+For example, if
+\[
+A = \begin{pmatrix} 1 & -1 \\ -2 & 2 \\ 3 & -3 \end{pmatrix}, \quad
+x = \begin{pmatrix} 1 \\ 1 \end{pmatrix},
+\]
+then $Ax = 0$, but neither $A = 0$ nor $x = 0$. However, when $Ax = 0$ for every $x$, then $A$ must be zero. % [cite: 52, 53]
+Things are different with a quadratic form, that is, an expression such as $x'Ax$. When $x'Ax = 0$, this does not imply that $A = 0$ or $x = 0$ or $Ax = 0$. % [cite: 54, 55]
+Even when $x'Ax = 0$ for every $x$, it does not follow that $A = 0$, as the example
+\[
+A = \begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix}
+\]
+demonstrates. This matrix is skew-symmetric, that is, it satisfies $A' = -A$. % [cite: 56, 57]
+In fact, when $x'Ax = 0$ for every $x$ then it follows that $A$ must be skew-symmetric. % [cite: 58]
+
+\begin{proposition}\label{prp:2}
+We have
+\begin{enumerate}[(i)]
+\item $Ax = 0$ for every $x \iff A = 0$,
+\item $x'Ax = 0$ for every $x \iff A$ is skew-symmetric,
+\item $x'Ax = 0$ for every $x$ and $A = A' \iff A = 0$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+We shall prove both directions of these equivalences to ensure completeness. Let $e_i$ denote the $i$th elementary vector, that is, the vector with one in the $i$th position and zeros elsewhere.
+
+To prove (i), first assume $A = 0$. Then $Ax = 0x = 0$ for all $x$. Conversely, assume $Ax = 0$ for every $x$. Let $x = e_i$. Then $Ae_i = 0$ for every $i$, meaning every column of $A$ is zero, and hence $A = 0$.
+
+To prove (ii), first assume $A$ is skew-symmetric, so $A = -A'$. Since $x'Ax$ is a scalar, it equals its own transpose: $x'Ax = (x'Ax)' = x'A'x$. Substituting $A' = -A$ gives $x'Ax = -x'Ax$, which implies $2x'Ax = 0$, so $x'Ax = 0$ for all $x$. Conversely, assume $x'Ax = 0$ for every $x$. Let $x = e_i + e_j$. Then $a_{ii} + a_{ij} + a_{ji} + a_{jj} = 0$. By setting $i = j$, we see $a_{ii} = a_{jj} = 0$. Hence, $a_{ij} + a_{ji} = 0$, which means $A = -A'$ and $A$ is skew-symmetric.
+
+To prove (iii), first assume $A = 0$. Then $A = A'$ and $x'Ax = 0$ for every $x$. Conversely, assume $x'Ax = 0$ for every $x$ and $A = A'$. From (ii), $x'Ax = 0$ for every $x$ implies $A = -A'$. Since we also have $A = A'$, it follows that $A = -A$, which implies $2A = 0$, so $A$ must be the null matrix.
+\end{proof}
+
+Proposition~\ref{prp:2}(i) has important practical consequences. Suppose we wish to prove that $A = B$. Then we could try and prove that $a_{ij} = b_{ij}$ for all $i$ and $j$. But it is often easier to show that $Ax = Bx$ for arbitrary $x$. % [cite: 65, 66, 67]
+Instead of showing directly that $A = B$, we show that $A$ and $B$ have the same effect when working on an arbitrary vector $x$. % [cite: 68]
+Proposition~\ref{prp:2}(ii) also has important consequences. It tells us that if $x'Ax = x'Bx$ for every $x$, then it is not necessarily true that $A = B$, but it is true that $A + A' = B + B'$. If $A$ is symmetric and $x'Ax = x'Bx$ for every $x$, then it still does not follow that $A = B$, but it does follow that $A = (B + B')/2$. % [cite: 69, 70]
+This will be important when we discuss the second identification theorem in Proposition~\ref{prp:13} and Eq.~\eqref{eq:42}. % [cite: 71]
+
+\subsection{The Kronecker product}\label{sec:2.3}
+
+Let $A$ be an $m \times n$ matrix and $B$ a $p \times q$ matrix. The $mp \times nq$ matrix defined by
+\begin{equation}\label{eq:2}
+\begin{pmatrix}
+a_{11}B & \dots & a_{1n}B \\
+\vdots & & \vdots \\
+a_{m1}B & \dots & a_{mn}B
+\end{pmatrix}
+\end{equation}
+is called the Kronecker product of $A$ and $B$ and is written as $A \otimes B$. % [cite: 72, 73]
+The Kronecker product $A \otimes B$ is thus defined for any pair of matrices $A$ and $B$, unlike the matrix product $AB$ which exists only if the number of columns in $A$ equals the number of rows in $B$ or if either $A$ or $B$ is a scalar. % [cite: 74]
+
+\begin{proposition}\label{prp:3}
+The following three properties show that the Kronecker product is in fact a product:
+\begin{align*}
+(A \otimes B) \otimes C &= A \otimes (B \otimes C), \\
+(A + B) \otimes (C + D) &= A \otimes C + A \otimes D + B \otimes C + B \otimes D, \\
+(A \otimes B)(C \otimes D) &= AC \otimes BD,
+\end{align*}
+where it is assumed that $A + B$ and $C + D$ are defined in the second equality, and that $AC$ and $BD$ are defined in the third equality. % [cite: 75]
+\end{proposition}
+
+\begin{proof}
+We prove each equality in turn, using the fact that the $(i,j)$ block of $A \otimes B$ is $a_{ij}B$. % [cite: 76]
+
+\emph{Associativity.} Let $A$, $B$, $C$ have orders $m \times n$, $p \times q$, $r \times s$, respectively. Both sides are $mpr \times nqs$ matrices. By definition, the $(i,j)$ block of $A \otimes B$ is $a_{ij}B$. Therefore, the $(i,j)$ macro-block of $(A \otimes B) \otimes C$ is $(a_{ij}B) \otimes C$. Since $a_{ij}$ is a scalar, we can factor it out to yield $a_{ij}(B \otimes C)$. This expression is precisely the $(i,j)$ block of $A \otimes (B \otimes C)$. Because all corresponding blocks are identical, the two matrices are equal.
+
+\emph{Distributivity.} The $(i,j)$ block of $(A + B) \otimes (C + D)$ is
+\[
+(a_{ij} + b_{ij})(C + D) = a_{ij}C + a_{ij}D + b_{ij}C + b_{ij}D,
+\]
+which is the sum of the $(i,j)$ blocks of $A \otimes C$, $A \otimes D$, $B \otimes C$, and $B \otimes D$. % [cite: 82]
+
+\emph{Mixed-product property.} Let $A$ be $m \times n$, $B$ be $p \times q$, $C$ be $n \times s$, and $D$ be $q \times t$. Both sides are $mp \times st$ matrices. Writing the product $(A \otimes B)(C \otimes D)$ in block form, the $(i,k)$ block (of size $p \times t$) is
+\[
+\sum_{j=1}^{n} (a_{ij}B)(c_{jk}D) = \Bigl(\sum_{j=1}^{n} a_{ij}c_{jk}\Bigr) BD = (AC)_{ik}\, BD,
+\]
+which is exactly the $(i,k)$ block of $AC \otimes BD$. % [cite: 83, 84]
+\end{proof}
+
+\begin{exercise}\label{exer:1}
+For any two column vectors $a$ and $b$ (not necessarily of the same order), we have
+\[
+a \otimes b' = ab' = b' \otimes a.
+\]
+\end{exercise}
+
+\begin{solution}
+This follows, in essence, from the fact that a vector $x$ can be written as $x \otimes 1$ and also as $1 \otimes x$. % [cite: 86]
+Define elementary vectors $e_i$ ($m \times 1$) and $u_j$ ($n \times 1$), where $m$ and $n$ are the orders of $a$ and $b$, respectively. Then,
+\begin{align*}
+e_i'(a \otimes b')u_j &= (e_i' \otimes 1)(a \otimes b')(1 \otimes u_j)
+= (e_i'a) \otimes (b'u_j) = a_i b_j = (ab')_{ij}, \\
+e_i'(b' \otimes a)u_j &= (1 \otimes e_i')(b' \otimes a)(u_j \otimes 1)
+= (b'u_j) \otimes (e_i'a) = b_j a_i = (ab')_{ij},
+\end{align*}
+using Proposition~\ref{prp:3}. % [cite: 87, 88]
+\end{solution}
+
+The transpose, trace, and inverse of the Kronecker product are given in the next proposition. % [cite: 89]
+
+\begin{proposition}\label{prp:4}
+We have
+\begin{align*}
+(A \otimes B)' &= A' \otimes B', \\
+\tr(A \otimes B) &= (\tr A)(\tr B), \\
+(A \otimes B)^{-1} &= A^{-1} \otimes B^{-1},
+\end{align*}
+where $A$ and $B$ are assumed to be square in the second equality and nonsingular in the third equality. % [cite: 90]
+\end{proposition}
+
+\begin{proof}
+\emph{Transpose.}
+The $(i,j)$ block of $A \otimes B$ is $a_{ij}B$.
+The transpose exchanges blocks: the $(j,i)$ block of $(A \otimes B)'$ is $(a_{ij}B)' = a_{ij}B'$.
+But the $(j,i)$ block of $A' \otimes B'$ is $(A')_{ji} B' = a_{ij} B'$.
+Since all blocks agree: $(A \otimes B)' = A' \otimes B'$.
+
+\emph{Trace.}
+The $i$th diagonal block of $A \otimes B$ is $a_{ii}B$ (a $p \times p$ matrix).
+The trace of $A \otimes B$ is the sum of the traces of its diagonal blocks:
+\[
+\tr(A \otimes B) = \sum_{i=1}^m \tr(a_{ii}B) = \sum_{i=1}^m a_{ii} \tr B = (\tr A)(\tr B).
+\]
+
+\emph{Inverse.}
+This follows from Proposition~\ref{prp:3} by writing
+\[
+(A \otimes B)(A^{-1} \otimes B^{-1}) = (AA^{-1}) \otimes (BB^{-1}) = I_m \otimes I_n = I_{mn},
+\]
+where $A$ has order $m \times m$, and $B$ has order $n \times n$. % [cite: 91, 92]
+\end{proof}
+
+\subsection{The vec operator}\label{sec:2.4}
+
+Consider an $m \times n$ matrix $A$. This matrix has $n$ columns, say $a_1, \dots, a_n$. We can transform the matrix into a vector by defining the $mn \times 1$ vector $\avec A$ as the vector which stacks the columns of $A$ one underneath the other:
+\begin{equation}\label{eq:3}
+\avec A = \begin{pmatrix} a_1 \\ a_2 \\ \vdots \\ a_n \end{pmatrix}.
+\end{equation}
+The vec operator is not the only operator that transforms a matrix into a vector. We could also take the rows of $A$ and stack them one underneath the other, but the vec transformation is now the most common. % [cite: 95, 96]
+
+\begin{exercise}\label{exer:2}
+If
+\[
+A = \begin{pmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \end{pmatrix},
+\]
+then what is $\avec A$? And what is $\avec A'$?
+\end{exercise}
+
+\begin{solution}
+We have $\avec A = (1, 4, 2, 5, 3, 6)'$ and $\avec A' = (1, 2, 3, 4, 5, 6)'$. % [cite: 98]
+\end{solution}
+
+The vec operator and the trace are related through the following result. % [cite: 99]
+
+\begin{proposition}\label{prp:5}
+If $A$ and $B$ are matrices of the same order, then
+\[
+(\avec A)'(\avec B) = \tr A'B.
+\]
+\end{proposition}
+
+\begin{proof}
+The product $(\avec A)'(\avec B)$ multiplies the corresponding elements in $A$ and $B$ and adds them together, so that $(\avec A)'(\avec B) = \sum_{ij} a_{ij} b_{ij}$. But this is precisely the expression for $\tr A'B$ by the proof of Proposition~\ref{prp:1}. % [cite: 101, 102]
+\end{proof}
+
+\begin{exercise}\label{exer:3}
+If $a$ and $b$ are vectors of arbitrary order, show that
+\[
+\avec ab' = b \otimes a.
+\]
+\end{exercise}
+
+\begin{solution}
+The $j$th column of $ab'$ is given by $b_j a$. % [cite: 104]
+\end{solution}
+
+The previous exercise relates the Kronecker product and the vec operator. Its generalization is an important and frequently used tool. % [cite: 105]
+
+\begin{proposition}\label{prp:6}
+For any matrices $A$, $B$, and $C$ for which the product $ABC$ is defined, we have
+\[
+\avec ABC = (C' \otimes A) \avec B.
+\]
+\end{proposition}
+
+\begin{proof}
+Using Exercise~\ref{exer:3}, we see that
+\[
+\avec(Abe'C) = \avec\bigl((Ab)(C'e)'\bigr) = (C'e) \otimes (Ab)
+= (C' \otimes A)(e \otimes b) = (C' \otimes A) \avec(be')
+\]
+for any vectors $b$ and $e$. Then, writing $B = \sum_j b_j e_j'$ where $b_j$ and $e_j$ denote the $j$th column of $B$ and $I$, respectively, the result follows. % [cite: 106, 107]
+\end{proof}
+
+\subsection{The commutation matrix}\label{sec:2.5}
+
+Let $A$ be an $m \times n$ matrix. The vectors $\avec A$ and $\avec A'$ contain the same $mn$ elements, but in a different order. % [cite: 108, 109]
+Hence, there exists a unique $mn \times mn$ matrix, which transforms $\avec A$ into $\avec A'$. This matrix contains $mn$ ones and $mn(mn-1)$ zeros and is called the commutation matrix, denoted by $K_{mn}$. % [cite: 110, 111]
+Thus,
+\begin{equation}\label{eq:4}
+K_{mn} \avec A = \avec A'.
+\end{equation}
+If $m = n$, we write $K_n$ instead of $K_{nn}$. The commutation matrix is a square matrix with exactly one entry of~$1$ in each row and each column with all other entries~$0$. (Such matrices are called permutation matrices.) % [cite: 112, 113]
+
+\begin{exercise}\label{exer:4}
+Show that $\tr K_n = n$.
+\end{exercise}
+
+\begin{solution}
+If $A$ is a square matrix of order $n \times n$, then its $i$th diagonal element is placed in the same position in $\avec A$ as in $\avec A'$. Hence, the $i$th diagonal block of $K_n$ has $1$ in the $ii$th position and zeros elsewhere. Summing up the diagonal elements of $K_n$ thus adds $1$ for each block, that is, $n$ in total. % [cite: 115, 116, 117]
+\end{solution}
+
+\begin{proposition}\label{prp:7}
+The commutation matrix satisfies
+\[
+K'_{mn} = K^{-1}_{mn} = K_{nm}.
+\]
+\end{proposition}
+
+\begin{proof}
+All permutation matrices are orthogonal, hence $K'_{mn} = K^{-1}_{mn}$. Also, premultiplying~\eqref{eq:4} by $K_{nm}$ gives $K_{nm} K_{mn} \avec A = \avec A$, which shows that $K_{nm} K_{mn} = I_{mn}$. % [cite: 118, 119]
+\end{proof}
+
+The key property of the commutation matrix enables us to interchange (commute) the two matrices of a Kronecker product. % [cite: 120]
+
+\begin{proposition}\label{prp:8}
+\[
+K_{pm}(A \otimes B) = (B \otimes A)K_{qn}
+\]
+for any $m \times n$ matrix $A$ and $p \times q$ matrix $B$.
+\end{proposition}
+
+\begin{proof}
+This is easiest shown, not by proving a matrix identity but by proving that the effect of the two matrices on an arbitrary vector is the same, in the spirit of Proposition~\ref{prp:2}(i). Thus, let $X$ be an arbitrary $q \times n$ matrix. Then, by repeated application of~\eqref{eq:4} and Proposition~\ref{prp:6},
+\[
+K_{pm}(A \otimes B) \avec X = K_{pm} \avec BXA' = \avec AX'B' = (B \otimes A) \avec X' = (B \otimes A) K_{qn} \avec X.
+\]
+Since $X$ is arbitrary, the result follows. % [cite: 122, 123, 124]
+\end{proof}
+
+\begin{exercise}\label{exer:5}
+Let $N_n = (I_{n^2} + K_n)/2$. Show that $N_n$ is symmetric idempotent and that $N_n(A \otimes A) = (A \otimes A) N_n$ for every $n \times n$ matrix $A$.
+\end{exercise}
+
+\begin{solution}
+Since $K_n$ is symmetric and orthogonal by Proposition~\ref{prp:7}, we have $K_n^2 = I_{n^2}$ and hence $N_n = N_n' = N_n^2$. Also, using Proposition~\ref{prp:8}, $K_n(A \otimes A) = (A \otimes A)K_n$ and hence $N_n(A \otimes A) = (A \otimes A)N_n$. % [cite: 126, 127]
+\end{solution}
+
+\subsection{The duplication matrix}\label{sec:2.6}
+
+Many matrices in statistics and econometrics are symmetric. When we differentiate with respect to symmetric matrices, we must take the symmetry into account and we need the duplication matrix. Let $A$ be a square $n \times n$ matrix. Then $\vech(A)$ (the `vec-half' operator) denotes the $\frac{1}{2}n(n+1) \times 1$ vector that is obtained from $\avec A$ by eliminating all elements of $A$ above the diagonal. % [cite: 128, 129, 130]
+
+For example, when $n = 3$, crossing out the elements above the diagonal,
+\[
+\begin{pmatrix}
+a_{11} & \cancel{a_{12}} & \cancel{a_{13}} \\
+a_{21} & a_{22} & \cancel{a_{23}} \\
+a_{31} & a_{32} & a_{33}
+\end{pmatrix},
+\]
+and vectorizing the remaining elements, we obtain
+\[
+\vech(A) = (a_{11}, a_{21}, a_{31}, a_{22}, a_{32}, a_{33})'.
+\]
+In this way, for symmetric $A$, $\vech(A)$ contains only the generically distinct elements of $A$. Since the elements of $\avec A$ are those of $\vech(A)$ with some repetitions, there exists a unique $n^2 \times \frac{1}{2}n(n+1)$ matrix which transforms, for symmetric $A$, $\vech(A)$ into $\avec A$. This matrix is called the duplication matrix and is denoted by $D_n$. % [cite: 132, 133, 134]
+Thus,
+\begin{equation}\label{eq:5}
+D_n \vech(A) = \avec A \qquad (A = A').
+\end{equation}
+The matrix $D_n$ has full column rank $\frac{1}{2}n(n+1)$, so that $D_n'D_n$ is nonsingular. This implies that $\vech(A)$ can be uniquely solved from~\eqref{eq:5}, and we have
+\begin{equation}\label{eq:6}
+\vech(A) = (D_n'D_n)^{-1} D_n' \avec A \qquad (A = A').
+\end{equation}
+
+\begin{proposition}\label{prp:9}
+The duplication matrix is connected to the commutation matrix by
+\[
+K_n D_n = D_n, \qquad
+D_n (D_n'D_n)^{-1} D_n' = \frac{1}{2}(I_{n^2} + K_n).
+\]
+\end{proposition}
+
+\begin{proof}
+Let $X$ be a symmetric $n \times n$ matrix. Then,
+\[
+K_n D_n \vech(X) = K_n \avec X = \avec X = D_n \vech(X).
+\]
+The symmetry of $X$ does not restrict $\vech(X)$, which is therefore arbitrary. Hence, the first result follows. % [cite: 138, 139]
+To prove the second result, let
+\[
+M_n = D_n(D_n'D_n)^{-1}D_n', \qquad N_n = \tfrac{1}{2}(I_{n^2} + K_n), \qquad \Delta_n = M_n - N_n.
+\]
+Both $M_n$ and $N_n$ are symmetric idempotent, the latter by Exercise~\ref{exer:5}. Since $K_n D_n = D_n$, we have $M_n N_n = N_n M_n = M_n$, so that $\Delta_n$ is also symmetric idempotent. % [cite: 141, 142]
+Now,
+\[
+\tr M_n = \tr I_{n(n+1)/2} = n(n+1)/2 = (n^2 + n)/2 = \tr N_n,
+\]
+since $\tr K_n = n$ (Exercise~\ref{exer:4}). This gives $\rank(\Delta_n) = \tr \Delta_n = 0$, and hence $\Delta_n = 0$. % [cite: 143, 144]
+\end{proof}
+
+Much of the interest in the duplication matrix is due to the importance of the matrix $D_n'(A \otimes A)D_n$, caused by the fact that, for symmetric $X$, the scalar expression $\tr AXA'X$ occurs frequently in statistics and econometrics; see Exercise~\ref{exer:28} and Section~\ref{sec:13}. % [cite: 145]
+
+\begin{proposition}\label{prp:10}
+Let $A$ be an $n \times n$ matrix, not necessarily symmetric. The matrix $D_n'(A \otimes A)D_n$ satisfies the following properties:
+\begin{align*}
+D_n(D_n'D_n)^{-1}D_n'(A \otimes A)D_n &= (A \otimes A)D_n, \\
+(D_n'(A \otimes A)D_n)^{-1} &= (D_n'D_n)^{-1} D_n'(A^{-1} \otimes A^{-1})D_n(D_n'D_n)^{-1}, \\
+|D_n'(A \otimes A)D_n| &= 2^{\frac{1}{2}n(n-1)} |A|^{n+1},
+\end{align*}
+where $A$ is assumed to be nonsingular in the second equality. % [cite: 148]
+\end{proposition}
+
+\begin{proof}
+The first result follows from Exercise~\ref{exer:5} and $N_n D_n = D_n$. To prove the second result we write
+\begin{align*}
+&D_n'(A \otimes A)D_n (D_n'D_n)^{-1} D_n'(A^{-1} \otimes A^{-1})D_n(D_n'D_n)^{-1} \\
+&\quad= D_n'(A \otimes A)(A^{-1} \otimes A^{-1})D_n(D_n'D_n)^{-1} \\
+&\quad= D_n'D_n(D_n'D_n)^{-1} = I_{n(n+1)/2}.
+\end{align*}
+To prove the third result, we use the multiplicative property of the determinant:
+\[
+|D_n'(A \otimes A)D_n| = |D_n'D_n| \, |(D_n'D_n)^{-1} D_n'(A \otimes A)D_n|,
+\]
+and evaluate the two determinants on the right-hand side separately.
+
+First, consider the matrix $D_n'D_n$. The duplication matrix $D_n$ has mutually orthogonal columns, each corresponding to a distinct element of an $n \times n$ symmetric matrix. For the $n$ diagonal elements, the corresponding column in $D_n$ contains exactly one entry of $1$, giving a squared norm of $1$. For the $\frac{1}{2}n(n-1)$ off-diagonal elements, symmetry dictates that the corresponding column contains exactly two entries of $1$, giving a squared norm of $2$. Therefore, $D_n'D_n$ is a diagonal matrix with $n$ ones and $\frac{1}{2}n(n-1)$ twos on its diagonal, yielding
+\[
+|D_n'D_n| = 2^{\frac{1}{2}n(n-1)}.
+\]
+
+Second, consider the linear operator $L = (D_n'D_n)^{-1}D_n'(A \otimes A)D_n$. For any symmetric matrix $X$, we have $D_n \vech(X) = \avec X$. Applying $L$ gives
+\[
+L \vech(X) = (D_n'D_n)^{-1}D_n'(A \otimes A)\avec X = (D_n'D_n)^{-1}D_n'\avec(AXA').
+\]
+Since $AXA'$ is symmetric, $(D_n'D_n)^{-1}D_n'\avec(AXA') = \vech(AXA')$. Thus, $L$ acts on the half-vectorization space exactly as the transformation $X \mapsto AXA'$ acts on the space of symmetric matrices.
+
+To find the determinant of $L$, we calculate its eigenvalues. Let $\lambda_1, \dots, \lambda_n$ be the eigenvalues of $A$ with corresponding eigenvectors $v_1, \dots, v_n$ (assuming $A$ is diagonalizable). For $1 \leqslant j \leqslant i \leqslant n$, define the symmetric matrix $V_{ij} = v_i v_j' + v_j v_i'$. Applying the transformation yields
+\[
+A V_{ij} A' = (Av_i)(Av_j)' + (Av_j)(Av_i)' = \lambda_i \lambda_j (v_i v_j' + v_j v_i') = \lambda_i \lambda_j V_{ij}.
+\]
+The $\frac{1}{2}n(n+1)$ matrices $V_{ij}$ are linearly independent and hence form a basis for the space of $n \times n$ symmetric matrices. The eigenvalues of $L$ are therefore $\lambda_i \lambda_j$ ($1 \leqslant j \leqslant i \leqslant n$). A specific eigenvalue $\lambda_k$ appears $k-1$ times when $i=k$ and $j<k$, $n-k$ times when $j=k$ and $i>k$, and contributes a power of $2$ when $i=j=k$ (since $\lambda_k \lambda_k = \lambda_k^2$). Its total exponent is $(k-1) + (n-k) + 2 = n+1$. Because this is true for all $k=1, \dots, n$, we obtain
+\[
+|(D_n'D_n)^{-1} D_n'(A \otimes A)D_n| = \prod_{k=1}^n \lambda_k^{n+1} = |A|^{n+1}.
+\]
+Multiplying the two determinants together completes the proof:
+\[
+|D_n'(A \otimes A)D_n| = 2^{\frac{1}{2}n(n-1)} |A|^{n+1}.
+\]
+(For non-diagonalizable $A$, the identity extends by continuity, since diagonalizable matrices are dense in $\mathbb{R}^{n \times n}$ and both sides are polynomial functions of the entries of $A$.)
+\end{proof}
+
+%----------------------------------------------------------------------
+\subsection{The determinant}\label{sec:2.7}
+
+We include in this section some background on the determinant, which is not one of the six tools listed above but is needed for the proof of Jacobi's formula~\eqref{eq:30} in Section~\ref{sec:7}.
+
+\begin{definition}\label{def:det}
+Let $A$ be an $n \times n$ matrix. The \emph{determinant} of $A$ is defined as
+\begin{equation}\label{eq:det}
+|A| = \sum_{\sigma \in S_n} \operatorname{sgn}(\sigma)\, a_{1,\sigma(1)}\, a_{2,\sigma(2)} \cdots a_{n,\sigma(n)},
+\end{equation}
+where $S_n$ is the set of all $n!$ permutations of $\{1, 2, \dots, n\}$, and $\operatorname{sgn}(\sigma) = +1$ if $\sigma$ is an even permutation (expressible as a product of an even number of transpositions), and $\operatorname{sgn}(\sigma) = -1$ if $\sigma$ is odd.
+\end{definition}
+
+Each term in the sum picks exactly one entry from each row and each column. An important consequence of the definition is that $|A'| = |A|$:
+\[
+|A'| = \sum_{\sigma} \operatorname{sgn}(\sigma)\, a_{\sigma(1),1}\, a_{\sigma(2),2}\cdots a_{\sigma(n),n}
+= \sum_{\sigma} \operatorname{sgn}(\sigma) \prod_{k=1}^n a_{\sigma(k),k}.
+\]
+Substitute $\rho = \sigma^{-1}$, so that $\sigma(k) = \rho^{-1}(k)$ and $\operatorname{sgn}(\sigma) = \operatorname{sgn}(\rho)$. The product becomes $\prod_{k} a_{\rho^{-1}(k),\, k}$. Re-index by setting $m = \rho^{-1}(k)$, i.e., $k = \rho(m)$:
+\[
+|A'| = \sum_{\rho} \operatorname{sgn}(\rho) \prod_{m=1}^n a_{m,\,\rho(m)} = |A|.
+\]
+
+\begin{proposition}\label{prp:row_swap}
+Interchanging two rows (or columns) of $A$ multiplies the determinant by $-1$.
+\end{proposition}
+
+\begin{proof}
+Let $B$ be obtained from $A$ by swapping rows $r$ and $s$ ($r \neq s$), so that $b_{k,j} = a_{\tau(k),j}$ for all $k, j$, where $\tau = (r\; s)$ is the transposition of $r$ and $s$. Then
+\[
+|B| = \sum_{\sigma} \operatorname{sgn}(\sigma) \prod_{k=1}^n a_{\tau(k),\sigma(k)}.
+\]
+Substitute $k' = \tau(k)$. Since $\tau$ is a bijection and $\tau^{-1} = \tau$, as $k$ ranges over $\{1, \dots, n\}$ so does $k'$, and $\sigma(k) = \sigma(\tau(k'))$. Defining $\sigma' = \sigma \circ \tau$:
+\[
+\prod_{k=1}^n a_{\tau(k),\sigma(k)} = \prod_{k'=1}^n a_{k',\sigma(\tau(k'))} = \prod_{k'=1}^n a_{k',\sigma'(k')}.
+\]
+Since $\sigma \mapsto \sigma' = \sigma \circ \tau$ is a bijection on $S_n$ and $\operatorname{sgn}(\sigma) = \operatorname{sgn}(\sigma' \circ \tau^{-1}) = \operatorname{sgn}(\sigma')\operatorname{sgn}(\tau) = -\operatorname{sgn}(\sigma')$:
+\[
+|B| = \sum_{\sigma'} (-\operatorname{sgn}(\sigma')) \prod_{k'=1}^n a_{k',\sigma'(k')} = -|A|. \qedhere
+\]
+\end{proof}
+
+\begin{corollary}\label{cor:identical_rows}
+If two rows (or columns) of $A$ are identical, then $|A| = 0$.
+\end{corollary}
+
+\begin{proof}
+Swapping the two identical rows leaves $A$ unchanged, but multiplies $|A|$ by $-1$. Hence $|A| = -|A|$, giving $|A| = 0$.
+\end{proof}
+
+We now define cofactors and state the Laplace expansion. Given $A = (a_{ij})$ of order $n$, the \emph{$(i,j)$-minor} $M_{ij}$ is the determinant of the $(n-1) \times (n-1)$ matrix obtained by deleting row~$i$ and column~$j$ from $A$. The \emph{$(i,j)$-cofactor} is
+\[
+C_{ij} = (-1)^{i+j} M_{ij}.
+\]
+
+\begin{proposition}[Laplace expansion]\label{prp:laplace}
+For any fixed row $i$:
+\begin{equation}\label{eq:laplace_row}
+|A| = \sum_{j=1}^{n} a_{ij}\, C_{ij} = \sum_{j=1}^{n} (-1)^{i+j}\, a_{ij}\, M_{ij}.
+\end{equation}
+Similarly, for any fixed column $j$:
+\begin{equation}\label{eq:laplace_col}
+|A| = \sum_{i=1}^{n} a_{ij}\, C_{ij}.
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+We prove the row expansion in two steps.
+
+\emph{Step~1: Expansion along row~$1$.}
+Group the terms in~\eqref{eq:det} by the value $j = \sigma(1)$:
+\[
+|A| = \sum_{j=1}^{n} a_{1j} \sum_{\substack{\sigma \in S_n \\ \sigma(1)=j}} \operatorname{sgn}(\sigma) \prod_{k=2}^{n} a_{k,\sigma(k)}.
+\]
+We must show that the inner sum equals $(-1)^{1+j} M_{1j}$.
+
+Fix $j$ and consider a permutation $\sigma \in S_n$ with $\sigma(1) = j$. The restriction of $\sigma$ to $\{2, \dots, n\}$ is a bijection onto $\{1, \dots, n\} \setminus \{j\}$. Re-index this set as $\{1, \dots, n-1\}$ via the order-preserving map $\psi_j$, and define $\tau \in S_{n-1}$ by $\tau(r) = \psi_j(\sigma(r+1))$. The product becomes
+\[
+\prod_{k=2}^{n} a_{k,\sigma(k)} = \prod_{r=1}^{n-1} \hat{a}_{r,\tau(r)},
+\]
+where $\hat{a}_{r,s}$ are the entries of the $(n-1) \times (n-1)$ matrix $A^{(1j)}$ (row~$1$ and column~$j$ deleted). The map $\sigma \mapsto \tau$ is a bijection from $\{\sigma \in S_n : \sigma(1) = j\}$ to $S_{n-1}$.
+
+The signs are related by $\operatorname{sgn}(\sigma) = (-1)^{j-1}\, \operatorname{sgn}(\tau)$. To see this, observe that $\sigma$ can be reconstructed from $\tau$ in two stages: first, embed $\tau$ as a permutation $\hat{\tau} \in S_n$ that fixes position~$1$ and acts on positions $\{2, \dots, n\}$ in the natural way (preserving sign); second, compose with the $j-1$ adjacent transpositions $(1\;2)(2\;3)\cdots(j{-}1\;j)$, which move the value $j$ from position~$j$ to position~$1$. These $j - 1$ transpositions contribute a sign of $(-1)^{j-1}$.
+
+Hence the inner sum equals
+\[
+(-1)^{j-1} \sum_{\tau \in S_{n-1}} \operatorname{sgn}(\tau) \prod_{r=1}^{n-1} \hat{a}_{r,\tau(r)} = (-1)^{j-1}\, M_{1j}.
+\]
+Since $(-1)^{j-1} = (-1)^{1+j}$, we obtain $|A| = \sum_{j=1}^{n} (-1)^{1+j}\, a_{1j}\, M_{1j}$. $\checkmark$
+
+\emph{Step~2: General row $i$.}
+Starting from $A$, swap row~$i$ with row~$i-1$, then with row~$i-2$, and so on, until it reaches row~$1$. This requires $i - 1$ adjacent row swaps, so by Proposition~\ref{prp:row_swap}:
+\[
+|A| = (-1)^{i-1}\, |\tilde{A}|,
+\]
+where $\tilde{A}$ has the original row~$i$ in position~$1$, with the remaining rows in their original relative order. The $(1,j)$-minor of $\tilde{A}$ equals $M_{ij}$ (the $(i,j)$-minor of the original $A$), because the remaining rows below row~$1$ in $\tilde{A}$ are rows $1, \dots, i{-}1, i{+}1, \dots, n$ of $A$, in their original order. Applying Step~1 to $\tilde{A}$:
+\[
+|\tilde{A}| = \sum_{j=1}^{n} (-1)^{1+j}\, a_{ij}\, M_{ij}.
+\]
+Hence:
+\[
+|A| = (-1)^{i-1} \sum_{j=1}^{n} (-1)^{1+j}\, a_{ij}\, M_{ij} = \sum_{j=1}^{n} (-1)^{i+j}\, a_{ij}\, M_{ij}.
+\]
+The column expansion~\eqref{eq:laplace_col} follows by applying~\eqref{eq:laplace_row} to $A'$ and using $|A'| = |A|$.
+\end{proof}
+
+Two important consequences follow from the Laplace expansion.
+
+\begin{proposition}\label{prp:cofactor_inverse}
+For a nonsingular matrix $A$, the inverse is given by
+\[
+A^{-1} = \frac{1}{|A|}\, (C_{ji}),
+\]
+where $(C_{ji})$ denotes the $n \times n$ matrix whose $(i,j)$-entry is $C_{ji}$ (the cofactor matrix, transposed). Equivalently, $(A^{-1})_{ji} = C_{ij}/|A|$.
+\end{proposition}
+
+\begin{proof}
+Define the matrix $B$ with entries $B_{ij} = C_{ji}$. We need to show that $AB = |A| I$, i.e., $(AB)_{ik} = |A|\, \delta_{ik}$.
+\[
+(AB)_{ik} = \sum_{j=1}^{n} a_{ij}\, B_{jk} = \sum_{j=1}^{n} a_{ij}\, C_{kj}.
+\]
+If $i = k$: this is the Laplace expansion of $|A|$ along row $i$, so $(AB)_{ii} = |A|$.
+
+If $i \neq k$: this is the Laplace expansion along row~$k$ of a matrix $\tilde{A}$ that agrees with $A$ except that row~$k$ has been replaced by row~$i$. Since $\tilde{A}$ has two identical rows ($i$ and~$k$), $|\tilde{A}| = 0$ by Corollary~\ref{cor:identical_rows}. Hence $(AB)_{ik} = 0$. $\checkmark$
+\end{proof}
+
+\begin{corollary}\label{cor:partial_det}
+For any entry $x_{ij}$ of a square matrix $X$:
+\[
+\frac{\partial |X|}{\partial x_{ij}} = C_{ij}.
+\]
+\end{corollary}
+
+\begin{proof}
+From the Laplace expansion along row~$i$: $|X| = \sum_{k} x_{ik} C_{ik}$. Since $C_{ik}$ depends only on entries outside row~$i$ and column~$k$, the cofactor $C_{ij}$ does not depend on $x_{ij}$. Hence $\partial|X|/\partial x_{ij} = C_{ij}$.
+\end{proof}
+
+%% ============================================================
+\section{The definition of matrix derivative}\label{sec:3}
+
+Matrix calculus uses six tools (discussed in the previous section) and it rests on two pillars: the correct definition of a matrix derivative and the concept of a differential. In the current section I discuss how to define a matrix derivative; in the next section I introduce differentials. % [cite: 153, 154]
+Let $x$ ($n \times 1$) and $y$ ($m \times 1$) be two vectors and let $y$ be a function of $x$, say $y = f(x)$. What is the derivative of $y$ with respect to $x$? Let us first consider the linear equation $y = f(x) = Ax$, where $A$ is an $m \times n$ matrix of constants. % [cite: 156, 157]
+The derivative is $A$ and we write
+\begin{equation}\label{eq:7}
+\frac{\partial f(x)}{\partial x'} = A.
+\end{equation}
+The notation $\partial f(x)/\partial x'$ is just notation, nothing else. We sometimes write the derivative as $Df(x)$ or as $f'(x)$, but we only use the latter notation if it does not cause confusion with the transpose. The proposed notation emphasizes that we differentiate an $m \times 1$ column vector $f$ with respect to a $1 \times n$ row vector $x'$, resulting in an $m \times n$ derivative matrix. % [cite: 158, 159, 160]
+More generally, the derivative of $f(x)$ is an $m \times n$ matrix containing all partial derivatives $\partial f_i(x)/\partial x_j$, but in a specific ordering, namely
+\begin{equation}\label{eq:8}
+\frac{\partial f(x)}{\partial x'} = \begin{pmatrix}
+\partial f_1(x)/\partial x_1 & \partial f_1(x)/\partial x_2 & \dots & \partial f_1(x)/\partial x_n \\
+\partial f_2(x)/\partial x_1 & \partial f_2(x)/\partial x_2 & \dots & \partial f_2(x)/\partial x_n \\
+\vdots & \vdots & & \vdots \\
+\partial f_m(x)/\partial x_1 & \partial f_m(x)/\partial x_2 & \dots & \partial f_m(x)/\partial x_n
+\end{pmatrix}.
+\end{equation}
+There is only one definition of a vector derivative, and this is it. Of course, one can organize the $mn$ partial derivatives in different ways, but these other combinations of the partial derivatives are not derivatives, have no practical use, and should be avoided. % [cite: 162, 163]
+Notice that each row of the derivative in~\eqref{eq:8} contains the partial derivatives of one element of $f$ with respect to all elements of $x$, and that each column contains the partial derivatives of all elements of $f$ with respect to one element of $x$. This is an essential characteristic of the derivative. As a consequence, the derivative of a scalar function, such as $y = a'x$ (where $a$ is a vector of constants), is a row vector; in this case, $a'$. So the derivative of $a'x$ is $a'$, not $a$. % [cite: 164, 165, 166]
+
+The essence of the concept derivative must be preserved when we generalize from vector functions $f(x)$ to matrix functions $F(X)$. While it is tempting to keep the structure of the matrices $X$ and $F$ intact --- and this line of thought was the original idea about matrix derivatives at the end of the 1960s --- it was not until the early 1980s that we realized that this is the wrong generalization, since it does not maintain the concept of derivative; see \cite{Magnus2010} for further discussion on the concept of matrix derivative and \cite{Magnus2024} for a sketch of the historical development. % [cite: 167, 168, 169]
+We now understand that when we have a collection of functions and a collection of variables, which may be organized in matrices (such as $F$ and $X$) or otherwise, then what is required is a one-dimensional ordering of the functions and of the variables, for which we choose $\avec F$ and $\avec X$, because these are now the most common vectorizations. In fact, which vectorization we choose is irrelevant, we may even use a different vectorization for $F$ and for $X$, although this would be confusing and is not recommended. % [cite: 170, 171]
+However, once we have chosen our vectorization, we must stick to it, so that the derivative
+\begin{equation}\label{eq:9}
+\frac{\partial \avec F(X)}{\partial(\avec X)'}
+\end{equation}
+has the essential property that each row contains the partial derivatives of one element of $F$ with respect to all elements of $X$, and that each column contains the partial derivatives of all elements of $F$ with respect to one element of $X$. This is the only correct definition of a matrix derivative. % [cite: 172, 173]
+
+%% ============================================================
+\section{The differential}\label{sec:4}
+
+\subsection{Definition, notation, and rules}\label{sec:4.1}
+
+If $f$ is a scalar function of one variable, such as $f(x) = x^2$, then we define the differential $\dd f(x)$ at a point $x$ as the linear function (of $u$)
+\begin{equation}\label{eq:10}
+\dd f(x)(u) = f'(x) u,
+\end{equation}
+where $x$ is a point where the derivative $f'(x)$ exists and $u$ is an arbitrary point in $\mathbb{R}$. The differential is closely related to the derivative, but the two concepts are not the same: the differential is a geometric concept, while the derivative is an algebraic concept, representing the differential by some number (the slope or the Jacobian). % [cite: 174, 175]
+
+\begin{exercise}\label{exer:6}
+Show that
+\begin{align*}
+f(x) = x &\implies \dd f(x)(u) = u, \\
+f(x) = x^2 &\implies \dd f(x)(u) = 2xu, \\
+f(x) = \sin(x) &\implies \dd f(x)(u) = \cos(x)\, u, \\
+f(x) = \sin^2(x) &\implies \dd f(x)(u) = 2\sin(x)\cos(x)\, u.
+\end{align*}
+\end{exercise}
+
+\begin{solution}
+These results follow directly from the definition in~\eqref{eq:10}, where in the last case we apply the chain rule:
+\[
+\frac{\dd\sin^2(x)}{\dd x} = \frac{\dd\sin^2(x)}{\dd\sin(x)} \cdot \frac{\dd\sin(x)}{\dd x} = 2\sin(x)\cos(x).
+\]
+\end{solution}
+
+Exercise~\ref{exer:6} shows that the differential associated with the identity function $f(x) = x$ is given by $\dd x(u) = u$. Hence, $\dd f(x)(u) = f'(x)\, \dd x(u)$, or for short,
+\begin{equation}\label{eq:11}
+\dd f(x) = f'(x)\, \dd x,
+\end{equation}
+which is the notation we shall use hereafter. % [cite: 178, 179]
+
+\begin{exercise}\label{exer:7}
+Show that
+\begin{align*}
+\dd x^2 &= 2x\, \dd x, \\
+\dd\sin(x) &= \cos(x)\, \dd x, \\
+\dd\sin^2(x) &= 2\sin(x)\cos(x)\, \dd x.
+\end{align*}
+\end{exercise}
+
+\begin{solution}
+This follows immediately from the previous exercise by replacing $u$ with $\dd x$. % [cite: 181]
+\end{solution}
+
+The differential is an operator, in fact a linear operator, and it obeys the following simple rules:
+\begin{equation}\label{eq:12}
+\begin{aligned}
+\dd a &= 0, & & (a \text{ constant}), \\
+\dd(ax) &= a\, \dd x & & (a \text{ constant}), \\
+\dd(f(x) + g(x)) &= \dd f(x) + \dd g(x), \\
+\dd(f(x)\, g(x)) &= (\dd f(x))\, g(x) + f(x)\, \dd g(x).
+\end{aligned}
+\end{equation}
+
+\subsection{Cauchy's rule of invariance}\label{sec:4.2}
+
+The chain rule, well-known for derivatives, also applies to differentials and is then called Cauchy's rule of invariance. Cauchy's rule states that taking differentials of functions preserves composition. Formally, if $z = h(x) = f(g(x))$ is the composition of the functions $y = g(x)$ and $z = f(y)$, then $\dd y = g'(x)\, \dd x$ and $\dd z = f'(y)\, \dd y$, so that
+\begin{equation}\label{eq:13}
+\dd z = f'(y)\, \dd y = f'(y) g'(x)\, \dd x = f'(g(x))\, g'(x)\, \dd x.
+\end{equation}
+
+\begin{exercise}\label{exer:8}
+Use Cauchy's rule of invariance to find the differentials of the functions $\sin^2(x)$, $e^{x^2}$, and $e^{\sin(x^2)}$.
+\end{exercise}
+
+\begin{solution}
+We have
+\begin{align*}
+\dd\sin^2(x) &= 2\sin(x)\, \dd\sin(x) = 2\sin(x)\cos(x)\, \dd x, \\
+\dd e^{x^2} &= e^{x^2}\, \dd x^2 = 2e^{x^2} x\, \dd x, \\
+\dd e^{\sin(x^2)} &= e^{\sin(x^2)}\, \dd\sin(x^2) = e^{\sin(x^2)} \cos(x^2)\, \dd x^2
+= 2x\, e^{\sin(x^2)} \cos(x^2)\, \dd x.
+\end{align*}
+Notice the subtle difference between the derivation of $\dd\sin^2(x)$ here, compared with Exercises~\ref{exer:6} and~\ref{exer:7}. In Exercise~\ref{exer:6} we used the chain rule, while here we use Cauchy's rule of invariance. The latter is simpler. % [cite: 188, 189]
+\end{solution}
+
+Cauchy's rule, like the chain rule, is a key instrument in differential calculus. Suppose we realize that $x$ in the function $\sin^2(x)$ depends on $t$, say $x = t^2$. Then, we do not need to compute the differential of $\sin^2(t^2)$ all over again. Instead, we write simply
+\[
+\dd\sin^2(t^2) = 2\sin(t^2)\cos(t^2)\, \dd t^2 = 4t\sin(t^2)\cos(t^2)\, \dd t.
+\]
+Cauchy's rule thus allows us to apply the rules of calculus sequentially, one after another. If we know the derivative then we can compute the differential. For our purposes we need the opposite: to compute the derivative from the differential. This is possible, because
+\begin{equation}\label{eq:14}
+\dd f(x) = \alpha(x)\, \dd x \iff f'(x) = \alpha(x),
+\end{equation}
+where $\alpha$ may depend on $x$, but not on $\dd x$. % [cite: 196, 197]
+Eq.~\eqref{eq:14} is a special case of the first identification theorem (Proposition~\ref{prp:11}). It shows that we can identify the derivative from the differential (and vice versa), and it shows that the concept differential is equivalent to the familiar concept derivative. % [cite: 198, 199]
+
+\subsection{Vector functions}\label{sec:4.3}
+
+So far we have only concerned ourselves with scalar functions of one variable, and the reader may wonder why we bother to introduce differentials. They do not seem to have a great advantage over the more familiar derivatives. This may be true for scalar functions of one variable, but it is not true for vector functions of several variables, to which we now turn. % [cite: 200, 201, 202]
+
+\begin{remark}\label{rem:diff_dim}
+The key practical advantage of working with differentials is that it preserves the order of the function. For an $m \times 1$ vector function $f(x)$, the derivative $Df(x)$ is an $m \times n$ matrix, but the differential $\dd f(x)$ has the same dimension as $f$, namely $m \times 1$. This dimensionality preservation is the foundational justification for using differentials when we generalize from vectors to matrices.
+\end{remark}
+
+Thus, let $f$ now denote an $m \times 1$ vector function of an $n \times 1$ vector $x$. The derivative $Df(x)$ is an $m \times n$ matrix, but the differential $\dd f(x)$ has the same dimension as $f$, namely $m \times 1$. The differential of a vector function $f$ is defined as
+\begin{equation}\label{eq:15}
+\dd f(x)(u) = (Df(x))\, u,
+\end{equation}
+generalizing~\eqref{eq:10}, where, as in the one-dimensional case, the identity function $f(x) = x$ gives $\dd x(u) = u$, which allows us to write
+\begin{equation}\label{eq:16}
+\dd f(x) = (Df(x))\, \dd x,
+\end{equation}
+generalizing~\eqref{eq:11}. % [cite: 206, 207]
+
+\begin{exercise}\label{exer:9}
+Find the differential of the function $f(x) = x_1^2 x_2$.
+\end{exercise}
+
+\begin{solution}
+We have
+\[
+\dd f(x) = \frac{\partial f(x)}{\partial x_1}\, \dd x_1 + \frac{\partial f(x)}{\partial x_2}\, \dd x_2
+= 2x_1 x_2\, \dd x_1 + x_1^2\, \dd x_2,
+\]
+where we note that both $f(x)$ and $\dd f(x)$ are scalars. % [cite: 209]
+\end{solution}
+
+The operating rules~\eqref{eq:12} concerning scalar functions of one variable generalize straightforwardly to vector functions of several variables, and we have
+\begin{equation}\label{eq:17}
+\begin{aligned}
+\dd a &= 0, & \dd(x') &= (\dd x)', & \dd(a'x) &= a'\, \dd x, \\
+\dd(x+y) &= \dd x + \dd y, & \dd(x'y) &= (\dd x)'y + x'\, \dd y,
+\end{aligned}
+\end{equation}
+where $x$ and $y$ are vectors and $a$ is a vector of real constants, all of the same order. In Exercise~\ref{exer:9} we found the differential by first calculating the derivative, but our purpose is to find the derivative by first calculating the differential. This would work like this. % [cite: 210, 211]
+
+\begin{exercise}\label{exer:10}
+Find again the differential of the function $f(x) = x_1^2 x_2$ without first calculating the partial derivatives.
+\end{exercise}
+
+\begin{solution}
+Using the operating rules, we write
+\[
+\dd f(x) = \dd(x_1^2 x_2) = (\dd x_1^2) x_2 + x_1^2 (\dd x_2)
+= 2x_1 x_2\, \dd x_1 + x_1^2\, \dd x_2
+= (2x_1 x_2,\; x_1^2) \begin{pmatrix} \dd x_1 \\ \dd x_2 \end{pmatrix},
+\]
+from which we find the derivative as $Df(x) = (2x_1 x_2,\; x_1^2)$. % [cite: 213]
+\end{solution}
+
+\subsection{First identification theorem}\label{sec:4.4}
+
+By identifying the derivative from the differential, we have generalized the identification result~\eqref{eq:14} from scalar functions of one variable to vector functions of several variables. This one-to-one relationship is formally stated as follows. % [cite: 214, 215]
+
+\begin{proposition}[First Identification Theorem]\label{prp:11}
+\[
+\dd f(x) = A(x)\, \dd x \iff Df(x) = A(x).
+\]
+\end{proposition}
+
+\begin{proof}
+($\Rightarrow$) By definition~\eqref{eq:16}, $\dd f(x) = (Df(x))\, \dd x$. Since we also have $\dd f(x) = A(x)\, \dd x$, it follows that $(Df(x) - A(x))\, \dd x = 0$ for all $\dd x$. By Proposition~\ref{prp:2}(i), $Df(x) - A(x) = 0$.
+
+($\Leftarrow$) If $Df(x) = A(x)$, then~\eqref{eq:16} gives $\dd f(x) = A(x)\, \dd x$ directly.
+\end{proof}
+
+Let us apply Proposition~\ref{prp:11} to linear and quadratic functions, the most frequently used functions in statistics and econometrics. % [cite: 216]
+
+\begin{exercise}\label{exer:11}
+Find the derivative of the linear function $a'x$, where $a$ is a vector of constants, and of the quadratic function $x'Ax$, where $A$ is a square matrix of constants.
+\end{exercise}
+
+\begin{solution}
+Writing out all the steps (which one would not normally do), we have
+\begin{align*}
+\dd(a'x) &= (\dd a)'x + a'(\dd x) = a'\, \dd x, \\
+\dd(x'Ax) &= (\dd x)'Ax + x'(\dd A)x + x'A(\dd x) \\
+&= x'A'\, \dd x + x'A\, \dd x = x'(A + A')\, \dd x,
+\end{align*}
+where we used the fact that the differential of a constant is $0$, and also the fact that the transpose of a scalar is the same scalar, so that $(\dd x)'Ax = x'A'\, \dd x$. % [cite: 218]
+Hence, the derivatives are
+\[
+\frac{\partial a'x}{\partial x'} = a', \qquad
+\frac{\partial x'Ax}{\partial x'} = x'(A + A'),
+\]
+and in the special case where $A$ is symmetric, the derivative of $x'Ax$ is $2x'A$. In either case, the derivative is a row vector, not a column vector. % [cite: 219, 220]
+\end{solution}
+
+\subsection{Cauchy invariance for vector functions}\label{sec:4.5}
+
+Now suppose that $z = f(y)$ and that $y = g(x)$, so that $z = f(g(x))$. Then,
+\begin{equation}\label{eq:18}
+\frac{\partial z}{\partial x'} = \frac{\partial z}{\partial y'} \frac{\partial y}{\partial x'}.
+\end{equation}
+This is the chain rule for vector functions. The corresponding result for differentials is the following. % [cite: 222, 223]
+
+\begin{proposition}[Cauchy Invariance]\label{prp:12}
+Let $z = f(y)$ and $y = g(x)$, so that $z = f(g(x))$. Then,
+\[
+\dd z = A(y) B(x)\, \dd x,
+\]
+where $A(y)$ and $B(x)$ are defined through
+\[
+\dd z = A(y)\, \dd y, \qquad \dd y = B(x)\, \dd x.
+\]
+\end{proposition}
+
+\begin{proof}
+By the definition of the vector differential, we have $\dd z = (Dz(x))\, \dd x$.
+
+Using the standard chain rule for vector functions, $Dz(x) = Df(y) Dg(x)$. From the premises of the proposition, we know $\dd z = A(y)\, \dd y$ and $\dd y = B(x)\, \dd x$. Applying the First Identification Theorem (Proposition~\ref{prp:11}) to these differentials yields $Df(y) = A(y)$ and $Dg(x) = B(x)$. 
+
+Substituting these derivative matrices into the chain rule gives $Dz(x) = A(y) B(x)$. Finally, substituting this composite derivative back into the definition of the differential for $z$ yields
+\[
+\dd z = (Dz(x))\, \dd x = A(y) B(x)\, \dd x. \qedhere
+\]
+\end{proof}
+
+In practice, we avoid introducing a new variable $z$ or a new function $h(x) = f(g(x))$, and we write $f(y)$ when we think of $z$ as a function of $y$ and we write $f(x)$ when we think of $z$ as a function of $x$. With this convention, Proposition~\ref{prp:12} can be reformulated as
+\begin{equation}\label{eq:19}
+\dd f(x) = A(y) B(x)\, \dd x,
+\end{equation}
+where $\dd f(y) = A(y)\, \dd y$ and $\dd y = \dd g(x) = B(x)\, \dd x$. % [cite: 226]
+Such abuses of notation are very common in mathematics when one has to balance pedantic correctness and readability. In fact, the chain rule~\eqref{eq:18} is typically written as $\partial f(x)/\partial x' = (\partial f(y)/\partial y')(\partial y/\partial x')$, without anybody complaining about it. % [cite: 227, 228]
+
+\begin{exercise}\label{exer:12}
+Find the derivative of
+\[
+f(x) = \begin{pmatrix} x_1^2 - x_2^2 \\ x_1 x_2 x_3 \end{pmatrix}, \qquad
+x = (x_1, x_2, x_3)'.
+\]
+\end{exercise}
+
+\begin{solution}
+The differential is
+\begin{align*}
+\dd f(x) &= \begin{pmatrix} \dd(x_1^2) - \dd(x_2^2) \\ \dd(x_1 x_2 x_3) \end{pmatrix}
+= \begin{pmatrix} 2x_1\, \dd x_1 - 2x_2\, \dd x_2 \\ (\dd x_1) x_2 x_3 + x_1 (\dd x_2) x_3 + x_1 x_2\, \dd x_3 \end{pmatrix} \\
+&= \begin{pmatrix} 2x_1 & -2x_2 & 0 \\ x_2 x_3 & x_1 x_3 & x_1 x_2 \end{pmatrix}
+\begin{pmatrix} \dd x_1 \\ \dd x_2 \\ \dd x_3 \end{pmatrix},
+\end{align*}
+which identifies the derivative as
+\[
+\frac{\partial f(x)}{\partial x'}
+= \begin{pmatrix} 2x_1 & -2x_2 & 0 \\ x_2 x_3 & x_1 x_3 & x_1 x_2 \end{pmatrix}.
+\]
+\end{solution}
+
+\begin{exercise}\label{exer:13}
+Let
+\[
+f(y) = e^{y_1} \sin(y_2), \qquad y_1 = x_1 x_2^2, \qquad y_2 = x_1^2 x_2.
+\]
+Find the derivative of $f$ with respect to $x = (x_1, x_2)'$.
+\end{exercise}
+
+\begin{solution}
+Using the notational convention~\eqref{eq:19}, we write
+\[
+\dd f(y) = (\dd e^{y_1})\sin(y_2) + e^{y_1}\, \dd\sin(y_2)
+= e^{y_1}\sin(y_2)\, \dd y_1 + e^{y_1}\cos(y_2)\, \dd y_2 = a(y)'\, \dd y,
+\]
+where
+\[
+a(y) = e^{y_1} \begin{pmatrix} \sin(y_2) \\ \cos(y_2) \end{pmatrix}, \qquad
+\dd y = \begin{pmatrix} \dd y_1 \\ \dd y_2 \end{pmatrix}.
+\]
+Also,
+\[
+\dd y = \begin{pmatrix} x_2^2 & 2x_1 x_2 \\ 2x_1 x_2 & x_1^2 \end{pmatrix}
+\begin{pmatrix} \dd x_1 \\ \dd x_2 \end{pmatrix} = B(x)\, \dd x.
+\]
+Hence,
+\[
+\dd f(x) = a(y)'\, \dd y = a(y)' B(x)\, \dd x = c_1\, \dd x_1 + c_2\, \dd x_2,
+\]
+where
+\begin{align*}
+c_1 &= x_2 e^{y_1}\bigl(x_2 \sin(y_2) + 2x_1 \cos(y_2)\bigr), \\
+c_2 &= x_1 e^{y_1}\bigl(x_1 \cos(y_2) + 2x_2 \sin(y_2)\bigr),
+\end{align*}
+so that the derivative is $\partial f(x)/\partial x' = (c_1, c_2)$. % [cite: 235]
+\end{solution}
+
+%% ============================================================
+\section{Optimization}\label{sec:5}
+
+Let $f(x)$ be a scalar function that we wish to optimize with respect to an $n \times 1$ vector $x$. We achieve this by first computing the differential $\dd f(x) = a(x)'\, \dd x$, and then setting $a(x) = 0$. % [cite: 236, 237]
+
+\begin{exercise}\label{exer:14}
+Minimize the function
+\[
+f(x) = \tfrac{1}{2} x'Ax - b'x,
+\]
+where the matrix $A$ is positive definite.
+\end{exercise}
+
+\begin{solution}
+The differential is
+\[
+\dd f(x) = x'A\, \dd x - b'\, \dd x = (Ax - b)'\, \dd x,
+\]
+since a positive definite matrix is symmetric, by definition. The solution $\hat{x}$ needs to satisfy $A\hat{x} - b = 0$, and hence $\hat{x} = A^{-1}b$. % [cite: 241]
+The function $f$ has an absolute minimum at $\hat{x}$, which can be seen by defining $y = x - \hat{x}$ and writing
+\[
+y'Ay = (x - A^{-1}b)'A(x - A^{-1}b) = 2f(x) + b'A^{-1}b.
+\]
+Since $A$ is positive definite, $y'Ay$ has a minimum at $y = 0$ and hence $f(x)$ has a minimum at $x = \hat{x}$. Alternatively, we note that $f(x)$ is strictly convex and use the fact that any (strictly) convex function attains a (strict) absolute minimum. % [cite: 243, 244]
+\end{solution}
+
+Next suppose there is a constraint, say $g(x) = 0$. Then we need to optimize subject to the constraint, and we need Lagrangian theory. This works as follows. First define the Lagrangian function (the Lagrangian)
+\begin{equation}\label{eq:20}
+\mathcal{L}(x) = f(x) - \lambda g(x),
+\end{equation}
+where $\lambda$ is the Lagrange multiplier. Then we obtain the differential of $\mathcal{L}(x)$ with respect to $x$,
+\begin{equation}\label{eq:21}
+\dd\mathcal{L}(x) = \dd f(x) - \lambda\, \dd g(x),
+\end{equation}
+and set it equal to zero. % [cite: 247, 248]
+The equations
+\begin{equation}\label{eq:22}
+\frac{\partial f(x)}{\partial x'} = \lambda \frac{\partial g(x)}{\partial x'}, \qquad g(x) = 0
+\end{equation}
+are the first-order conditions. From these $n+1$ equations in $n+1$ unknowns ($x$ and $\lambda$), we solve $x$ and $\lambda$. % [cite: 249]
+
+\begin{exercise}\label{exer:15}
+Let $A$ be positive definite. Minimize the function
+\[
+f(x) = \tfrac{1}{2} x'Ax - b'x,
+\]
+subject to the constraint $c'x = 0$.
+\end{exercise}
+
+%\begin{solution}
+%We write the Lagrangian as
+%\[
+%\mathcal{L}(x) = \tfrac{1}{2} x'Ax - b'x - \lambda c'x.
+%\]
+%The differential of $\mathcal{L}(x)$ is
+%\[
+%\dd\mathcal{L}(x) = (Ax - b)'\, \dd x - \lambda c'\, \dd x = (Ax - b - \lambda c)'\, \dd x,
+%\]
+%from which we obtain the first-order conditions $Ax - b - \lambda c = 0$ and $c'x = 0$. This gives $x = A^{-1}(b + \lambda c)$ and hence $0 = c'x = c'A^{-1}(b + \lambda c)$. % [cite: 253, 254]
+%We then solve $\tilde{\lambda} = -c'A^{-1}b / c'A^{-1}c$, so that the constrained optimum is achieved at
+%\[
+%\tilde{x} = A^{-1}(b + \tilde{\lambda} c) = A^{-1}b - \frac{c'A^{-1}b}{c'A^{-1}c}\, A^{-1}c.
+%\]
+\begin{solution}
+We write the Lagrangian as
+\[
+\mathcal{L}(x) = \tfrac{1}{2} x'Ax - b'x - \lambda c'x.
+\]
+The differential of $\mathcal{L}(x)$ is
+\[
+\dd\mathcal{L}(x) = (Ax - b)'\, \dd x - \lambda c'\, \dd x = (Ax - b - \lambda c)'\, \dd x,
+\]
+from which we obtain the first-order conditions $Ax - b - \lambda c = 0$ and $c'x = 0$. % [cite: 319, 320]
+This gives $Ax = b + \lambda c$, and isolating $x$ yields $x = A^{-1}(b + \lambda c)$.
+We then substitute this expression for $x$ into the constraint equation $c'x = 0$:
+\[
+0 = c'A^{-1}(b + \lambda c) = c'A^{-1}b + \lambda c'A^{-1}c.
+\]
+Notice that $c'A^{-1}b$ and $c'A^{-1}c$ are both scalars. Since $A$ is positive definite, $c'A^{-1}c > 0$, allowing us to isolate the Lagrange multiplier $\lambda$:
+\[
+\lambda c'A^{-1}c = -c'A^{-1}b \implies \tilde{\lambda} = -\frac{c'A^{-1}b}{c'A^{-1}c}.
+\]
+Substituting $\tilde{\lambda}$ back into the equation for $x$ yields the constrained optimum:
+\[
+\tilde{x} = A^{-1}(b + \tilde{\lambda} c) = A^{-1}b - \frac{c'A^{-1}b}{c'A^{-1}c}\, A^{-1}c.
+\]
+Alternatively, we can write the first-order conditions as
+\[
+\begin{pmatrix} A & c \\ c' & 0 \end{pmatrix}
+\begin{pmatrix} x \\ -\lambda \end{pmatrix}
+= \begin{pmatrix} b \\ 0 \end{pmatrix}
+\]
+and solve for $x$ and $-\lambda$ by inverting the matrix on the left-hand side. Notice that by expressing the equation in $x$ and $-\lambda$ (rather than $x$ and $\lambda$) I achieve symmetry of the matrix on the left-hand side. Symmetric matrices are easier, both theoretically and computationally, than non-symmetric matrices, so, if possible, we work with symmetric matrices. % [cite: 257, 258]
+Either way, since $f(x)$ is linear-quadratic (hence strictly convex) and the constraint is linear, $f(x)$ attains an absolute minimum at $\tilde{x}$ under the constraint. % [cite: 259]
+\end{solution}
+
+If the constraint $g$ is a vector rather than a scalar, then we have not one but several (say, $m$) constraints. In that case we need $m$ multipliers and it works like this. First, define the Lagrangian
+\begin{equation}\label{eq:23}
+\mathcal{L}(x) = f(x) - l' g(x),
+\end{equation}
+where $l = (\lambda_1, \lambda_2, \dots, \lambda_m)'$ is a vector of Lagrange multipliers. Then, we obtain the differential of $\mathcal{L}(x)$ with respect to $x$:
+\begin{equation}\label{eq:24}
+\dd\mathcal{L}(x) = \dd f(x) - l'\, \dd g(x)
+\end{equation}
+and set it equal to zero. % [cite: 262, 263]
+The equations
+\begin{equation}\label{eq:25}
+\frac{\partial f(x)}{\partial x'} = l' \frac{\partial g(x)}{\partial x'}, \qquad g(x) = 0
+\end{equation}
+constitute $n + m$ equations (the first-order conditions). If we can solve these equations, then we obtain the solutions, say $\hat{x}$ and $\hat{l}$. % [cite: 264, 265]
+
+\begin{exercise}\label{exer:16}
+Show that optimizing a function subject to constraints is not equivalent to optimizing the Lagrangian function.
+\end{exercise}
+
+\begin{solution}
+A simple counterexample is provided by the optimization problem: $\max(xy)$ under the constraint $x + y = 2$. The solution is $x = y = 1$, but the Lagrangian $\mathcal{L}(x, y) = xy - \lambda(x + y - 2)$ has a saddle-point at $(1, 1)$. % [cite: 267, 268]
+\end{solution}
+
+The Lagrangian method gives necessary conditions for a local constrained extremum to occur at a given point $\hat{x}$. But how do we know that this point is in fact a maximum or a minimum? Sufficient conditions are available but they may be difficult to verify. However, in the often occurring situation where $\mathcal{L}(x)$ is (strictly) convex, as in Exercises~\ref{exer:14} and~\ref{exer:15}, $f(x)$ attains a (strict) absolute minimum at the solution $\hat{x}$ under the constraint $g(x) = 0$. % [cite: 271, 272]
+Notice that the Lagrangian $\mathcal{L}(x,y)$ in Exercise~\ref{exer:16} is not convex, because $\partial \mathcal{L}(x,y)/\partial x = y - \lambda$ and $\partial \mathcal{L}(x,y)/\partial y = x - \lambda$, so that the Hessian takes the form
+\[
+H\mathcal{L}(x,y) = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix},
+\]
+which is not positive semidefinite. % [cite: 273]
+
+%% ============================================================
+\section{Example 1: Least squares}\label{sec:6}
+
+Suppose we are given an $n \times k$ matrix $A$ with linearly independent columns, so that $\rank(A) = k$, and an $n \times 1$ vector $b$. We wish to find a $k \times 1$ vector $x$, such that $Ax$ is `as close as possible' to $b$ in the sense that the `error' vector $e = b - Ax$ is minimized. A convenient scalar measure of the `error' would be $e'e$ and our objective is to minimize
+\begin{equation}\label{eq:26}
+f(x) = \frac{e'e}{2} = \frac{(b - Ax)'(b - Ax)}{2},
+\end{equation}
+where we note that we write $e'e/2$ rather than $e'e$. This makes no difference, since any $x$ which minimizes $e'e$ will also minimize $e'e/2$, but it is a common trick, useful because we know that we are minimizing a quadratic function, so that a $2$ will appear in the derivative. The $1/2$ neutralizes this $2$. % [cite: 276, 277]
+
+Differentiating $f(x)$ in~\eqref{eq:26} gives
+\[
+\dd f(x) = e'\, \dd e = e'\, \dd(b - Ax) = -e'A\, \dd x.
+\]
+Hence, the optimum is obtained when $A'e = 0$, that is, when $A'Ax = A'b$, from which we obtain
+\begin{equation}\label{eq:27}
+\hat{x} = (A'A)^{-1} A'b,
+\end{equation}
+the least-squares solution. % [cite: 279]
+If there are constraints on $x$, say $Rx = r$, then we need to solve
+\begin{equation}\label{eq:28}
+\text{minimize } f(x) \quad \text{subject to } Rx = r.
+\end{equation}
+We assume that the $m$ rows of $R$ are linearly independent, and define the Lagrangian
+\[
+\mathcal{L}(x) = (b - Ax)'(b - Ax)/2 - l'(Rx - r),
+\]
+where $l$ is a vector of Lagrange multipliers. % [cite: 281]
+
+\begin{exercise}\label{exer:17}
+Show that the matrix $V = R(A'A)^{-1}R'$ is nonsingular if and only if the $m$ rows of $R$ are linearly independent.
+\end{exercise}
+
+\begin{solution}
+Let $B = R(A'A)^{-1/2}$, so that $\rank(B) = \rank(R)$. Since $V = BB'$, it follows that $\rank(V) = \rank(B)$, and hence that $\rank(V) = \rank(R)$. Since $V$ is an $m \times m$ matrix, it is nonsingular if and only if $\rank(V) = m$, that is, if and only if $\rank(R) = m$. % [cite: 283, 284]
+\end{solution}
+
+We now write the differential of $\mathcal{L}(x)$ as
+\begin{align*}
+\dd\mathcal{L}(x) &= \dd(b-Ax)'(b-Ax)/2 - l'\, \dd(Rx - r) \\
+&= (b-Ax)'\, \dd(b-Ax) - l'R\, \dd x \\
+&= -(b-Ax)'A\, \dd x - l'R\, \dd x.
+\end{align*}
+Setting the differential equal to zero and denoting the solutions by $\tilde{x}$ and $\tilde{l}$, we obtain the first-order conditions
+\[
+(b - A\tilde{x})'A + \tilde{l}'R = 0, \qquad R\tilde{x} = r,
+\]
+or, written differently,
+\[
+A'A\tilde{x} - A'b = R'\tilde{l}, \qquad R\tilde{x} = r.
+\]
+We do not know $\tilde{x}$ but we know $R\tilde{x}$. Hence, we premultiply by $R(A'A)^{-1}$. Letting $\hat{x} = (A'A)^{-1}A'b$ as in~\eqref{eq:27}, this gives
+\[
+r - R\hat{x} = R(A'A)^{-1}R'\tilde{l}.
+\]
+Since we have assumed that $R$ has full row rank, we can solve for $l$:
+\[
+\tilde{l} = \bigl(R(A'A)^{-1}R'\bigr)^{-1}(r - R\hat{x}),
+\]
+and hence for $x$:
+\begin{equation}\label{eq:29}
+\tilde{x} = \hat{x} + (A'A)^{-1}R'\bigl(R(A'A)^{-1}R'\bigr)^{-1}(r - R\hat{x}).
+\end{equation}
+Since the constraint is linear and the function $f(x)$ is linear-quadratic, it follows that the solution $\tilde{x}$ indeed minimizes $f(x) = e'e/2$ under the constraint $Rx = r$. % [cite: 289, 290]
+
+%% ============================================================
+\section{Matrix calculus}\label{sec:7}
+
+We have moved from scalar calculus to vector calculus, now we move from vector calculus to matrix calculus. The rules for vector differentials in Section~\ref{sec:4} carry over to matrix differentials. Let $A$ be a matrix of constants and let $\alpha$ be a scalar. Then, for any $X$,
+\[
+\dd A = 0, \qquad \dd(\alpha X) = \alpha\, \dd X, \qquad \dd(X') = (\dd X)',
+\]
+and, for square $X$,
+\[
+\dd\tr X = \tr \dd X.
+\]
+If $X$ and $Y$ are of the same order, then
+\[
+\dd(X + Y) = \dd X + \dd Y,
+\]
+and, if the matrix product $XY$ is defined,
+\[
+\dd(XY) = (\dd X)Y + X\, \dd Y.
+\]
+Two less trivial differentials are the determinant and the inverse. For nonsingular $X$ we have
+\begin{equation}\label{eq:30}
+\dd|X| = |X| \tr X^{-1}\, \dd X,
+\end{equation}
+and in particular, when $|X| > 0$,
+\begin{equation}\label{eq:31}
+\dd\log|X| = \frac{\dd|X|}{|X|} = \tr X^{-1}\, \dd X.
+\end{equation}
+
+\begin{proof}[Proof of~\eqref{eq:30}]
+By Corollary~\ref{cor:partial_det}, $\partial|X|/\partial x_{ij} = C_{ij}$. Hence
+\[
+\dd|X| = \sum_{i,j} C_{ij}\, \dd x_{ij}.
+\]
+By Proposition~\ref{prp:cofactor_inverse}, $C_{ij} = |X|\, (X^{-1})_{ji}$. Substituting:
+\begin{align*}
+\dd|X| &= \sum_{i,j} |X|\, (X^{-1})_{ji}\, \dd x_{ij}
+= |X| \sum_{j} \sum_{i} (X^{-1})_{ji}\, \dd x_{ij} \\
+&= |X| \sum_{j} (X^{-1}\, \dd X)_{jj}
+= |X|\, \tr X^{-1}\, \dd X. \qedhere
+\end{align*}
+\end{proof}
+The differential of the inverse is, for nonsingular $X$,
+\begin{equation}\label{eq:32}
+\dd X^{-1} = -X^{-1}(\dd X)X^{-1}.
+\end{equation}
+This we can prove easily by considering the equation $X^{-1}X = I$. Differentiating both sides gives
+\[
+(\dd X^{-1})X + X^{-1}\, \dd X = 0
+\]
+and the result then follows by postmultiplying with $X^{-1}$. If we use the correct definition of matrix derivative (but only then), all results from vector calculus carry over to matrix calculus. % [cite: 299, 300]
+In particular, the first equivalence theorem for vector functions (Proposition~\ref{prp:11}) now becomes
+\begin{equation}\label{eq:33}
+\dd\avec F(X) = A(X)\, \dd\avec X \iff DF(X) = A(X).
+\end{equation}
+The same holds for the chain rule. More precisely, if $Z = F(Y)$ and $Y = G(X)$, so that $Z = F(G(X))$, then
+\[
+\dd Z = A(Y) B(X)\, \dd X,
+\]
+where $A(Y)$ and $B(X)$ are defined through
+\[
+\dd Z = A(Y)\, \dd Y, \qquad \dd Y = B(X)\, \dd X,
+\]
+as in Proposition~\ref{prp:12}. % [cite: 301, 302]
+Constrained optimization, treated for vector functions in Section~\ref{sec:5}, can easily and elegantly be extended to matrix constraints. If we have a matrix $G$ (rather than a vector $g$) of constraints and a matrix $X$ (rather than a vector $x$) of variables, then we define a matrix of multipliers $L = (\lambda_{ij})$ of the same dimension as $G = (g_{ij})$. The Lagrangian then becomes
+\begin{equation}\label{eq:34}
+\mathcal{L}(X) = f(X) - \tr L'G(X),
+\end{equation}
+where we have used the fact, as in the proof of Proposition~\ref{prp:1}, that
+\[
+\tr L'G = \sum_i \sum_j \lambda_{ij} g_{ij}.
+\]
+If the constraint matrix $G$ is symmetric, we may take the matrix of Lagrange multipliers to be symmetric as well. % [cite: 305, 306]
+
+\begin{exercise}\label{exer:18}
+Consider the optimization problem
+\[
+\text{minimize } f(X) \quad \text{subject to } G(X) = 0.
+\]
+If $G(X)$ is symmetric for all $X$, then the Lagrangian function is
+\[
+\mathcal{L}(X) = f(X) - \tr LG(X),
+\]
+where $L$ may be assumed to be symmetric.
+\end{exercise}
+
+\begin{solution}
+Since $G$ is symmetric, we have
+\[
+\tr L'G = \tr L'G' = \tr(GL)' = \tr GL = \tr LG,
+\]
+so that $\tr L'G = \tr L^* G$, where $L^* = (L + L')/2$ is symmetric. % [cite: 308]
+\end{solution}
+
+From the Lagrangian~\eqref{eq:34} we obtain the differential
+\begin{equation}\label{eq:35}
+\dd\mathcal{L}(X) = \dd f(X) - \tr L'\, \dd G(X),
+\end{equation}
+and, setting the differential equal to $0$, we obtain the first-order conditions
+\begin{equation}\label{eq:36}
+\frac{\partial f(X)}{\partial(\avec X)'} = (\avec L)' \frac{\partial \avec G(X)}{\partial(\avec X)'}, \qquad G(X) = 0,
+\end{equation}
+using Proposition~\ref{prp:5} and the fact that
+\[
+\tr L'\, \dd G(X) = (\avec L)'\, \dd\avec G(X) = (\avec L)' \frac{\partial \avec G(X)}{(\partial \avec X)'}\, \dd\avec X.
+\]
+
+%% ============================================================
+\section{Four exercises: first derivative}\label{sec:8}
+
+\begin{exercise}\label{exer:19}
+Obtain the derivative of the scalar function $f(X) = \tr X'AX$.
+\end{exercise}
+
+%\begin{solution}
+%The differential is
+%\begin{align*}
+%\dd f(X) &= \dd(\tr X'AX) = \tr \dd(X'AX) \\
+%&= \tr(\dd X)'AX + \tr X'A\, \dd X = \tr X'(A + A')\, \dd X \\
+%&= \tr C'\, \dd X = (\avec C)'\, \dd\avec X,
+%\end{align*}
+%using Proposition~\ref{prp:5} and letting $C = (A + A')X$. Hence the derivative is $Df(X) = (\avec C)'$. % [cite: 310]
+%\end{solution}
+
+\begin{solution}
+The differential is
+\begin{align*}
+\dd f(X) &= \dd(\tr X'AX) = \tr \dd(X'AX) \\
+&= \tr(\dd X)'AX + \tr X'A\, \dd X.
+\end{align*}
+To combine these terms, we use the property that the trace of a matrix equals the trace of its transpose ($\tr M = \tr M'$). Applying this to the first term gives:
+\[
+\tr\bigl((\dd X)'AX\bigr) = \tr\bigl(((\dd X)'AX)'\bigr) = \tr(X'A'\, \dd X).
+\]
+Substituting this back into the differential, we can factor out $X'$ and $\dd X$:
+\begin{align*}
+\dd f(X) &= \tr X'A'\, \dd X + \tr X'A\, \dd X \\
+&= \tr X'(A + A')\, \dd X \\
+&= \tr C'\, \dd X = (\avec C)'\, \dd\avec X,
+\end{align*}
+using Proposition~\ref{prp:5} and letting $C = (A + A')X$. % 
+Hence the derivative is $Df(X) = (\avec C)'$.
+\end{solution}
+
+\begin{exercise}\label{exer:20}
+Obtain the derivative of the scalar function $f(X) = \log|X'X|$, where $X$ has full column rank.
+\end{exercise}
+
+\begin{solution}
+From the differential
+\begin{align*}
+\dd f(X) &= \dd\log|X'X| = \tr(X'X)^{-1} \dd(X'X) \\
+&= \tr(X'X)^{-1}(\dd X)'X + \tr(X'X)^{-1}X'\, \dd X = 2\tr(X'X)^{-1}X'\, \dd X \\
+&= 2\tr C'\, \dd X = 2(\avec C)'\, \dd\avec X,
+\end{align*}
+where $C = X(X'X)^{-1}$, we obtain $Df(X) = 2(\avec C)'$. % [cite: 312]
+\end{solution}
+
+\begin{exercise}\label{exer:21}
+Let $f_k(X) = \tr X^k$ $(k = 1, 2, \dots)$. Find the derivative.
+\end{exercise}
+
+\begin{solution}
+We have
+\begin{align*}
+\dd f_k(X) &= \tr(\dd X)X^{k-1} + \tr X(\dd X)X^{k-2} + \dots + \tr X^{k-1}\, \dd X \\
+&= k\tr X^{k-1}\, \dd X = k(\avec X'^{k-1})'\, \dd\avec X.
+\end{align*}
+This gives $Df_k(X) = k(\avec X'^{k-1})'$. In particular,
+\[
+Df_1(X) = D\tr X = (\avec I)', \qquad Df_2(X) = D\tr X^2 = 2(\avec X')'.
+\]
+\end{solution}
+
+\begin{exercise}\label{exer:22}
+Find the derivative of the matrix equation $F(X) = AX^{-1}B$, where $X$ is nonsingular.
+\end{exercise}
+
+%\begin{solution}
+%Since
+%\[
+%\dd F(X) = A(\dd X^{-1})B = -AX^{-1}(\dd X)X^{-1}B,
+%\]
+%we find
+%\[
+%\dd\avec F(X) = -\bigl((X^{-1}B)' \otimes (AX^{-1})\bigr)\, \dd\avec X,
+%\]
+%using Proposition~\ref{prp:6}, so that the derivative is given by
+%\[
+%DF(X) = \frac{\partial \avec F(X)}{\partial(\avec X)'} = -(X^{-1}B)' \otimes (AX^{-1}),
+%\]
+%by the first identification theorem for matrices~\eqref{eq:33}. % [cite: 317]
+%\end{solution}
+
+\begin{solution}
+Since
+\[
+\dd F(X) = A(\dd X^{-1})B = -AX^{-1}(\dd X)X^{-1}B,
+\]
+we need to vectorize this equation to find the derivative. We use Proposition~\ref{prp:6}, which states that $\avec(M_1 M_2 M_3) = (M_3' \otimes M_1) \avec M_2$ for any compatible matrices. % 
+
+By grouping the terms in our differential as $M_1 = -AX^{-1}$, $M_2 = \dd X$, and $M_3 = X^{-1}B$, we find:
+\[
+\dd\avec F(X) = \avec\bigl((-AX^{-1})(\dd X)(X^{-1}B)\bigr) = -\bigl((X^{-1}B)' \otimes (AX^{-1})\bigr)\, \dd\avec X.
+\]
+The derivative is thus identified by the first identification theorem for matrices~\eqref{eq:33} as:
+\[
+DF(X) = \frac{\partial \avec F(X)}{\partial(\avec X)'} = -(X^{-1}B)' \otimes (AX^{-1}).
+\]
+% 
+\end{solution}
+
+%% ============================================================
+\section{The second differential}\label{sec:9}
+
+The second differential is simply the differential of the first differential, that is, $\dd^2 f = \dd(df)$. Higher-order differentials are similarly defined, but they are seldom needed. % [cite: 318]
+
+\begin{exercise}\label{exer:23}
+Let $f(x) = x'Ax$. Show that $\dd^2 f(x) = (\dd x)'(A + A')\, \dd x$.
+\end{exercise}
+
+\begin{solution}
+We know from Exercise~\ref{exer:11} that $\dd f(x) = x'(A + A')\, \dd x$. Then,
+\[
+\dd^2 f(x) = d\bigl(x'(A + A')\, \dd x\bigr) = (\dd x)'(A + A')\, \dd x + x'(A + A')\, \dd^2 x
+= (\dd x)'(A + A')\, \dd x,
+\]
+since $\dd^2 x = 0$. % [cite: 321, 322]
+\end{solution}
+
+\begin{exercise}\label{exer:24}
+Why is $\dd^2 x = 0$?
+\end{exercise}
+
+\begin{solution}
+If $f$ is a function of $x$, then $\dd x$ is short-hand for the differential $\dd x(u) = u$ associated with the identity function, see Section~\ref{sec:4.1}. The first derivative of the identity function is $1$ (if $f$ is a scalar function of one variable), and the second derivative is $0$. Hence $\dd^2 x = 0$. In simpler words, if $f$ is a function of $x$ and $x$ is the `endpoint', then $\dd^2 x = 0$. But if $x$ is only an intermediary variable and in fact $x = x(t)$, then $\dd^2 x$ is not $0$ (unless $x$ is a linear function of $t$). This relationship is further developed and made more precise in Section~\ref{sec:10}. % [cite: 323, 324, 325, 326]
+\end{solution}
+
+The first differential leads to the first derivative (sometimes called the Jacobian matrix) and the second differential leads to the second derivative (called the Hessian matrix). We emphasize that the concept of Hessian matrix is only useful for scalar functions, not for vector or matrix functions. When we have a vector function $f$ we shall consider the Hessian matrix of each component of $f$ separately, and when we have a matrix function $F$ we shall consider the Hessian matrix of each element of $F$ separately. % [cite: 328, 329, 330]
+Thus, let $f$ be a scalar function and let
+\begin{equation}\label{eq:37}
+\dd f(x) = a(x)'\, \dd x, \qquad \dd a(x) = (Hf(x))\, \dd x,
+\end{equation}
+where
+\[
+a(x)' = \frac{\partial f(x)}{\partial x'}, \qquad
+Hf(x) = \frac{\partial a(x)}{\partial x'} = \frac{\partial}{\partial x'} \left(\frac{\partial f(x)}{\partial x'}\right)'.
+\]
+The $ij$th element of the Hessian matrix $Hf(x)$ is thus obtained by first calculating $a_j(x) = \partial f(x)/\partial x_j$ and then $(Hf(x))_{ij} = \partial a_j(x)/\partial x_i$. The Hessian matrix contains all second-order partial derivatives $\partial^2 f(x)/\partial x_i \partial x_j$, and it is symmetric if $f$ is twice differentiable. The Hessian matrix is often written as
+\begin{equation}\label{eq:38}
+Hf(x) = \frac{\partial^2 f(x)}{\partial x\, \partial x'},
+\end{equation}
+where the expression on the right-hand side is a notation, the precise meaning of which is given by
+\begin{equation}\label{eq:39}
+\frac{\partial^2 f(x)}{\partial x\, \partial x'} = \frac{\partial}{\partial x'} \left(\frac{\partial f(x)}{\partial x'}\right)'.
+\end{equation}
+
+Given~\eqref{eq:37} and using the symmetry of $Hf(x)$, we obtain the second differential as
+\begin{equation}\label{eq:40}
+\dd^2 f(x) = (\dd a)'\, \dd x = (\dd x)'\, (Hf(x))\, \dd x,
+\end{equation}
+which shows that the second differential of $f$ is a quadratic form in $\dd x$. Now, suppose that we have obtained $\dd^2 f(x) = (\dd x)' B(x)\, \dd x$. We also know that $\dd^2 f(x) = (\dd x)' Hf(x)\, \dd x$ by the definition of the Hessian. Hence,
+\[
+(\dd x)'\bigl(Hf(x) - B(x)\bigr)\, \dd x = 0
+\]
+for all $\dd x$, where $Hf(x)$ is symmetric, but $B(x)$ is not necessarily symmetric. Does this imply that $Hf(x) = B(x)$? No, it does not, as we have seen in Section~\ref{sec:2.2}. It does, however, imply that
+\[
+(Hf(x) - B(x))' + (Hf(x) - B(x)) = 0,
+\]
+and hence that $Hf(x) = (B(x) + B(x)')/2$, using the symmetry of $Hf(x)$. % [cite: 337, 338, 339, 340]
+This proves the following result.
+
+\begin{proposition}[Second Identification Theorem]\label{prp:13}
+\[
+\dd^2 f(x) = (\dd x)' B(x)\, \dd x \iff Hf(x) = \frac{B(x) + B(x)'}{2}.
+\]
+\end{proposition}
+
+The second identification theorem shows that there is a one-to-one correspondence between second-order differentials and second-order derivatives, but only if we make the matrix $B(x)$ in the quadratic form symmetric. Hence, the second differential identifies the second derivative. % [cite: 342]
+
+\begin{exercise}\label{exer:25}
+Consider again the quadratic function $f(x) = x'Ax$. Find the second differential without writing out the first differential in its final form.
+\end{exercise}
+
+\begin{solution}
+We can start with $\dd f(x) = x'(A + A')\, \dd x$, as in Exercise~\ref{exer:23}, and obtain $\dd^2 f(x) = (\dd x)'(A + A')\, \dd x$. The matrix in the quadratic form is already symmetric, so we obtain directly $Hf(x) = A + A'$. Alternatively --- and this is often quicker --- we differentiate $f$ twice without writing out the first differential in its final form, as follows. From
+\[
+\dd f(x) = (\dd x)'Ax + x'A\, \dd x,
+\]
+we obtain
+\[
+\dd^2 f(x) = 2(\dd x)'A\, \dd x,
+\]
+which immediately identifies the Hessian matrix as $Hf(x) = A + A'$. % [cite: 345, 346, 347, 348]
+\end{solution}
+
+Even with such a simple function as $f(x) = x'Ax$, the advantage and elegance of using differentials is clear. Without differentials we would need to prove first that $\partial a'x/\partial x' = a'$ and $\partial x'Ax/\partial x' = x'(A + A')$, and then use~\eqref{eq:39} to obtain
+\[
+\frac{\partial^2 x'Ax}{\partial x\, \partial x'} = \frac{\partial (x'(A + A'))'}{\partial x'} = \frac{\partial (A + A')x}{\partial x'} = A + A',
+\]
+which is cumbersome in this simple case and not practical in more complex situations. % [cite: 349, 350]
+
+%% ============================================================
+\section{Chain rule for second differentials}\label{sec:10}
+
+Let us now further analyze the question why sometimes $\dd^2 x = 0$ and sometimes $\dd^2 x \neq 0$, first considered in Exercise~\ref{exer:24}. If $f$ is a function of $x$, and $x$ is the argument of interest, then $\dd^2 x = 0$. But if $f$ is a function of $x$, which in turn is a function of $t$, then it is no longer true that $\dd^2 x$ equals zero. % [cite: 351, 352, 353]
+More generally, suppose that $z = f(y)$ and that $y = g(x)$, so that $z = f(g(x))$. Then,
+\[
+\dd z = A(y)\, \dd y
+\]
+and
+\begin{equation}\label{eq:41}
+\dd^2 z = (\dd A)\, \dd y + A(y)\, \dd^2 y.
+\end{equation}
+This is true whether or not $y$ depends on some other variables. If we think of $z$ as a function of $y$, then $\dd^2 y = 0$, but if $y$ depends on $x$ then $\dd^2 y$ is not zero; in fact,
+\[
+\dd y = B(x)\, \dd x, \qquad \dd^2 y = (\dd B)\, \dd x.
+\]
+This leads to the following result. % [cite: 356, 357, 358]
+
+\begin{proposition}[Chain Rule for Second Differentials]\label{prp:14}
+Let $z = f(y)$ and $y = g(x)$, so that $z = f(g(x))$. Then,
+\[
+\dd^2 z = (\dd A) B(x)\, \dd x + A(y)(\dd B)\, \dd x,
+\]
+where $A(y)$ and $B(x)$ are defined through
+\[
+\dd z = A(y)\, \dd y, \qquad \dd y = B(x)\, \dd x.
+\]
+\end{proposition}
+
+\begin{proof}
+We begin with the first differential, $\dd z = A(y)\, \dd y$. The second differential is obtained by taking the differential of the first: $\dd^2 z = \dd(A(y)\, \dd y)$. 
+
+Applying the product rule for differentials yields
+\[
+\dd^2 z = (\dd A(y))\, \dd y + A(y)\, \dd^2 y.
+\]
+We are given that $\dd y = B(x)\, \dd x$. Because $x$ is the independent starting variable, its second differential is zero ($\dd^2 x = 0$). Taking the differential of $\dd y$ gives
+\[
+\dd^2 y = \dd(B(x)\, \dd x) = (\dd B(x))\, \dd x + B(x)\, \dd^2 x = (\dd B(x))\, \dd x.
+\]
+Substituting the expressions for $\dd y$ and $\dd^2 y$ back into the equation for $\dd^2 z$, we obtain
+\[
+\dd^2 z = (\dd A) B(x)\, \dd x + A(y)(\dd B)\, \dd x. \qedhere
+\]
+\end{proof}
+
+Personally, I usually avoid Proposition~\ref{prp:14}. Instead, I express $\dd^2 z$ in terms of $\dd y$ and $\dd^2 y$, as in~\eqref{eq:41}, and proceed from there. Let me give two examples, one using Proposition~\ref{prp:14}, the other not using the proposition. % [cite: 361, 362]
+
+\begin{exercise}\label{exer:26}
+Let
+\[
+f(y_1, y_2) = e^{y_1} \sin(y_2), \qquad y_1 = x_1 x_2^2, \qquad y_2 = x_1^2 x_2.
+\]
+Find the Hessian matrix by using Proposition~\ref{prp:14}.
+\end{exercise}
+
+\begin{solution}
+By Proposition~\ref{prp:14},
+\[
+\dd^2 f(x) = (\dd a)' B(x)\, \dd x + a(y)'(\dd B)\, \dd x,
+\]
+where
+\[
+a(y) = e^{y_1} \begin{pmatrix} \sin(y_2) \\ \cos(y_2) \end{pmatrix}, \qquad
+B(x) = \begin{pmatrix} x_2^2 & 2x_1 x_2 \\ 2x_1 x_2 & x_1^2 \end{pmatrix}.
+\]
+Now, letting
+\[
+C(y) = e^{y_1} \begin{pmatrix} \sin(y_2) & \cos(y_2) \\ \cos(y_2) & -\sin(y_2) \end{pmatrix}
+\]
+and
+\[
+D_1(x) = 2\begin{pmatrix} 0 & x_2 \\ x_2 & x_1 \end{pmatrix}, \qquad
+D_2(x) = 2\begin{pmatrix} x_2 & x_1 \\ x_1 & 0 \end{pmatrix},
+\]
+we obtain
+\[
+\dd a = C(y)\, \dd y = C(y) B(x)\, \dd x
+\]
+and
+\[
+\dd B = (\dd x_1) D_1(x) + (\dd x_2) D_2(x).
+\]
+Let us write $\dd x_1$ and $\dd x_2$ in terms of $\dd x$, which can be done by defining $e_1 = (1, 0)'$ and $e_2 = (0, 1)'$. Then, $\dd x_1 = e_1'\, \dd x$ and $\dd x_2 = e_2'\, \dd x$, and hence
+\begin{align*}
+\dd^2 f(x) &= (\dd a)' B(x)\, \dd x + a(y)'(\dd B)\, \dd x \\
+&= (\dd x)' B(x) C(y) B(x)\, \dd x + a(y)'\bigl((\dd x_1) D_1(x) + (\dd x_2) D_2(x)\bigr)\, \dd x \\
+&= (\dd x)' B(x) C(y) B(x)\, \dd x + (\dd x)' e_1 a(y)' D_1(x)\, \dd x + (\dd x)' e_2 a(y)' D_2(x)\, \dd x \\
+&= (\dd x)'\bigl[B(x) C(y) B(x) + e_1 a(y)' D_1(x) + e_2 a(y)' D_2(x)\bigr]\, \dd x.
+\end{align*}
+Some care is required where to position the scalars $e_1'\, \dd x$ and $e_2'\, \dd x$ in the matrix product. A scalar can be positioned anywhere in a matrix product, but we wish to position the two scalars in such a way that the usual matrix multiplication rules still apply. Having obtained the second differential in the desired form, Proposition~\ref{prp:13} implies that the Hessian is equal to
+\begin{align*}
+Hf(x) &= B(x) C(y) B(x) \\
+&\quad + \tfrac{1}{2}\bigl(e_1 a(y)' D_1(x) + D_1(x) a(y) e_1'\bigr) \\
+&\quad + \tfrac{1}{2}\bigl(e_2 a(y)' D_2(x) + D_2(x) a(y) e_2'\bigr).
+\end{align*}
+\end{solution}
+
+\begin{exercise}\label{exer:27}
+Now find the Hessian matrix, not using Proposition~\ref{prp:14}.
+\end{exercise}
+
+\begin{solution}
+We have
+\[
+\dd f(y) = (\dd e^{y_1})\sin(y_2) + e^{y_1}\, \dd\sin(y_2) = e^{y_1}\sin(y_2)\, \dd y_1 + e^{y_1}\cos(y_2)\, \dd y_2,
+\]
+and hence
+\begin{align*}
+\dd^2 f(y) &= [\dd e^{y_1}]\sin(y_2)\, \dd y_1 + e^{y_1}[\dd\sin(y_2)]\, \dd y_1 + e^{y_1}\sin(y_2)\, \dd^2 y_1 \\
+&\quad + [\dd e^{y_1}]\cos(y_2)\, \dd y_2 + e^{y_1}[\dd\cos(y_2)]\, \dd y_2 + e^{y_1}\cos(y_2)\, \dd^2 y_2 \\
+&= e^{y_1}\sin(y_2)(\dd y_1)^2 + e^{y_1}\cos(y_2)\, \dd y_1\, \dd y_2 + e^{y_1}\sin(y_2)\, \dd^2 y_1 \\
+&\quad + e^{y_1}\cos(y_2)\, \dd y_1\, \dd y_2 - e^{y_1}\sin(y_2)(\dd y_2)^2 + e^{y_1}\cos(y_2)\, \dd^2 y_2,
+\end{align*}
+where we emphasize that $\dd^2 y_1$ and $\dd^2 y_2$ are not $0$, because they depend on $x_1$ and $x_2$. In fact,
+\[
+\dd y_1 = x_2^2\, \dd x_1 + 2x_1 x_2\, \dd x_2, \qquad \dd^2 y_1 = 4x_2\, \dd x_1\, \dd x_2 + 2x_1(\dd x_2)^2,
+\]
+and
+\[
+\dd y_2 = 2x_1 x_2\, \dd x_1 + x_1^2\, \dd x_2, \qquad \dd^2 y_2 = 2x_2(\dd x_1)^2 + 4x_1\, \dd x_1\, \dd x_2.
+\]
+Inserting these expressions into $\dd^2 f(y)$ gives the required result. % [cite: 371, 372, 373]
+\end{solution}
+
+%% ============================================================
+\section{The Hessian matrix}\label{sec:11}
+
+When we move from vector calculus to matrix calculus, we need an ordering of the functions and of the variables. As motivated in Section~\ref{sec:3}, we shall view the matrix function $F(X)$ as a vector function $f(x)$, where $f = \avec F$ and $x = \avec X$. We already obtained in~\eqref{eq:33} the extension of the first identification theorem,
+\[
+\dd\avec F(X) = A(X)\, \dd\avec X \iff \frac{\partial \avec F(X)}{\partial(\avec X)'} = A(X).
+\]
+For the second identification theorem, we obtain
+\begin{equation}\label{eq:42}
+\dd^2 f(X) = (\dd\avec X)' B(X)\, \dd\avec X \iff Hf(X) = \frac{B(X) + B(X)'}{2}.
+\end{equation}
+Notice that we only provide the Hessian matrix for scalar functions, not for vector or matrix functions, as explained in Section~\ref{sec:9}. % [cite: 374, 375, 376, 377, 378]
+The commutation matrix, introduced in Section~\ref{sec:2.5}, has many applications in matrix theory, and it is essential in identifying the Hessian matrix from the second differential. The second differential of a scalar function often takes the form of a trace, either $\tr A(\dd X)'B\, \dd X$ or $\tr A(\dd X)B\, \dd X$. The following result is then of importance. % [cite: 379, 380]
+
+\begin{proposition}\label{prp:15}
+Let $f$ be a twice differentiable real-valued function of an $n \times q$ matrix $X$. Then,
+\begin{align*}
+\dd^2 f(X) = \tr A(\dd X)'B\, \dd X &\iff Hf(X) = \tfrac{1}{2}(A' \otimes B + A \otimes B'), \\
+\dd^2 f(X) = \tr A(\dd X)B\, \dd X &\iff Hf(X) = \tfrac{1}{2} K_{qn}(A' \otimes B + B' \otimes A).
+\end{align*}
+\end{proposition}
+
+\begin{proof}
+We write
+\begin{align*}
+\tr A(\dd X)'B\, \dd X &= \tr(\dd X)'B(\dd X)A = (\avec \dd X)' \avec B(\dd X)A \\
+&= (\avec \dd X)'(A' \otimes B) \avec \dd X = (\dd\avec X)'(A' \otimes B)\, \dd\avec X
+\end{align*}
+and
+\begin{align*}
+\tr A(\dd X)B\, \dd X &= \tr(\dd X)'B'(\dd X)'A' = (\avec \dd X)' \avec B'(\dd X)'A' \\
+&= (\avec \dd X)'(A \otimes B') \avec \dd X' = (\dd\avec X)'(A \otimes B') K_{nq}\, \dd\avec X,
+\end{align*}
+using Propositions~\ref{prp:5} and~\ref{prp:6}, and properties of the commutation matrix. The result now follows from Proposition~\ref{prp:13}, using the fact that
+\[
+(A \otimes B') K_{nq} + K_{qn}(A' \otimes B) = K_{qn}(A' \otimes B + B' \otimes A).
+\]
+\end{proof}
+
+\begin{exercise}\label{exer:28}
+Suppose that $\dd^2 f(X) = 2\tr A(\dd X)A\, \dd X$ and that both $A$ and $X$ are known to be symmetric $n \times n$ matrices. Show that
+\[
+Hf(X) = 2D_n'(A \otimes A)D_n.
+\]
+\end{exercise}
+
+\begin{solution}
+This follows from
+\[
+\tr A(\dd X)'A\, \dd X = (\dd\avec X)'(A \otimes A)\, \dd\avec X
+= (\dd\vech(X))' D_n'(A \otimes A) D_n\, \dd\vech(X).
+\]
+\end{solution}
+
+%% ============================================================
+\section{Four exercises: second derivative}\label{sec:12}
+
+In this section we consider the same functions as in Section~\ref{sec:8}, but now we obtain the second derivatives. % [cite: 387]
+
+\begin{exercise}[Exercise~\ref{exer:19} Cont'd]\label{exer:29}
+Obtain the Hessian of $f(X) = \tr X'AX$.
+\end{exercise}
+
+\begin{solution}
+We know that $\dd f(X) = \tr C'\, \dd X$, where $C = (A + A')X$. The second differential is
+\[
+\dd^2 f(X) = \dd\tr X'(A + A')\, \dd X = \tr(\dd X)'(A + A')\, \dd X.
+\]
+Hence, the Hessian is $Hf(X) = I_q \otimes (A + A')$. % [cite: 388, 389]
+\end{solution}
+
+\begin{exercise}[Exercise~\ref{exer:20} Cont'd]\label{exer:30}
+Obtain the Hessian of $f(X) = \log|X'X|$, where $X$ has full column rank.
+\end{exercise}
+
+\begin{solution}
+Since $\dd f(X) = 2\tr C'\, \dd X$, where $C = X(X'X)^{-1}$, the second differential is
+\begin{align*}
+\dd^2 f(X) &= 2\, d\bigl(\tr(X'X)^{-1}X'\, \dd X\bigr) \\
+&= 2\tr(d(X'X)^{-1})X'\, \dd X + 2\tr(X'X)^{-1}(\dd X)'\, \dd X \\
+&= -2\tr(X'X)^{-1}(\dd X'X)(X'X)^{-1}X'\, \dd X + 2\tr(X'X)^{-1}(\dd X)'\, \dd X \\
+&= -2\tr(X'X)^{-1}(\dd X)'X(X'X)^{-1}X'\, \dd X \\
+&\quad - 2\tr(X'X)^{-1}X'(\dd X)(X'X)^{-1}X'\, \dd X + 2\tr(X'X)^{-1}(\dd X)'\, \dd X \\
+&= 2\tr(X'X)^{-1}(\dd X)'M\, \dd X - 2\tr C'(\dd X)C'\, \dd X,
+\end{align*}
+where $M = I_n - X(X'X)^{-1}X'$. The second equality in this derivation follows from considering $(X'X)^{-1}X'\, \dd X$ as a product of three matrices: $(X'X)^{-1}$, $X'$, and $\dd X$ (a matrix of constants), the third equality uses the differential of the inverse in~\eqref{eq:32}, and the fourth equality separates $\dd X'X$ into $(\dd X)'X + X'\, \dd X$. Hence, we obtain from Proposition~\ref{prp:15},
+\[
+Hf(X) = 2(X'X)^{-1} \otimes M - 2K_{qn}(C \otimes C').
+\]
+\end{solution}
+
+\begin{exercise}[Exercise~\ref{exer:21} Cont'd]\label{exer:31}
+Let $f_k(X) = \tr X^k$ $(k = 1, 2, \dots)$. Find the Hessian.
+\end{exercise}
+
+\begin{solution}
+We have $\dd f_k(X) = k\tr X^{k-1}\, \dd X$, and, in particular, $\dd f_1(X) = \tr \dd X$ and $\dd f_2(X) = 2\tr X\, \dd X$. Hence, $\dd^2 f_1(X) = 0$ and, for $k \geqslant 2$,
+\[
+\dd^2 f_k(X) = k\tr(\dd X^{k-1})\, \dd X = k\sum_{j=0}^{k-2} \tr X^j(\dd X) X^{k-2-j}\, \dd X.
+\]
+This gives $Hf_1(X) = 0$, and, for $k \geqslant 2$,
+\[
+Hf_k(X) = (k/2) \sum_{j=0}^{k-2} K_n(X'^j \otimes X^{k-2-j} + X'^{k-2-j} \otimes X^j).
+\]
+\end{solution}
+
+\begin{exercise}[Exercise~\ref{exer:22} Cont'd]\label{exer:32}
+Find the Hessian of the matrix equation $F(X) = AX^{-1}B$, where $X$ is nonsingular.
+\end{exercise}
+
+\begin{solution}
+We know that $\dd F(X) = -AX^{-1}(\dd X)X^{-1}B$. The second differential is
+\begin{align*}
+\dd^2 F(X) &= -A(\dd X^{-1})(\dd X)X^{-1}B - AX^{-1}(\dd X)(\dd X^{-1})B \\
+&= 2AX^{-1}(\dd X)X^{-1}(\dd X)X^{-1}B.
+\end{align*}
+To obtain the Hessian matrix of the $st$th element of $F$, we let
+\[
+C_{ts} = X^{-1}B e_t e_s' A X^{-1},
+\]
+where $e_s$ and $e_t$ are elementary vectors with $1$ in the $s$th (respectively, $t$th) position and zeros elsewhere. Then,
+\[
+\dd^2 F_{st}(X) = 2e_s' A X^{-1}(\dd X) X^{-1}(\dd X) X^{-1} B e_t = 2\tr C_{ts}(\dd X) X^{-1}(\dd X),
+\]
+and hence
+\[
+HF_{st}(X) = \frac{\partial^2 F_{st}}{(\partial \avec X)(\partial \avec X)'} = K_n(C_{ts}' \otimes X^{-1} + X'^{-1} \otimes C_{ts}).
+\]
+\end{solution}
+
+%% ============================================================
+\section{Example 2: Maximum likelihood}\label{sec:13}
+
+Consider a sample of $m \times 1$ vectors $y_1, y_2, \dots, y_n$ from the multivariate normal distribution with mean $\mu$ and variance $\Omega$, where $\Omega$ is positive definite and $n \geqslant m + 1$. The density of $y_i$ is
+\[
+f(y_i) = (2\pi)^{-m/2} |\Omega|^{-1/2} \exp\left(-\tfrac{1}{2}(y_i - \mu)'\Omega^{-1}(y_i - \mu)\right),
+\]
+and since the $y_i$ are independent and identically distributed, the joint density of $(y_1, \dots, y_n)$ is given by $\prod_i f(y_i)$. The likelihood is equal to the joint density, but now thought of as a function of the parameters $\mu$ and $\Omega$, rather than of the observations. Its logarithm is the loglikelihood, which here takes the form
+\begin{equation}\label{eq:43}
+\Lambda(\mu, \Omega) = -\frac{mn}{2}\log 2\pi - \frac{n}{2}\log|\Omega|
+- \frac{1}{2}\sum_{i=1}^{n}(y_i - \mu)'\Omega^{-1}(y_i - \mu).
+\end{equation}
+The maximum likelihood (ML) estimators are obtained by maximizing the loglikelihood (which is the same, but usually easier, as maximizing the likelihood). % [cite: 401, 402, 403, 404, 405]
+
+Thus, we differentiate $\Lambda$ by applying the chain rule to the scalar product and determinant terms:
+\begin{align}\label{eq:44_step1}
+\dd\Lambda &= -\frac{n}{2}\, \dd\log|\Omega| + \frac{1}{2}\sum_{i=1}^{n}(\dd\mu)'\Omega^{-1}(y_i - \mu) \notag \\
+&\quad - \frac{1}{2}\sum_{i=1}^{n}(y_i - \mu)'(\dd\Omega^{-1})(y_i - \mu) + \frac{1}{2}\sum_{i=1}^{n}(y_i - \mu)'\Omega^{-1}\, \dd\mu \notag \\
+&= -\frac{n}{2}\, \dd\log|\Omega| - \frac{1}{2}\sum_{i=1}^{n}(y_i - \mu)'(\dd\Omega^{-1})(y_i - \mu) + \sum_{i=1}^{n}(y_i - \mu)'\Omega^{-1}\, \dd\mu.
+\end{align}
+Next, we substitute the differential of the determinant ($\dd\log|\Omega| = \tr(\Omega^{-1}\, \dd\Omega)$) and apply the trace operator to the scalar sum involving $\dd\Omega^{-1}$. Letting
+\[
+S = S(\mu) = \frac{1}{n}\sum_{i=1}^{n}(y_i - \mu)(y_i - \mu)',
+\]
+we can pull the differential outside the sum and wrap it in a trace:
+\begin{equation}\label{eq:44_step2}
+\dd\Lambda = -\frac{n}{2}\tr(\Omega^{-1}\, \dd\Omega + S\, \dd\Omega^{-1}) + \sum_{i=1}^{n}(y_i - \mu)'\Omega^{-1}\, \dd\mu.
+\end{equation}
+
+Denoting the ML estimators by $\hat{\mu}$ and $\hat{\Omega}$, letting $\hat{S} = S(\hat{\mu})$, and setting $\dd\Lambda = 0$ then implies that
+\[
+\tr\bigl(\hat{\Omega}^{-1} - \hat{\Omega}^{-1}\hat{S}\hat{\Omega}^{-1}\bigr)\, \dd\Omega = 0, \qquad
+\sum_{i=1}^{n}(y_i - \hat{\mu})'\hat{\Omega}^{-1}\, \dd\mu = 0,
+\]
+for all $\dd\Omega$ and all $\dd\mu$. This, in turn, implies that
+\[
+\hat{\Omega}^{-1} = \hat{\Omega}^{-1}\hat{S}\hat{\Omega}^{-1}, \qquad
+\sum_{i=1}^{n}(y_i - \hat{\mu}) = 0.
+\]
+Hence, the ML estimators are given by
+\begin{equation}\label{eq:45}
+\hat{\mu} = \frac{1}{n}\sum_{i=1}^{n} y_i = \bar{y}, \qquad
+\hat{\Omega} = \frac{1}{n}\sum_{i=1}^{n}(y_i - \bar{y})(y_i - \bar{y})'.
+\end{equation}
+We note that the condition that $\Omega$ is symmetric has not been imposed. But since the solution $\hat{\Omega}$ is symmetric, imposing the condition would have made no difference. % [cite: 408, 409, 410, 411]
+
+The second differential is obtained by differentiating~\eqref{eq:44_step2} again. This gives
+\begin{align}\label{eq:46}
+\dd^2\Lambda &= -\frac{n}{2}\tr\bigl((\dd\Omega^{-1})\, \dd\Omega + (\dd S)\, \dd\Omega^{-1} + S\, \dd^2\Omega^{-1}\bigr) - n(\dd\mu)'\Omega^{-1}\, \dd\mu \notag \\
+&\quad + \sum_{i=1}^{n}(y_i - \mu)'(\dd\Omega^{-1})\, \dd\mu.
+\end{align}
+From the second differential~\eqref{eq:46} we can obtain the Hessian matrix by differentiating further, but if one is only interested in the information matrix (minus the expectation of the Hessian matrix), then an important shortcut is possible by taking expectations at this stage. Since $\expc(S) = \Omega$ and $\expc(\dd S) = 0$, we obtain
+\begin{align}\label{eq:47}
+\expc\, \dd^2\Lambda &= -\frac{n}{2}\tr\bigl((\dd\Omega^{-1})\, \dd\Omega + \Omega\, \dd^2\Omega^{-1}\bigr) - n(\dd\mu)'\Omega^{-1}\, \dd\mu \notag \\
+&= \frac{n}{2}\tr\Omega^{-1}(\dd\Omega)\Omega^{-1}\, \dd\Omega - n\tr(\dd\Omega)\Omega^{-1}(\dd\Omega)\Omega^{-1} - n(\dd\mu)'\Omega^{-1}\, \dd\mu \notag \\
+&= -\frac{n}{2}\tr\Omega^{-1}(\dd\Omega)\Omega^{-1}\, \dd\Omega - n(\dd\mu)'\Omega^{-1}\, \dd\mu,
+\end{align}
+using the facts that $\dd\Omega^{-1} = -\Omega^{-1}(\dd\Omega)\Omega^{-1}$ and
+\[
+\dd^2\Omega^{-1} = -(\dd\Omega^{-1})(\dd\Omega)\Omega^{-1} - \Omega^{-1}(\dd\Omega)\, \dd\Omega^{-1}
+= 2\Omega^{-1}(\dd\Omega)\Omega^{-1}(\dd\Omega)\Omega^{-1}.
+\]
+To obtain the information matrix we need to take the symmetry of $\Omega$ into account and this is where the duplication matrix appears. So far, we have avoided the vec operator and in practical situations one should work with differentials (rather than with derivatives) as long as possible. But we cannot go further than~\eqref{eq:47} without use of the vec operator. % [cite: 412, 413, 414, 415, 416, 417]
+
+Thus, from~\eqref{eq:47},
+\begin{align*}
+-\expc\, \dd^2\Lambda &= \frac{n}{2}\tr\Omega^{-1}(\dd\Omega)\Omega^{-1}\, \dd\Omega + n(\dd\mu)'\Omega^{-1}\, \dd\mu \\
+&= \frac{n}{2}(\dd\avec\Omega)'(\Omega^{-1} \otimes \Omega^{-1})\, \dd\avec\Omega + n(\dd\mu)'\Omega^{-1}\, \dd\mu \\
+&= \frac{n}{2}(\dd\vech(\Omega))' D_m'(\Omega^{-1} \otimes \Omega^{-1})D_m\, \dd\vech(\Omega) + n(\dd\mu)'\Omega^{-1}\, \dd\mu,
+\end{align*}
+which implies that the information matrix for $\mu$ and $\vech(\Omega)$ takes the form
+\begin{equation}\label{eq:48}
+\mathcal{I} = n \begin{pmatrix} \Omega^{-1} & 0 \\ 0 & \frac{1}{2}D_m'(\Omega^{-1} \otimes \Omega^{-1})D_m \end{pmatrix}.
+\end{equation}
+The results on the duplication matrix in Section~\ref{sec:2.6} allow us to obtain the inverse:
+\[
+(\mathcal{I}/n)^{-1} = \begin{pmatrix} \Omega & 0 \\ 0 & 2(D_m'D_m)^{-1}D_m'(\Omega \otimes \Omega)D_m(D_m'D_m)^{-1} \end{pmatrix}
+\]
+and the determinant:
+\[
+|(\mathcal{I}/n)^{-1}| = |\Omega| \cdot |2(D_m'D_m)^{-1}D_m'(\Omega \otimes \Omega)D_m(D_m'D_m)^{-1}| = 2^m |\Omega|^{m+2}.
+\]
+
+%% ============================================================
+\section{Example 3: Maximum likelihood with parameters in the design matrix}\label{sec:14}
+
+Let us consider the linear model $y = X\beta + u$, where $\expc(u) = 0$ and $\var(u) = \Omega(\theta)$. In contrast to the standard linear model we assume, in addition, that $X$ depends on a vector of parameters $\psi$. We wish to find the ML estimators of $\beta$, $\psi$, and $\theta$, and the information matrix, whose inverse approximates the variance of the ML estimators. This model was considered in \cite{Ikefuji2022}. % [cite: 420, 421, 422]
+
+Under normality, the loglikelihood takes the form
+\begin{equation}\label{eq:49}
+\Lambda(\beta, \psi, \theta) = \text{constant} - (1/2)\log|\Omega|
+- (1/2)(y - X\beta)'\Omega^{-1}(y - X\beta).
+\end{equation}
+Maximizing $\Lambda$ with respect to $\beta$ and $\theta$ is (relatively) easy, while maximization with respect to $\psi$ is more difficult. Upon differentiating $X\beta$ we obtain
+\[
+\dd(X\beta) = X\, \dd\beta + (\dd X)\beta = X\, \dd\beta + (\beta' \otimes I_n)Z\, \dd\psi,
+\]
+where $Z = \partial \avec X/\partial \psi'$. Differentiating the loglikelihood then gives
+\begin{align}\label{eq:50}
+\dd\Lambda &= -(1/2)\tr(\Omega^{-1}\, \dd\Omega) + (1/2)(y - X\beta)'\Omega^{-1}(\dd\Omega)\Omega^{-1}(y - X\beta) \notag \\
+&\quad + (y - X\beta)'\Omega^{-1}X\, \dd\beta + (y - X\beta)'\Omega^{-1}(\dd X)\beta,
+\end{align}
+from which we obtain the first-order conditions
+\begin{align*}
+(y - X\beta)'\Omega^{-1}X\, \dd\beta &= 0, \\
+(y - X\beta)'\Omega^{-1}(\dd\Omega)\Omega^{-1}(y - X\beta) &= \tr(\Omega^{-1}\, \dd\Omega), \\
+(y - X\beta)'\Omega^{-1}(\dd X)\beta &= 0,
+\end{align*}
+for $\beta$, $\theta$, and $\psi$, respectively. % [cite: 424, 425, 426]
+This implies that $\hat{\beta}$ takes the simple form
+\begin{equation}\label{eq:51}
+\hat{\beta}(\psi, \theta) = (X'\Omega^{-1}X)^{-1}X'\Omega^{-1}y,
+\end{equation}
+so we can concentrate the likelihood with respect to $\beta$. The concentrated loglikelihood is
+\[
+\Lambda_c(\psi, \theta) = \text{constant} - (1/2)\log|\Omega| - (1/2)\hat{u}'\Omega^{-1}\hat{u},
+\]
+where $\hat{u} = y - X\hat{\beta} = y - X(X'\Omega^{-1}X)^{-1}X'\Omega^{-1}y$. We obtain $\hat{\psi}$ and $\hat{\theta}$ by maximizing $\Lambda_c$, and then $\hat{\beta}$ through~\eqref{eq:51}. % [cite: 427, 428, 429]
+
+One way to maximize $\Lambda_c$ is to perform a grid search over $\psi$. Fixing $\psi = \psi_0$, we have $X = X(\psi_0)$ and $\dd\psi = 0$. Then,
+\begin{align*}
+d\hat{\beta} &= [d(X'\Omega^{-1}X)^{-1}]X'\Omega^{-1}y + (X'\Omega^{-1}X)^{-1}\, \dd(X'\Omega^{-1}y) \\
+&= -(X'\Omega^{-1}X)^{-1}X'\Omega^{-1}(\dd\Omega)\Omega^{-1}\hat{u},
+\end{align*}
+and hence
+\begin{align*}
+\dd\Lambda_c(\psi_0, \theta) &= -(1/2)\tr(\Omega^{-1}\, \dd\Omega) + (1/2)\hat{u}'\Omega^{-1}(\dd\Omega)\Omega^{-1}\hat{u} \\
+&\quad - \hat{u}'\Omega^{-1}X(X'\Omega^{-1}X)^{-1}X'\Omega^{-1}(\dd\Omega)\Omega^{-1}\hat{u}.
+\end{align*}
+Solving $\theta$ from $\dd\Lambda_c(\psi_0, \theta) = 0$ gives $\hat{\theta}(\psi_0)$ and hence $\Lambda_c(\psi_0, \hat{\theta}(\psi_0))$. Performing a grid search over $\psi$ we find $\hat{\psi}$ where $\Lambda_c(\psi, \hat{\theta}(\psi))$ is maximized. Given $\hat{\psi}$ and $\hat{\theta}$ we then compute $\hat{\beta}$ from~\eqref{eq:51}. % [cite: 430, 431, 432, 433, 434, 435]
+
+To obtain the information matrix we take the differential of $\dd\Lambda$ in~\eqref{eq:50}. This gives, letting $\mu = X\beta$,
+\begin{align}\label{eq:52}
+\dd^2\Lambda &= (1/2)\tr(\Omega^{-1}\, \dd\Omega)^2 - (y - X\beta)'\Omega^{-1}(\dd\Omega)\Omega^{-1}(\dd\Omega)\Omega^{-1}(y - X\beta) \notag \\
+&\quad - (\dd\mu)'\Omega^{-1}(\dd\mu) - 2(y - X\beta)'\Omega^{-1}(\dd\Omega)\Omega^{-1}(\dd\mu) + (y - X\beta)'\Omega^{-1}(d^2\mu) \notag \\
+&\quad - (1/2)\tr(\Omega^{-1}\, \dd^2\Omega) + (1/2)(y - X\beta)'\Omega^{-1}(\dd^2\Omega)\Omega^{-1}(y - X\beta).
+\end{align}
+Minus the expectation of the second differential takes the simple form
+\[
+-\expc(\dd^2\Lambda) = (1/2)\tr(\Omega^{-1}\, \dd\Omega)^2 + (\dd\mu)'\Omega^{-1}(\dd\mu),
+\]
+which implies that the information matrix is block-diagonal in $(\beta, \psi)$ and $\theta$. Therefore we do not have to take the variance of the ML estimator $\hat{\theta}$ into account when calculating the variance of the ML estimators $(\hat{\beta}, \hat{\psi})$. % [cite: 436, 437, 438]
+Now writing
+\[
+\tr(\Omega^{-1}\, \dd^2\Omega) = (\dd\avec\Omega)'(\Omega^{-1} \otimes \Omega^{-1})(\dd\avec\Omega) = (\dd\theta)'\mathcal{I}_{\theta\theta}\, \dd\theta,
+\]
+with
+\[
+\mathcal{I}_{\theta\theta} = \left(\frac{\partial \avec\Omega}{\partial \theta'}\right)' (\Omega^{-1} \otimes \Omega^{-1}) \left(\frac{\partial \avec\Omega}{\partial \theta'}\right),
+\]
+and
+\[
+(\dd\mu)'\Omega^{-1}(\dd\mu) = \begin{pmatrix} \dd\beta \\ \dd\psi \end{pmatrix}' \begin{pmatrix} \mathcal{I}_{\beta\beta} & \mathcal{I}_{\beta\psi} \\ \mathcal{I}_{\psi\beta} & \mathcal{I}_{\psi\psi} \end{pmatrix} \begin{pmatrix} \dd\beta \\ \dd\psi \end{pmatrix},
+\]
+with
+\[
+\mathcal{I}_{\beta\beta} = X'\Omega^{-1}X, \qquad
+\mathcal{I}_{\beta\psi} = \mathcal{I}_{\psi\beta}' = X'(\beta' \otimes \Omega^{-1})Z,
+\]
+and
+\[
+\mathcal{I}_{\psi\psi} = Z'(\beta\beta' \otimes \Omega^{-1})Z,
+\]
+we obtain the information matrix
+\[
+\mathcal{I} = \begin{pmatrix}
+\mathcal{I}_{\beta\beta} & \mathcal{I}_{\beta\psi} & 0 \\
+\mathcal{I}_{\psi\beta} & \mathcal{I}_{\psi\psi} & 0 \\
+0 & 0 & \mathcal{I}_{\theta\theta}
+\end{pmatrix},
+\]
+whose inverse $\mathcal{I}^{-1}$ approximates the variance matrix of the ML estimators. % [cite: 439]
+
+%% ============================================================
+\section{Example 4: The Eckart--Young theorem}\label{sec:15}
+
+My next example is somewhat related to restricted least squares (Section~\ref{sec:6}), but instead of approximating a vector $Ab$, we wish to approximate $A$ itself. More specifically, I wish to approximate a given $m \times n$ matrix $A$ by a matrix $XZ'$, such that
+\begin{equation}\label{eq:53}
+f(X, Z) = \tr(A - XZ')(A - XZ')'
+\end{equation}
+is minimized. Let $r$ be a given (small) integer such that $X$ has dimension $m \times r$ and $Z$ has dimension $n \times r$, where the latter is normalized by the semi-orthogonality condition $Z'Z = I_r$. % [cite: 440, 441, 442]
+
+The Eckart--Young theorem (\cite{EckartYoung1936}; \cite{MagnusNeudecker2019}, Theorem~17.7) tells us that the minimum of $f$ is obtained when $Z$ contains the eigenvectors associated with the $r$ largest eigenvalues of $A'A$ and $X = AZ$. The `best' approximation $\tilde{A}$ (of rank $r$) to $A$ is then $\tilde{A} = AZZ'$, and the constrained minimum of $f$ is the sum of the $n - r$ smallest eigenvalues of $A'A$. % [cite: 443, 444]
+
+To prove the Eckart--Young theorem, define the Lagrangian function
+\begin{equation}\label{eq:54}
+\mathcal{L}(X, Z) = \tfrac{1}{2}\tr(A - XZ')(A - XZ')' - \tfrac{1}{2}\tr L(Z'Z - I_r),
+\end{equation}
+where $L$ is a symmetric $r \times r$ matrix of Lagrange multipliers (see Exercise~\ref{exer:18}). Differentiating $\mathcal{L}$, we obtain
+\begin{align*}
+\dd\mathcal{L}(X, Z) &= \tr(A - XZ')\, \dd(A - XZ')' - \tfrac{1}{2}\tr L\bigl((\dd Z)'Z + Z'\, \dd Z\bigr) \\
+&= -\tr(A - XZ')Z(\dd X)' - \tr(A - XZ')(\dd Z)X' - \tr LZ'\, \dd Z \\
+&= -\tr(A - XZ')Z(\dd X)' - \tr(X'A - X'XZ' + LZ')\, \dd Z.
+\end{align*}
+The first-order conditions are therefore
+\begin{equation}\label{eq:55}
+\begin{aligned}
+(A - XZ')Z &= 0, \\
+X'A - X'XZ' + LZ' &= 0, \\
+Z'Z &= I_r.
+\end{aligned}
+\end{equation}
+These conditions give $X = AZ$ and hence $L = X'X - X'AZ = 0$, so that we arrive at the equation
+\begin{equation}\label{eq:56}
+(A'A)Z = Z(Z'A'AZ).
+\end{equation}
+Now, let $P$ be an orthogonal $r \times r$ matrix such that
+\[
+P'(Z'A'AZ)P = \Lambda_1,
+\]
+where $\Lambda_1$ is a diagonal $r \times r$ matrix containing the eigenvalues of $Z'A'AZ$ on its diagonal. Let $T_1 = ZP$. Then~\eqref{eq:56} can be written as $A'AT_1 = T_1\Lambda_1$, where $T_1$ is a semi-orthogonal $n \times r$ matrix (that is, it satisfies $T_1'T_1 = I_r$) that diagonalizes $A'A$, and the $r$ diagonal elements in $\Lambda_1$ are eigenvalues of $A'A$. (The matrix $A'A$ has $n$ eigenvalues and $r$ of these are contained in $\Lambda_1$.) % [cite: 445, 446, 447, 448, 449]
+
+Given $X = AZ$, we have
+\[
+(A - XZ')(A - XZ')' = A(I - ZZ')A',
+\]
+and thus
+\begin{equation}\label{eq:57}
+\tr(A - XZ')(A - XZ')' = \tr A'A - \tr\Lambda_1.
+\end{equation}
+To minimize~\eqref{eq:57}, we must maximize $\tr\Lambda_1$. Hence $\Lambda_1$ must contain the $r$ largest eigenvalues of $A'A$, and $T_1$ contains eigenvectors associated with these $r$ eigenvalues. The `best' approximation to $A$ is then
+\[
+XZ' = AZZ' = AT_1 T_1',
+\]
+so that an optimal choice is $Z = T_1$, $X = AT_1$. From~\eqref{eq:57}, it is clear that the value of the constrained minimum is the sum of the $n - r$ smallest eigenvalues of $A'A$. % [cite: 450, 451, 452, 453]
+
+%% ============================================================
+\section{Tacit knowledge}\label{sec:16}
+
+When you want to become a carpenter or a doctor or a chef, you follow courses, read books, and pass exams, and at some point you become a trainee in a studio, clinic, or restaurant. There you learn important things that are not available in books and were not taught to you in courses. Such knowledge is called `tacit knowledge'. Let me try, in this final section, to write down a few things that I have learned over the years in the hope that they may be of use to the reader. The following suggestions refer to matrix algebra in general. % [cite: 454, 455, 456]
+
+\begin{itemize}
+\item Think of matrices as units of a higher-order algebra. Do not think in terms of the elements of a matrix. % [cite: 457, 458]
+\item When proving a theorem about $n \times n$ matrices, try to prove it first for $n = 2$ and $n = 3$. If it works for $n = 2$, then this is good news, but it is no guarantee. But if it works for $n = 3$, then it probably works in general. % [cite: 459, 460, 461]
+\item When a matrix is symmetric, set it equal to a diagonal matrix, and see if the theorem works in that case. % [cite: 462]
+\item If you need to prove that $A = B$, it is almost always easier to prove that $C = A - B = 0$. There are many ways to prove that $C = 0$, but the method of showing that $c_{ij} = 0$ for all $i$ and $j$ is probably not the most efficient. Maybe you can prove that $\tr C'C = 0$, which is equivalent. % [cite: 463, 464, 465]
+\item If we have a matrix $A$ and a matrix $B$ which is the same as $A$ except that (for example) its last column is missing, then do not write $B = \tilde{A}$, but write $B$ explicitly in terms of $A$, in the present case $B = AE$, where $E$ is a matrix of zeros and ones. % [cite: 466]
+\end{itemize}
+
+The next suggestions refer specifically to matrix calculus.
+
+\begin{itemize}
+\item Always use the correct definition of matrix derivative. The derivative of $\tr X$ is not the identity matrix but $(\avec I)'$, a row vector. % [cite: 467, 468]
+\item When you need the Hessian, do not start with the first derivative, but with the first differential. Then obtain the second differential, then the Hessian (see the exercises in Section~\ref{sec:12}). % [cite: 469, 470]
+\item Remember that Cauchy invariance does not hold for second differentials. I usually avoid the chain rule for second differentials, and write the first differential in terms of the eventual matrices, unless there is linearity (symmetry, diagonality), which can be safely added at the end. % [cite: 471, 472]
+\item If $\dd^2 f(x) = (\dd x)' B(x)\, \dd x$, remember to `symmetrize' the matrix $B$, because $B$ will not be symmetric in general. The Hessian is then $Hf(x) = (B(x) + B(x)')/2$. % [cite: 473]
+\end{itemize}
+
+%% ============================================================
+%\section*{Declaration of competing interest}
+%
+%The author declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper. % [cite: 474]
+%
+%\section*{Acknowledgments}
+%
+%I thank Serena Ng for alerting me to the `how-to' paper series, the editors for supporting the idea of a tutorial on matrix calculus, and two unusually constructive referees and Yannick van Etten for valuable comments. As always, Henk Pijls has been my unfailing `helpdesk' for mathematical questions of all types. My publisher John Wiley gracefully permitted me to freely use material from \emph{Matrix Differential Calculus}, 3rd edition. % [cite: 475, 476, 477]
+
+%% ============================================================
+\begin{thebibliography}{99}
+
+\bibitem{EckartYoung1936}
+Eckart, C., Young, G., 1936. The approximation of one matrix by another of lower rank. \emph{Psychometrika} 1, 211--218. % [cite: 478]
+
+\bibitem{Ikefuji2022}
+Ikefuji, M., Laeven, R.J.A., Magnus, J.R., Yue, Y., 2022. Earthquake risk embedded in property prices: Evidence from five Japanese cities. \emph{J.\ Amer.\ Statist.\ Assoc.}\ 117, 82--93. % [cite: 479, 480]
+
+\bibitem{Magnus1988}
+Magnus, J.R., 1988. \emph{Linear Structures}. Oxford University Press, New York. % [cite: 480]
+
+\bibitem{Magnus2010}
+Magnus, J.R., 2010. On the concept of matrix derivative. \emph{J.\ Multivariate Anal.}\ 101, 2200--2206. % [cite: 481]
+
+\bibitem{Magnus2024}
+Magnus, J.R., 2024. Matrix derivatives: Why and where did it go wrong? \emph{IMAGE.\ Bull.\ Int.\ Linear Algebra Soc.}\ 72 (Spring), 3--8. % [cite: 482]
+
+\bibitem{MagnusNeudecker2019}
+Magnus, J.R., Neudecker, H., 2019. \emph{Matrix Differential Calculus with Applications in Statistics and Econometrics}, third ed. John Wiley, Chichester/New York. % [cite: 483]
+
+\end{thebibliography}
+
+\end{document}

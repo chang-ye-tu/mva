@@ -1,0 +1,1229 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=15mm]{geometry}
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+\usepackage{booktabs,array}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{tocloft}
+% Compact TOC
+\setlength{\cftbeforesecskip}{2pt}
+\setlength{\cftbeforesubsecskip}{0pt}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!70!black,urlcolor=blue!80!black,citecolor=blue!70!black}
+
+% Theorem environments
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{exercise}{Exercise}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{property}{Property}[section]
+\newtheorem*{remark}{Remark}
+
+% Custom commands
+\newcommand\expc{\mathsf{E}}
+\newcommand\prb{\mathsf{P}}
+\DeclareMathOperator\var{var}
+\DeclareMathOperator\cov{cov}
+\DeclareMathOperator\corr{corr}
+\DeclareMathOperator\plim{plim}
+\DeclareMathOperator\tr{tr}
+\DeclareMathOperator\rank{rank}
+\DeclareMathOperator\diag{diag}
+\newcommand{\ds}{\displaystyle}
+\newcommand{\ie}{\;\Longrightarrow\;}
+\newcommand{\ifff}{\;\Longleftrightarrow\;}
+\newcommand{\SST}{\mathrm{SST}}
+\newcommand{\SSR}{\mathrm{SSR}}
+\newcommand{\SSE}{\mathrm{SSE}}
+\newcommand{\MSR}{\mathrm{MSR}}
+\newcommand{\MSE}{\mathrm{MSE}}
+\newcommand{\SE}{\mathrm{SE}}
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\bY}{\mathbf{Y}}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\bx}{\mathbf{x}}
+\def\bb{\boldsymbol{\beta}}
+\newcommand{\be}{\boldsymbol{\varepsilon}}
+\newcommand{\bI}{\mathbf{I}}
+\newcommand{\bH}{\mathbf{H}}
+\newcommand{\bM}{\mathbf{M}}
+\newcommand{\bR}{\mathbf{R}}
+\newcommand{\br}{\mathbf{r}}
+\def\bc{\mathbf{c}}
+\newcommand{\bone}{\mathbf{1}}
+\newcommand{\bzero}{\mathbf{0}}
+\newcommand{\bz}{\mathbf{z}}
+\newcommand{\bw}{\mathbf{w}}
+\newcommand{\bA}{\mathbf{A}}
+\newcommand{\bC}{\mathbf{C}}
+\newcommand{\bD}{\mathbf{D}}
+\newcommand{\bP}{\mathbf{P}}
+\newcommand{\ba}{\mathbf{a}}
+\newcommand{\bv}{\mathbf{v}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\calC}{\mathcal{C}}
+
+\title{\textbf{Notes on the Classical Theory of Linear Models}}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+\newpage
+
+%=============================================================================
+\section{The Multiple Linear Regression Model}\label{sec:model}
+%=============================================================================
+
+\subsection{Model Specification and Matrix Notation}
+
+\begin{definition}[Multiple Linear Regression Model]\label{def:model}
+Given $n$ observations, each consisting of a dependent variable $Y_i$ and $k$ independent variables $X_{i1}, \ldots, X_{ik}$, the \textbf{multiple linear regression model} assumes:
+\begin{equation}\label{eq:model-scalar}
+Y_i = \beta_0 + \beta_1 X_{i1} + \beta_2 X_{i2} + \cdots + \beta_k X_{ik} + \varepsilon_i, \quad i = 1, 2, \ldots, n
+\end{equation}
+where $\beta_0$ is the intercept, $\beta_1, \ldots, \beta_k$ are slope coefficients, and $\varepsilon_i$ is the error term.
+\end{definition}
+
+\begin{definition}[Matrix Notation]\label{def:matrix-notation}
+Model~\eqref{eq:model-scalar} can be written in matrix form as
+\begin{equation}\label{eq:model-matrix}
+\boxed{\bY = \bX\bb + \be}
+\end{equation}
+where
+\[
+\bY = \begin{pmatrix} Y_1 \\ Y_2 \\ \vdots \\ Y_n \end{pmatrix}_{n \times 1}, \quad
+\bX = \begin{pmatrix} 1 & X_{11} & \cdots & X_{1k} \\ 1 & X_{21} & \cdots & X_{2k} \\ \vdots & \vdots & \ddots & \vdots \\ 1 & X_{n1} & \cdots & X_{nk} \end{pmatrix}_{n \times (k+1)}, \quad
+\bb = \begin{pmatrix} \beta_0 \\ \beta_1 \\ \vdots \\ \beta_k \end{pmatrix}_{(k+1) \times 1}, \quad
+\be = \begin{pmatrix} \varepsilon_1 \\ \varepsilon_2 \\ \vdots \\ \varepsilon_n \end{pmatrix}_{n \times 1}.
+\]
+The matrix $\bX$ is called the \textbf{design matrix}. Its first column is the all-ones vector $\bone = (1, 1, \ldots, 1)'$, corresponding to the intercept. We write $\bx_i'$ for the $i$-th row of $\bX$, so that $Y_i = \bx_i'\bb + \varepsilon_i$.
+\end{definition}
+
+\subsection{Classical Assumptions}
+
+\begin{definition}[Classical Assumptions]\label{def:assumptions}
+The following assumptions are imposed on model~\eqref{eq:model-matrix}:
+\begin{enumerate}[label=\textup{(A\arabic*)}]
+\item\label{A1} \textbf{Linearity}: $\expc[\bY \mid \bX] = \bX\bb$.
+\item\label{A2} \textbf{Zero conditional mean}: $\expc[\be \mid \bX] = \bzero$.
+\item\label{A3} \textbf{Spherical errors}: $\var(\be \mid \bX) = \sigma^2 \bI_n$. This comprises two sub-conditions:
+\begin{itemize}
+    \item \emph{Homoscedasticity}: $\var(\varepsilon_i) = \sigma^2$ for all $i$ (a constant).
+    \item \emph{No serial correlation}: $\cov(\varepsilon_i, \varepsilon_j) = 0$ for $i \neq j$.
+\end{itemize}
+\item\label{A4} \textbf{Full rank}: $\rank(\bX) = k + 1$ (the columns of $\bX$ are linearly independent). This requires $n \geqslant k + 1$. For variance estimation and inference (Sections~\ref{sec:finite}--\ref{sec:test}), we additionally require $n > k + 1$ so that $\MSE = \SSE/(n-k-1)$ is well-defined.
+\item\label{A5} \textbf{Normality}: $\be \mid \bX \sim N(\bzero, \sigma^2 \bI_n)$.
+\end{enumerate}
+Assumptions~\ref{A1}--\ref{A4} are called the \textbf{Gauss--Markov assumptions}. Assumption~\ref{A5} is additionally needed for exact distributional results in finite samples.
+\end{definition}
+
+\begin{remark}
+Throughout this article, we treat $\bX$ as fixed (non-stochastic) and condition on it. All expectations, variances, and distributions are conditional on $\bX$, but we suppress the conditioning notation for brevity.
+\end{remark}
+
+%=============================================================================
+\section{Ordinary Least Squares}\label{sec:ols}
+%=============================================================================
+
+\subsection{Definition and the Normal Equations}
+
+\begin{definition}[Ordinary Least Squares]\label{def:ols}
+The \textbf{OLS estimator} $\hat{\bb}$ is the value of $\bb$ that minimizes the sum of squared residuals:
+\begin{equation}\label{eq:sse-obj}
+Q(\bb) = \sum_{i=1}^{n}(Y_i - \bx_i'\bb)^2 = (\bY - \bX\bb)'(\bY - \bX\bb) = \|\bY - \bX\bb\|^2.
+\end{equation}
+\end{definition}
+
+We begin with a matrix calculus tool.
+
+\begin{lemma}[Matrix Differentiation Formulas]\label{lem:matrix-diff}
+Let $\bb \in \Real^p$, $\ba \in \Real^p$ a constant vector, and $\bA$ a $p \times p$ constant matrix. Then:
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item $\dfrac{\partial}{\partial \bb}(\ba'\bb) = \dfrac{\partial}{\partial \bb}(\bb'\ba) = \ba$.
+\item $\dfrac{\partial}{\partial \bb}(\bb'\bA\bb) = (\bA + \bA')\bb$. When $\bA$ is symmetric, this simplifies to $2\bA\bb$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+\textbf{(i).} We have $\ba'\bb = \sum_{j=1}^{p} a_j \beta_j$. Differentiating with respect to $\beta_\ell$:
+\[
+\frac{\partial}{\partial \beta_\ell}(\ba'\bb) = a_\ell.
+\]
+Stacking all partial derivatives, $\frac{\partial}{\partial \bb}(\ba'\bb) = \ba$.
+
+\textbf{(ii).} We have $\bb'\bA\bb = \sum_{i=1}^{p}\sum_{j=1}^{p} a_{ij}\beta_i\beta_j$. Differentiating with respect to $\beta_\ell$:
+\[
+\frac{\partial}{\partial \beta_\ell}(\bb'\bA\bb) = \sum_{j=1}^{p} a_{\ell j}\beta_j + \sum_{i=1}^{p} a_{i\ell}\beta_i = (\bA\bb)_\ell + (\bA'\bb)_\ell.
+\]
+The first sum arises from terms where $i = \ell$ (differentiating $\beta_\ell$), and the second from terms where $j = \ell$. Stacking all partial derivatives:
+\[
+\frac{\partial}{\partial \bb}(\bb'\bA\bb) = \bA\bb + \bA'\bb = (\bA + \bA')\bb.
+\]
+When $\bA = \bA'$, this becomes $(\bA + \bA)\bb = 2\bA\bb$.
+\end{proof}
+
+\subsection{Derivation via Differentiation}
+
+\begin{theorem}[OLS Estimator]\label{thm:ols}
+Under assumption~\ref{A4}, the OLS estimator is
+\begin{equation}\label{eq:ols}
+\boxed{\hat{\bb} = (\bX'\bX)^{-1}\bX'\bY.}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+\textbf{Step 1: Expand $Q(\bb)$.}
+\begin{align}
+Q(\bb) &= (\bY - \bX\bb)'(\bY - \bX\bb) \notag\\
+&= \bY'\bY - \bY'\bX\bb - \bb'\bX'\bY + \bb'\bX'\bX\bb \notag\\
+&= \bY'\bY - 2\bb'\bX'\bY + \bb'\bX'\bX\bb. \label{eq:sse-expand}
+\end{align}
+In the last line, we used the fact that $\bY'\bX\bb$ is a $1 \times 1$ scalar, hence equals its transpose $\bb'\bX'\bY$.
+
+\textbf{Step 2: Set the first-order condition to zero.} Using Lemma~\ref{lem:matrix-diff} with $\ba = \bX'\bY$ and $\bA = \bX'\bX$ (which is symmetric):
+\[
+\frac{\partial Q}{\partial \bb} = -2\bX'\bY + 2\bX'\bX\bb.
+\]
+Setting this to zero:
+\begin{equation}\label{eq:normal-eq}
+\bX'\bX\hat{\bb} = \bX'\bY.
+\end{equation}
+This is the \textbf{normal equation}.
+
+\textbf{Step 3: Solve.} By assumption~\ref{A4}, $\rank(\bX) = k+1$, so $\bX'\bX$ is a $(k+1) \times (k+1)$ matrix of rank $k+1$, hence invertible. Multiplying both sides of~\eqref{eq:normal-eq} by $(\bX'\bX)^{-1}$:
+\[
+\hat{\bb} = (\bX'\bX)^{-1}\bX'\bY.
+\]
+
+\textbf{Step 4: Verify the second-order condition.} The Hessian matrix is
+\[
+\frac{\partial^2 Q}{\partial \bb \partial \bb'} = 2\bX'\bX.
+\]
+Under assumption~\ref{A4}, for any nonzero $\bv \in \Real^{k+1}$, $\bX\bv \neq \bzero$, so $\bv'\bX'\bX\bv = \|\bX\bv\|^2 > 0$. Hence $\bX'\bX$ is positive definite, confirming that $\hat{\bb}$ is a global minimum.
+\end{proof}
+
+\subsection{Derivation via Orthogonal Projection}
+
+\begin{theorem}[OLS as Orthogonal Projection]\label{thm:ols-proj}
+The fitted vector $\hat{\bY} = \bX\hat{\bb}$ is the orthogonal projection of $\bY$ onto $\calC(\bX)$, and the OLS estimator is $\hat{\bb} = (\bX'\bX)^{-1}\bX'\bY$.
+\end{theorem}
+
+\begin{proof}
+The vector $\hat{\bY}$ must lie in $\calC(\bX)$, so $\hat{\bY} = \bX\hat{\bb}$ for some $\hat{\bb}$. The residual $\mathbf{e} = \bY - \hat{\bY}$ must be orthogonal to every vector in $\calC(\bX)$; equivalently, $\mathbf{e}$ must be orthogonal to every column of $\bX$:
+\[
+\bX'\mathbf{e} = \bzero \iff \bX'(\bY - \bX\hat{\bb}) = \bzero \iff \bX'\bX\hat{\bb} = \bX'\bY.
+\]
+Under assumption~\ref{A4}, $\bX'\bX$ is invertible, giving $\hat{\bb} = (\bX'\bX)^{-1}\bX'\bY$. By the Pythagorean theorem in $\Real^n$, for any other $\tilde{\bY} = \bX\tilde{\bb} \in \calC(\bX)$:
+\[
+\|\bY - \tilde{\bY}\|^2 = \|\bY - \hat{\bY}\|^2 + \|\hat{\bY} - \tilde{\bY}\|^2 \geqslant \|\bY - \hat{\bY}\|^2,
+\]
+confirming that $\hat{\bb}$ minimizes $Q(\bb)$.
+\end{proof}
+
+\subsection{Hat Matrix, Residual Maker, and Idempotent Matrices}
+
+\begin{definition}[Hat Matrix and Residual Maker Matrix]\label{def:hat-matrix}
+The \textbf{hat matrix} is
+\begin{equation}\label{eq:hat}
+\bH = \bX(\bX'\bX)^{-1}\bX'.
+\end{equation}
+The \textbf{residual maker matrix} (or \textbf{annihilator matrix}) is
+\begin{equation}\label{eq:residual-maker}
+\bM = \bI_n - \bH.
+\end{equation}
+Then $\hat{\bY} = \bH\bY$ and $\mathbf{e} = \bM\bY$.
+\end{definition}
+
+\begin{definition}[Idempotent Matrix]\label{def:idempotent}
+A square matrix $\bA$ is \textbf{idempotent} if $\bA^2 = \bA$.
+\end{definition}
+
+\begin{lemma}[Trace Equals Rank for Idempotent Matrices]\label{lem:idempotent}
+If $\bA$ is an $n \times n$ idempotent matrix, then $\tr(\bA) = \rank(\bA)$.
+\end{lemma}
+
+\begin{proof}
+Since $\bA^2 = \bA$, every eigenvalue $\lambda$ satisfies $\lambda^2 = \lambda$, i.e., $\lambda(\lambda - 1) = 0$. Hence every eigenvalue is $0$ or $1$. Suppose $\bA$ has $r$ eigenvalues equal to $1$ and $n - r$ equal to $0$. Then:
+\begin{itemize}
+\item $\tr(\bA) = \sum \lambda_i = r \cdot 1 + (n-r) \cdot 0 = r$.
+\item $\rank(\bA) = r$ (the number of nonzero eigenvalues).
+\end{itemize}
+Hence $\tr(\bA) = \rank(\bA)$.
+\end{proof}
+
+\begin{theorem}[Properties of $\bH$ and $\bM$]\label{thm:HM}
+The matrices $\bH$ and $\bM$ satisfy:
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item\label{HM:i} $\bH$ and $\bM$ are both symmetric and idempotent.
+\item\label{HM:ii} $\bH\bX = \bX$ and $\bM\bX = \bzero$.
+\item\label{HM:iii} $\bH\bM = \bM\bH = \bzero$.
+\item\label{HM:iv} $\tr(\bH) = k + 1$ and $\tr(\bM) = n - k - 1$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\textbf{(i) Symmetry of $\bH$:} Since $\bX'\bX$ is symmetric, so is $(\bX'\bX)^{-1}$:
+\[
+\bH' = [\bX(\bX'\bX)^{-1}\bX']' = \bX[(\bX'\bX)^{-1}]'\bX' = \bX(\bX'\bX)^{-1}\bX' = \bH.
+\]
+
+\textbf{Idempotency of $\bH$:}
+\[
+\bH^2 = \bX(\bX'\bX)^{-1}\underbrace{\bX'\bX(\bX'\bX)^{-1}}_{\bI_{k+1}}\bX' = \bX(\bX'\bX)^{-1}\bX' = \bH.
+\]
+
+\textbf{Symmetry and idempotency of $\bM$:} $\bM' = (\bI - \bH)' = \bI - \bH' = \bI - \bH = \bM$. Also, $\bM^2 = (\bI - \bH)^2 = \bI - 2\bH + \bH^2 = \bI - 2\bH + \bH = \bI - \bH = \bM$.
+
+\textbf{(ii)} $\bH\bX = \bX(\bX'\bX)^{-1}\bX'\bX = \bX\bI_{k+1} = \bX$, and $\bM\bX = (\bI - \bH)\bX = \bX - \bX = \bzero$.
+
+\textbf{(iii)} $\bH\bM = \bH(\bI - \bH) = \bH - \bH^2 = \bH - \bH = \bzero$, and $\bM\bH = (\bI - \bH)\bH = \bH - \bH^2 = \bzero$.
+
+\textbf{(iv)} By Lemma~\ref{lem:idempotent}, $\tr(\bH) = \rank(\bH)$. Since $\bH$ is the orthogonal projection onto $\calC(\bX)$, which has dimension $k + 1$ (by~\ref{A4}), $\rank(\bH) = k + 1$. Hence $\tr(\bH) = k + 1$. Then $\tr(\bM) = \tr(\bI) - \tr(\bH) = n - (k + 1) = n - k - 1$.
+\end{proof}
+
+\subsection{Errors Versus Residuals}
+
+\begin{remark}[Errors versus residuals]
+The \textbf{error} $\varepsilon_i = Y_i - \bx_i'\bb$ is the deviation from the true (unknown) regression function; it is \emph{unobservable}. The \textbf{residual} $e_i = Y_i - \bx_i'\hat{\bb} = Y_i - \hat{Y}_i$ is the deviation from the fitted regression function; it is \emph{observable}. In matrix form, $\mathbf{e} = \bM\bY = \bM(\bX\bb + \be) = \bM\be$ (since $\bM\bX = \bzero$ by Theorem~\ref{thm:HM}\ref{HM:ii}). The residual vector is a linear transformation of the error vector.
+\end{remark}
+
+\subsection{Algebraic Properties of OLS Residuals}
+
+\begin{theorem}[Implications of the Normal Equations]\label{thm:normal-eq}
+The OLS residuals satisfy:
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item\label{ne:i} $\bX'\mathbf{e} = \bzero$ (residuals are orthogonal to every column of $\bX$).
+\item\label{ne:ii} $\sum_{i=1}^{n} e_i = 0$ (residuals sum to zero), provided the model includes an intercept.
+\item\label{ne:iii} $\hat{\bY}'\mathbf{e} = 0$ (residuals are orthogonal to fitted values).
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\textbf{(i)} From the normal equation $\bX'\bX\hat{\bb} = \bX'\bY$, rearranging:
+\[
+\bX'\bY - \bX'\bX\hat{\bb} = \bzero \iff \bX'(\bY - \bX\hat{\bb}) = \bzero \iff \bX'\mathbf{e} = \bzero.
+\]
+
+\textbf{(ii)} The first column of $\bX$ is $\bone$. The first component of the vector equation $\bX'\mathbf{e} = \bzero$ is $\bone'\mathbf{e} = \sum_{i=1}^{n} e_i = 0$. This relies on the presence of the intercept column.
+
+\textbf{(iii)} Since $\hat{\bY} = \bX\hat{\bb}$:
+\[
+\hat{\bY}'\mathbf{e} = (\bX\hat{\bb})'\mathbf{e} = \hat{\bb}'\bX'\mathbf{e} = \hat{\bb}' \cdot \bzero = 0.
+\]
+Geometrically, $\hat{\bY} \in \calC(\bX)$ and $\mathbf{e} \perp \calC(\bX)$.
+\end{proof}
+
+\subsection{Leverages}\label{sec:leverage}
+
+\begin{definition}[Leverage]\label{def:leverage}
+The \textbf{leverage} of the $i$-th observation is $h_{ii}$, the $i$-th diagonal entry of $\bH$.
+\end{definition}
+
+\begin{theorem}[Properties of Leverages]\label{thm:leverage}
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item\label{lev:i} $0 \leqslant h_{ii} \leqslant 1$ for all $i$.
+\item\label{lev:ii} $\sum_{i=1}^{n} h_{ii} = k + 1$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\textbf{(i)} Since $\bH$ is idempotent, $\bH = \bH^2$. Comparing the $(i, i)$ entry on both sides:
+\[
+h_{ii} = \sum_{j=1}^{n} h_{ij} h_{ji} = \sum_{j=1}^{n} h_{ij}^2 \geqslant 0,
+\]
+where we used the symmetry $h_{ji} = h_{ij}$. Since $h_{ij}^2 \geqslant 0$ and one of the terms in the sum is $h_{ii}^2$, we have $h_{ii} \geqslant h_{ii}^2$, i.e., $h_{ii}(1 - h_{ii}) \geqslant 0$. Combined with $h_{ii} \geqslant 0$, this gives $0 \leqslant h_{ii} \leqslant 1$.
+
+\textbf{(ii)} $\sum_{i=1}^{n} h_{ii} = \tr(\bH) = k + 1$ by Theorem~\ref{thm:HM}\ref{HM:iv}.
+\end{proof}
+
+%=============================================================================
+\section{Finite-Sample Properties Without Normality}\label{sec:finite}
+%=============================================================================
+
+In this section, only assumptions~\ref{A1}--\ref{A4} are used. No distributional assumption on $\be$ is needed.
+
+\subsection{Unbiasedness}
+
+\begin{theorem}[Unbiasedness of $\hat{\bb}$]\label{thm:unbiased}
+Under~\ref{A1}--\ref{A2}, the OLS estimator is unbiased:
+\begin{equation}\label{eq:unbiased}
+\boxed{\expc[\hat{\bb}] = \bb.}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Substituting $\bY = \bX\bb + \be$ into $\hat{\bb} = (\bX'\bX)^{-1}\bX'\bY$:
+\begin{align}
+\hat{\bb} &= (\bX'\bX)^{-1}\bX'(\bX\bb + \be) \notag\\
+&= (\bX'\bX)^{-1}\bX'\bX\bb + (\bX'\bX)^{-1}\bX'\be \notag\\
+&= \bI_{k+1}\bb + (\bX'\bX)^{-1}\bX'\be \notag\\
+&= \bb + (\bX'\bX)^{-1}\bX'\be. \label{eq:beta-decomp}
+\end{align}
+Taking expectations, using~\ref{A2} ($\expc[\be] = \bzero$):
+\[
+\expc[\hat{\bb}] = \bb + (\bX'\bX)^{-1}\bX'\expc[\be] = \bb + (\bX'\bX)^{-1}\bX' \cdot \bzero = \bb. \qedhere
+\]
+\end{proof}
+
+\subsection{Variance--Covariance Matrix}
+
+\begin{theorem}[Variance--Covariance Matrix of $\hat{\bb}$]\label{thm:var-beta}
+Under~\ref{A1}--\ref{A4}:
+\begin{equation}\label{eq:var-beta}
+\boxed{\var(\hat{\bb}) = \sigma^2 (\bX'\bX)^{-1}.}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+From~\eqref{eq:beta-decomp}, $\hat{\bb} - \bb = (\bX'\bX)^{-1}\bX'\be$. Therefore:
+\begin{align}
+\var(\hat{\bb}) &= \expc[(\hat{\bb} - \bb)(\hat{\bb} - \bb)'] \notag\\
+&= \expc\left[(\bX'\bX)^{-1}\bX'\be\be'\bX(\bX'\bX)^{-1}\right] \notag\\
+&= (\bX'\bX)^{-1}\bX' \expc[\be\be'] \bX(\bX'\bX)^{-1}. \label{eq:var-beta-step}
+\end{align}
+By~\ref{A2} and~\ref{A3}, $\expc[\be\be'] = \var(\be) + \expc[\be]\expc[\be]' = \sigma^2\bI + \bzero = \sigma^2\bI$. Substituting into~\eqref{eq:var-beta-step}:
+\begin{align*}
+\var(\hat{\bb}) &= (\bX'\bX)^{-1}\bX'(\sigma^2\bI)\bX(\bX'\bX)^{-1}\\
+&= \sigma^2(\bX'\bX)^{-1}\underbrace{\bX'\bX(\bX'\bX)^{-1}}_{\bI_{k+1}}\\
+&= \sigma^2(\bX'\bX)^{-1}.
+\end{align*}
+The diagonal entry $[\var(\hat{\bb})]_{jj} = \sigma^2[(\bX'\bX)^{-1}]_{jj}$ gives $\var(\hat{\beta}_j)$.
+\end{proof}
+
+\subsection{The Gauss--Markov Theorem}
+
+\begin{theorem}[Gauss--Markov Theorem]\label{thm:gm}
+Under~\ref{A1}--\ref{A4}, the OLS estimator $\hat{\bb}$ is the \textbf{Best Linear Unbiased Estimator} (BLUE) of $\bb$. That is, for any other linear unbiased estimator $\tilde{\bb} = \bC\bY$ (where $\bC$ is a $(k+1) \times n$ constant matrix), the difference $\var(\tilde{\bb}) - \var(\hat{\bb})$ is positive semi-definite. In particular, $\var(\tilde{\beta}_j) \geqslant \var(\hat{\beta}_j)$ for every $j$.
+\end{theorem}
+
+\begin{proof}
+\textbf{Step 1: Necessary condition for unbiasedness.} We need $\expc[\tilde{\bb}] = \bb$ for all $\bb$:
+\[
+\expc[\tilde{\bb}] = \bC\expc[\bY] = \bC\bX\bb = \bb \quad \text{for all } \bb.
+\]
+This forces $\bC\bX = \bI_{k+1}$.
+
+\textbf{Step 2: Decompose $\bC$.} Write $\bC = (\bX'\bX)^{-1}\bX' + \bD$, where $\bD = \bC - (\bX'\bX)^{-1}\bX'$ is the ``excess'' beyond the OLS coefficient matrix. From $\bC\bX = \bI_{k+1}$:
+\[
+\bD\bX = \bC\bX - (\bX'\bX)^{-1}\bX'\bX = \bI_{k+1} - \bI_{k+1} = \bzero.
+\]
+
+\textbf{Step 3: Compute $\var(\tilde{\bb})$.}
+\begin{align*}
+\var(\tilde{\bb}) &= \bC\var(\bY)\bC' = \sigma^2\bC\bC'\\
+&= \sigma^2\bigl[(\bX'\bX)^{-1}\bX' + \bD\bigr]\bigl[\bX(\bX'\bX)^{-1} + \bD'\bigr].
+\end{align*}
+Expanding the product yields four terms:
+\begin{align*}
+\sigma^2\bC\bC' &= \sigma^2(\bX'\bX)^{-1}\underbrace{\bX'\bX}_{}(\bX'\bX)^{-1} + \sigma^2(\bX'\bX)^{-1}\bX'\bD' + \sigma^2\bD\bX(\bX'\bX)^{-1} + \sigma^2\bD\bD'.
+\end{align*}
+Since $\bD\bX = \bzero$, the third term vanishes. The second term is $\sigma^2(\bX'\bX)^{-1}(\bD\bX)' = \sigma^2(\bX'\bX)^{-1}\bzero' = \bzero$. So:
+\[
+\var(\tilde{\bb}) = \sigma^2(\bX'\bX)^{-1} + \sigma^2\bD\bD' = \var(\hat{\bb}) + \sigma^2\bD\bD'.
+\]
+Since $\bD\bD'$ is positive semi-definite (for any $\bv$, $\bv'\bD\bD'\bv = \|\bD'\bv\|^2 \geqslant 0$):
+\[
+\var(\tilde{\bb}) - \var(\hat{\bb}) = \sigma^2\bD\bD' \succeq \bzero.
+\]
+Equality holds if and only if $\bD = \bzero$, i.e., $\bC = (\bX'\bX)^{-1}\bX'$, i.e., $\tilde{\bb} = \hat{\bb}$.
+\end{proof}
+
+\subsection{Estimation of $\sigma^2$}
+
+\begin{lemma}[Expected Value of a Quadratic Form]\label{lem:quadratic-form}
+Let $\bz$ be an $n \times 1$ random vector with $\expc[\bz] = \boldsymbol\mu$ and $\var(\bz) = \boldsymbol\Sigma$. Let $\bA$ be an $n \times n$ constant matrix. Then:
+\begin{equation}\label{eq:quad-expect}
+\expc[\bz'\bA\bz] = \tr(\bA\boldsymbol\Sigma) + \boldsymbol\mu'\bA\boldsymbol\mu.
+\end{equation}
+In particular, if $\expc[\bz] = \bzero$, then $\expc[\bz'\bA\bz] = \tr(\bA\boldsymbol\Sigma)$.
+\end{lemma}
+
+\begin{proof}
+The quadratic form is a scalar: $\bz'\bA\bz = \sum_{i,j} a_{ij} z_i z_j$. Taking expectations:
+\[
+\expc[\bz'\bA\bz] = \sum_{i,j} a_{ij} \expc[z_i z_j].
+\]
+From $\cov(z_i, z_j) = \expc[z_i z_j] - \mu_i\mu_j$, we get $\expc[z_i z_j] = \Sigma_{ij} + \mu_i\mu_j$. Substituting:
+\begin{align*}
+\expc[\bz'\bA\bz] &= \sum_{i,j} a_{ij}\Sigma_{ij} + \sum_{i,j} a_{ij}\mu_i\mu_j.
+\end{align*}
+The first sum equals $\tr(\bA\boldsymbol\Sigma)$: indeed, $\tr(\bA\boldsymbol\Sigma) = \sum_i (\bA\boldsymbol\Sigma)_{ii} = \sum_i \sum_j a_{ij}\Sigma_{ji} = \sum_{i,j} a_{ij}\Sigma_{ij}$, where the last step uses the symmetry $\Sigma_{ji} = \Sigma_{ij}$. The second sum is $\boldsymbol\mu'\bA\boldsymbol\mu$.
+\end{proof}
+
+\begin{theorem}[Unbiasedness of MSE]\label{thm:mse-unbiased}
+Under~\ref{A1}--\ref{A4}, the \textbf{mean squared error}
+\begin{equation}\label{eq:mse}
+s^2 = \MSE = \frac{\SSE}{n - k - 1} = \frac{\mathbf{e}'\mathbf{e}}{n - k - 1}
+\end{equation}
+is an unbiased estimator of $\sigma^2$: $\expc[\MSE] = \sigma^2$.
+\end{theorem}
+
+\begin{proof}
+\textbf{Step 1: Express SSE as a quadratic form in $\be$.} Since $\mathbf{e} = \bM\be$ (Remark after Definition~\ref{def:hat-matrix}):
+\[
+\SSE = \mathbf{e}'\mathbf{e} = (\bM\be)'(\bM\be) = \be'\bM'\bM\be = \be'\bM\be,
+\]
+where the last step uses $\bM'\bM = \bM\bM = \bM$ (symmetric idempotent).
+
+\textbf{Step 2: Apply Lemma~\ref{lem:quadratic-form}.} With $\bz = \be$, $\bA = \bM$, $\boldsymbol\mu = \expc[\be] = \bzero$ (by~\ref{A2}), and $\boldsymbol\Sigma = \var(\be) = \sigma^2\bI$ (by~\ref{A3}):
+\[
+\expc[\SSE] = \expc[\be'\bM\be] = \tr(\bM \cdot \sigma^2\bI) + \bzero'\bM\bzero = \sigma^2\tr(\bM).
+\]
+
+\textbf{Step 3: Evaluate the trace.} By Theorem~\ref{thm:HM}\ref{HM:iv}, $\tr(\bM) = n - k - 1$. Hence $\expc[\SSE] = \sigma^2(n - k - 1)$.
+
+\textbf{Step 4: Conclude.}
+\[
+\expc[\MSE] = \expc\!\left[\frac{\SSE}{n-k-1}\right] = \frac{\sigma^2(n-k-1)}{n-k-1} = \sigma^2. \qedhere
+\]
+\end{proof}
+
+\subsection{Variance of Individual Residuals}
+
+\begin{theorem}[Variance of Residuals]\label{thm:var-resid}
+Under~\ref{A1}--\ref{A4}:
+\begin{equation}\label{eq:var-resid}
+\var(\mathbf{e}) = \sigma^2\bM, \qquad \text{and in particular, } \var(e_i) = \sigma^2(1 - h_{ii}).
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+Since $\mathbf{e} = \bM\be$:
+\[
+\var(\mathbf{e}) = \bM\var(\be)\bM' = \bM(\sigma^2\bI)\bM = \sigma^2\bM^2 = \sigma^2\bM,
+\]
+where the last step uses the idempotency of $\bM$. The $(i, i)$ entry gives $\var(e_i) = \sigma^2 m_{ii}$. Since $\bM = \bI - \bH$, we have $m_{ii} = 1 - h_{ii}$, so $\var(e_i) = \sigma^2(1 - h_{ii})$.
+\end{proof}
+
+\begin{remark}
+By Theorem~\ref{thm:leverage}\ref{lev:i}, $0 \leqslant h_{ii} \leqslant 1$, so $\var(e_i) \leqslant \sigma^2$. High-leverage observations (large $h_{ii}$) produce residuals with smaller variance: the fitted line is pulled toward them, leaving less room for the residual to vary.
+\end{remark}
+
+%=============================================================================
+\section{Multivariate Normal Tools}\label{sec:mvn}
+%=============================================================================
+
+This section collects the distributional results needed for exact inference in Section~\ref{sec:exact}.
+
+\begin{theorem}[Closure Under Linear Transformations]\label{thm:mvn-linear}
+If $\bz \sim N(\boldsymbol\mu, \boldsymbol\Sigma)$ is an $n \times 1$ normal random vector, $\bA$ is an $m \times n$ constant matrix, and $\mathbf{b} \in \Real^m$ is a constant vector, then
+\begin{equation}\label{eq:mvn-linear}
+\bA\bz + \mathbf{b} \sim N(\bA\boldsymbol\mu + \mathbf{b},\; \bA\boldsymbol\Sigma\bA').
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+The moment-generating function (MGF) of $\bz$ is $M_{\bz}(\mathbf{t}) = \exp(\mathbf{t}'\boldsymbol\mu + \frac{1}{2}\mathbf{t}'\boldsymbol\Sigma\mathbf{t})$. The MGF of $\bw = \bA\bz + \mathbf{b}$ is:
+\begin{align*}
+M_{\bw}(\mathbf{t}) &= \expc\!\left[e^{\mathbf{t}'(\bA\bz + \mathbf{b})}\right] = e^{\mathbf{t}'\mathbf{b}} \cdot \expc\!\left[e^{(\bA'\mathbf{t})' \bz}\right] = e^{\mathbf{t}'\mathbf{b}} \cdot M_{\bz}(\bA'\mathbf{t})\\
+&= e^{\mathbf{t}'\mathbf{b}} \cdot \exp\!\bigl((\bA'\mathbf{t})'\boldsymbol\mu + \tfrac{1}{2}(\bA'\mathbf{t})'\boldsymbol\Sigma(\bA'\mathbf{t})\bigr)\\
+&= \exp\!\bigl(\mathbf{t}'(\bA\boldsymbol\mu + \mathbf{b}) + \tfrac{1}{2}\mathbf{t}'\bA\boldsymbol\Sigma\bA'\mathbf{t}\bigr).
+\end{align*}
+This is the MGF of $N(\bA\boldsymbol\mu + \mathbf{b},\; \bA\boldsymbol\Sigma\bA')$. By uniqueness of the MGF, the result follows.
+\end{proof}
+
+\begin{theorem}[Uncorrelatedness $\Leftrightarrow$ Independence Under Joint Normality]\label{thm:mvn-uncorr-indep}
+Let $(\mathbf{U}', \mathbf{V}')'$ be jointly normal:
+\[
+\begin{pmatrix} \mathbf{U} \\ \mathbf{V} \end{pmatrix} \sim N\!\left(\begin{pmatrix} \boldsymbol\mu_U \\ \boldsymbol\mu_V \end{pmatrix}, \begin{pmatrix} \boldsymbol\Sigma_{UU} & \boldsymbol\Sigma_{UV} \\ \boldsymbol\Sigma_{VU} & \boldsymbol\Sigma_{VV} \end{pmatrix}\right).
+\]
+Then $\boldsymbol\Sigma_{UV} = \bzero$ if and only if $\mathbf{U}$ and $\mathbf{V}$ are independent.
+\end{theorem}
+
+\begin{proof}
+$(\Leftarrow)$: Independence implies uncorrelatedness for any distribution.
+
+$(\Rightarrow)$: When $\boldsymbol\Sigma_{UV} = \bzero$, the covariance matrix is block-diagonal. The joint MGF factors:
+\begin{align*}
+M_{(\mathbf{U},\mathbf{V})}(\mathbf{s}, \mathbf{t}) &= \exp\!\bigl((\mathbf{s}', \mathbf{t}')\boldsymbol\mu + \tfrac{1}{2}(\mathbf{s}', \mathbf{t}')\boldsymbol\Sigma(\mathbf{s}', \mathbf{t}')'\bigr)\\
+&= \exp\!\bigl(\mathbf{s}'\boldsymbol\mu_U + \tfrac{1}{2}\mathbf{s}'\boldsymbol\Sigma_{UU}\mathbf{s}\bigr) \cdot \exp\!\bigl(\mathbf{t}'\boldsymbol\mu_V + \tfrac{1}{2}\mathbf{t}'\boldsymbol\Sigma_{VV}\mathbf{t}\bigr)\\
+&= M_{\mathbf{U}}(\mathbf{s}) \cdot M_{\mathbf{V}}(\mathbf{t}).
+\end{align*}
+Factorization of the joint MGF into the product of marginal MGFs implies independence.
+\end{proof}
+
+\begin{remark}
+For general (non-normal) distributions, uncorrelatedness does \emph{not} imply independence. The equivalence is a special property of the multivariate normal.
+\end{remark}
+
+\begin{theorem}[Chi-Square Distribution of Quadratic Forms]\label{thm:quadratic-chisq}
+Let $\bz \sim N(\bzero, \bI_n)$ and $\bA$ be an $n \times n$ symmetric idempotent matrix. Then
+\begin{equation}\label{eq:quad-chisq}
+\bz'\bA\bz \sim \chi^2_r, \quad \text{where } r = \rank(\bA) = \tr(\bA).
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+\textbf{Step 1: Spectral decomposition.} Since $\bA$ is symmetric, there exists an orthogonal matrix $\bP$ ($\bP'\bP = \bP\bP' = \bI$) such that $\bA = \bP\boldsymbol\Lambda\bP'$, where $\boldsymbol\Lambda = \diag(\lambda_1, \ldots, \lambda_n)$. By idempotency and Lemma~\ref{lem:idempotent}, each $\lambda_i \in \{0, 1\}$. Without loss of generality, let the first $r$ eigenvalues be $1$ and the rest be $0$:
+\[
+\boldsymbol\Lambda = \diag(\underbrace{1, \ldots, 1}_{r}, \underbrace{0, \ldots, 0}_{n-r}).
+\]
+
+\textbf{Step 2: Apply orthogonal transformation.} Let $\bw = \bP'\bz$. Since $\bP$ is orthogonal:
+\[
+\expc[\bw] = \bP'\expc[\bz] = \bzero, \qquad \var(\bw) = \bP'\bI\bP = \bI_n.
+\]
+By Theorem~\ref{thm:mvn-linear}, $\bw \sim N(\bzero, \bI_n)$, so $w_1, \ldots, w_n$ are i.i.d.\ $N(0, 1)$.
+
+\textbf{Step 3: Evaluate the quadratic form.}
+\[
+\bz'\bA\bz = \bz'\bP\boldsymbol\Lambda\bP'\bz = (\bP'\bz)'\boldsymbol\Lambda(\bP'\bz) = \bw'\boldsymbol\Lambda\bw = \sum_{i=1}^{n}\lambda_i w_i^2 = \sum_{i=1}^{r} w_i^2.
+\]
+
+\textbf{Step 4: Conclude.} Since $w_1, \ldots, w_r$ are independent $N(0, 1)$, by definition $\sum_{i=1}^{r} w_i^2 \sim \chi^2_r$.
+\end{proof}
+
+\begin{theorem}[Cochran's Theorem --- Independence of Quadratic Forms]\label{thm:cochran}
+Let $\bz \sim N(\bzero, \bI_n)$, and let $\bA_1, \bA_2$ be $n \times n$ symmetric idempotent matrices with $\bA_1\bA_2 = \bzero$. Then $\bz'\bA_1\bz$ and $\bz'\bA_2\bz$ are independent.
+\end{theorem}
+
+\begin{proof}
+Define $\mathbf{U} = \bA_1\bz$ and $\mathbf{V} = \bA_2\bz$. Both are linear transformations of the normal vector $\bz$, so $(\mathbf{U}', \mathbf{V}')'$ is jointly normal by Theorem~\ref{thm:mvn-linear}. Their cross-covariance is:
+\[
+\cov(\mathbf{U}, \mathbf{V}) = \bA_1\var(\bz)\bA_2' = \bA_1\bI\bA_2 = \bA_1\bA_2 = \bzero.
+\]
+By Theorem~\ref{thm:mvn-uncorr-indep}, $\mathbf{U}$ and $\mathbf{V}$ are independent. Since $\bz'\bA_1\bz = \|\mathbf{U}\|^2$ is a function of $\mathbf{U}$ alone, and $\bz'\bA_2\bz = \|\mathbf{V}\|^2$ is a function of $\mathbf{V}$ alone, the two quadratic forms are independent.
+\end{proof}
+
+\begin{remark}
+In Section~\ref{sec:exact}, we shall apply Cochran's theorem with $\bA_1 = \bH - \bH_0$ and $\bA_2 = \bM$ to prove the independence of $\SSR$ and $\SSE$.
+\end{remark}
+
+%=============================================================================
+\section{Exact Inference Under Normality}\label{sec:exact}
+%=============================================================================
+
+From this section onward, all five assumptions~\ref{A1}--\ref{A5} are in force.
+
+\subsection{Sampling Distribution of $\hat{\bb}$}
+
+\begin{theorem}[Normality of $\hat{\bb}$]\label{thm:beta-dist}
+Under~\ref{A1}--\ref{A5}:
+\begin{equation}\label{eq:beta-dist}
+\boxed{\hat{\bb} \sim N\!\left(\bb,\; \sigma^2(\bX'\bX)^{-1}\right).}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+From~\eqref{eq:beta-decomp}, $\hat{\bb} = \bb + (\bX'\bX)^{-1}\bX'\be$. This is an affine transformation of $\be$. Under~\ref{A5}, $\be \sim N(\bzero, \sigma^2\bI)$. By Theorem~\ref{thm:mvn-linear} with $\bA = (\bX'\bX)^{-1}\bX'$, $\bz = \be$, $\mathbf{b} = \bb$:
+\begin{align*}
+\hat{\bb} &\sim N\!\bigl(\bb + (\bX'\bX)^{-1}\bX' \cdot \bzero,\; (\bX'\bX)^{-1}\bX'(\sigma^2\bI)\bX(\bX'\bX)^{-1}\bigr)\\
+&= N\!\bigl(\bb,\; \sigma^2(\bX'\bX)^{-1}\bigr). \qedhere
+\end{align*}
+\end{proof}
+
+\subsection{Distribution of $\SSE/\sigma^2$ and Independence from $\hat{\bb}$}
+
+\begin{theorem}[Chi-Square Distribution of $\SSE/\sigma^2$]\label{thm:sse-dist}
+Under~\ref{A1}--\ref{A5}:
+\begin{equation}\label{eq:sse-dist}
+\frac{\SSE}{\sigma^2} \sim \chi^2_{n-k-1},
+\end{equation}
+and $\SSE$ is independent of $\hat{\bb}$.
+\end{theorem}
+
+\begin{proof}
+\textbf{Step 1: Standardize.} Let $\bz = \be/\sigma$. Under~\ref{A5}, $\bz \sim N(\bzero, \bI_n)$. Since $\mathbf{e} = \bM\be$:
+\[
+\frac{\SSE}{\sigma^2} = \frac{\be'\bM\be}{\sigma^2} = \bz'\bM\bz.
+\]
+
+\textbf{Step 2: Apply Theorem~\ref{thm:quadratic-chisq}.} The matrix $\bM$ is symmetric and idempotent (Theorem~\ref{thm:HM}\ref{HM:i}), with $\tr(\bM) = n - k - 1$ (Theorem~\ref{thm:HM}\ref{HM:iv}). Hence $\bz'\bM\bz \sim \chi^2_{n-k-1}$.
+
+\textbf{Step 3: Prove independence.} Consider $\hat{\bb} - \bb = (\bX'\bX)^{-1}\bX'\be$ and $\mathbf{e} = \bM\be$. Both are linear transformations of $\be \sim N(\bzero, \sigma^2\bI)$, so they are jointly normal by Theorem~\ref{thm:mvn-linear}. Their cross-covariance is:
+\begin{align*}
+\cov\!\bigl((\bX'\bX)^{-1}\bX'\be,\; \bM\be\bigr) &= (\bX'\bX)^{-1}\bX'\var(\be)\bM'\\
+&= (\bX'\bX)^{-1}\bX'(\sigma^2\bI)\bM\\
+&= \sigma^2(\bX'\bX)^{-1}\bX'\bM = \bzero,
+\end{align*}
+where the last step uses $\bX'\bM = (\bM\bX)' = \bzero' = \bzero$ (from Theorem~\ref{thm:HM}\ref{HM:ii}). By Theorem~\ref{thm:mvn-uncorr-indep}, $\hat{\bb} - \bb$ and $\mathbf{e}$ are independent. Since $\SSE = \mathbf{e}'\mathbf{e}$ is a function of $\mathbf{e}$ and $\hat{\bb} = \bb + (\hat{\bb} - \bb)$, the independence of $\hat{\bb}$ and $\SSE$ follows.
+\end{proof}
+
+\subsection{OLS as Maximum Likelihood Under Normality}
+
+\begin{theorem}[OLS Equals MLE Under Normality]\label{thm:mle}
+Under~\ref{A1}--\ref{A5}, the OLS estimator $\hat{\bb}$ is also the maximum likelihood estimator of $\bb$. The MLE of $\sigma^2$ is $\hat{\sigma}^2_{\mathrm{MLE}} = \SSE/n$, which is biased.
+\end{theorem}
+
+\begin{proof}
+Under~\ref{A5}, $\bY \sim N(\bX\bb, \sigma^2\bI)$, so the log-likelihood is:
+\begin{align*}
+\ell(\bb, \sigma^2) &= -\frac{n}{2}\ln(2\pi) - \frac{n}{2}\ln\sigma^2 - \frac{1}{2\sigma^2}(\bY - \bX\bb)'(\bY - \bX\bb).
+\end{align*}
+
+\textbf{Maximizing over $\bb$:} For any fixed $\sigma^2 > 0$, maximizing $\ell$ over $\bb$ is equivalent to minimizing $(\bY - \bX\bb)'(\bY - \bX\bb) = Q(\bb)$. This is exactly the OLS problem, so $\hat{\bb}_{\mathrm{MLE}} = \hat{\bb}_{\mathrm{OLS}} = (\bX'\bX)^{-1}\bX'\bY$.
+
+\textbf{Maximizing over $\sigma^2$:} Substituting $\hat{\bb}$ and differentiating with respect to $\sigma^2$:
+\[
+\frac{\partial \ell}{\partial \sigma^2} = -\frac{n}{2\sigma^2} + \frac{\SSE}{2(\sigma^2)^2} = 0 \implies \hat{\sigma}^2_{\mathrm{MLE}} = \frac{\SSE}{n}.
+\]
+\textbf{Second-order condition:}
+\[
+\frac{\partial^2 \ell}{\partial (\sigma^2)^2} = \frac{n}{2(\sigma^2)^2} - \frac{\SSE}{(\sigma^2)^3}.
+\]
+Evaluating at $\hat{\sigma}^2_{\mathrm{MLE}} = \SSE/n$: $\frac{\partial^2 \ell}{\partial (\sigma^2)^2}\big|_{\hat{\sigma}^2} = \frac{n}{2(\SSE/n)^2} - \frac{\SSE}{(\SSE/n)^3} = \frac{n^3}{2\SSE^2} - \frac{n^3}{\SSE^2} = -\frac{n^3}{2\SSE^2} < 0$, confirming a maximum.
+
+This is biased: $\expc[\hat{\sigma}^2_{\mathrm{MLE}}] = \frac{n-k-1}{n}\sigma^2 \neq \sigma^2$. The unbiased estimator is $\MSE = \SSE/(n-k-1)$.
+\end{proof}
+
+%=============================================================================
+\section{Sum of Squares and the Coefficient of Determination}\label{sec:R2}
+%=============================================================================
+
+\subsection{Variance Decomposition}
+
+\begin{definition}[Centering Matrix]\label{def:centering}
+The \textbf{centering matrix} is $\bM_0 = \bI_n - \frac{1}{n}\bone\bone'$. For any vector $\bv$, $\bM_0\bv = \bv - \bar{v}\bone$, where $\bar{v} = \frac{1}{n}\bone'\bv$.
+\end{definition}
+
+\begin{remark}
+$\bM_0$ is symmetric and idempotent (being the residual maker for the intercept-only model), with $\tr(\bM_0) = n - 1$. Also define $\bH_0 = \frac{1}{n}\bone\bone' = \bI - \bM_0$, the projection onto $\calC(\bone)$.
+\end{remark}
+
+\begin{theorem}[Variance Decomposition]\label{thm:anova}
+In the model with an intercept:
+\begin{equation}\label{eq:anova}
+\boxed{\SST = \SSR + \SSE,}
+\end{equation}
+where:
+\begin{itemize}
+\item $\SST = \sum(Y_i - \bar{Y})^2 = \bY'\bM_0\bY$ \quad (Total Sum of Squares),
+\item $\SSR = \sum(\hat{Y}_i - \bar{Y})^2 = \hat{\bY}'\bM_0\hat{\bY}$ \quad (Regression Sum of Squares),
+\item $\SSE = \sum(Y_i - \hat{Y}_i)^2 = \mathbf{e}'\mathbf{e}$ \quad (Error/Residual Sum of Squares).
+\end{itemize}
+\end{theorem}
+
+\begin{proof}
+Decompose:
+\[
+\bY - \bar{Y}\bone = (\bY - \hat{\bY}) + (\hat{\bY} - \bar{Y}\bone) = \mathbf{e} + (\hat{\bY} - \bar{Y}\bone).
+\]
+Squaring:
+\begin{align*}
+\SST &= \|\bY - \bar{Y}\bone\|^2 = \|\mathbf{e}\|^2 + \|\hat{\bY} - \bar{Y}\bone\|^2 + 2\mathbf{e}'(\hat{\bY} - \bar{Y}\bone).
+\end{align*}
+The cross term vanishes:
+\[
+\mathbf{e}'(\hat{\bY} - \bar{Y}\bone) = \mathbf{e}'\hat{\bY} - \bar{Y}\mathbf{e}'\bone = 0 - \bar{Y} \cdot 0 = 0,
+\]
+where we used Theorem~\ref{thm:normal-eq}\ref{ne:iii} and \ref{ne:ii}. Hence $\SST = \SSE + \SSR$.
+\end{proof}
+
+\subsection{Coefficient of Determination}
+
+\begin{definition}[$R^2$ and Adjusted $R^2$]\label{def:R2}
+The \textbf{coefficient of determination} is
+\begin{equation}\label{eq:R2}
+R^2 = \frac{\SSR}{\SST} = 1 - \frac{\SSE}{\SST}, \qquad 0 \leqslant R^2 \leqslant 1.
+\end{equation}
+It measures the proportion of total variation in $\bY$ explained by the regression. The \textbf{adjusted $R^2$} is
+\begin{equation}\label{eq:adj-R2}
+\bar{R}^2 = 1 - \frac{\SSE/(n-k-1)}{\SST/(n-1)} = 1 - \frac{n-1}{n-k-1}(1 - R^2) = 1 - \frac{\MSE}{s_Y^2},
+\end{equation}
+where $s_Y^2 = \SST/(n-1)$. The adjusted $R^2$ can be negative.
+\end{definition}
+
+\begin{theorem}[Monotonicity of $R^2$]\label{thm:R2-monotone}
+Adding a regressor to the model cannot decrease $R^2$. That is, if $R^2_k$ is the coefficient of determination with $k$ regressors and $R^2_{k+1}$ is that with an additional regressor, then $R^2_{k+1} \geqslant R^2_k$.
+\end{theorem}
+
+\begin{proof}
+Let $\calC_k \subset \calC_{k+1}$ denote the column spaces of the smaller and larger design matrices. Since $\calC_k \subseteq \calC_{k+1}$, the projection of $\bY$ onto $\calC_{k+1}$ is at least as close to $\bY$ as the projection onto $\calC_k$. That is, $\SSE_{k+1} \leqslant \SSE_k$. Since $\SST$ does not depend on the regressors:
+\[
+R^2_{k+1} = 1 - \frac{\SSE_{k+1}}{\SST} \geqslant 1 - \frac{\SSE_k}{\SST} = R^2_k. \qedhere
+\]
+\end{proof}
+
+\begin{theorem}[$\bar{R}^2$ Increases iff $|t| > 1$]\label{thm:adj-R2}
+Adding a single regressor increases $\bar{R}^2$ if and only if its $t$-statistic exceeds $1$ in absolute value.
+\end{theorem}
+
+\begin{proof}
+Let the model with $k$ regressors have $\MSE_k = \SSE_k/(n-k-1)$, and the model with an additional regressor have $\MSE_{k+1} = \SSE_{k+1}/(n-k-2)$. Then $\bar{R}^2_{k+1} > \bar{R}^2_k$ if and only if $\MSE_{k+1} < \MSE_k$, i.e.,
+\begin{equation}\label{eq:mse-compare}
+\frac{\SSE_{k+1}}{n-k-2} < \frac{\SSE_k}{n-k-1}.
+\end{equation}
+
+\textbf{Step 1: Derive the SSE reduction identity.} Write the enlarged design matrix as $\bX_{k+1} = [\bX_k \;\; \bx]$ where $\bx$ is the new regressor column. The partitioned normal equations for the enlarged model are:
+\begin{align*}
+\bX_k'\bX_k\hat{\bb}_k^* + \bX_k'\bx\hat{\beta}_{k+1} &= \bX_k'\bY,\\
+\bx'\bX_k\hat{\bb}_k^* + \bx'\bx\,\hat{\beta}_{k+1} &= \bx'\bY.
+\end{align*}
+From the first equation, $\hat{\bb}_k^* = (\bX_k'\bX_k)^{-1}\bX_k'(\bY - \bx\hat{\beta}_{k+1})$. Substituting into the second and simplifying:
+\begin{equation}\label{eq:beta-new}
+\hat{\beta}_{k+1} = \frac{\bx'\bM_k\bY}{\bx'\bM_k\bx},
+\end{equation}
+where $\bM_k = \bI - \bX_k(\bX_k'\bX_k)^{-1}\bX_k'$ is the residual maker for the $k$-regressor model. By standard results on partitioned matrix inverses, $[(\bX_{k+1}'\bX_{k+1})^{-1}]_{k+1,k+1} = (\bx'\bM_k\bx)^{-1}$.
+
+Now, $\SSE_k = \bY'\bM_k\bY$ and $\SSE_{k+1} = \bY'\bM_{k+1}\bY$, where $\bM_{k+1} = \bM_k - \frac{\bM_k\bx\bx'\bM_k}{\bx'\bM_k\bx}$ (the rank-one projection update). Hence:
+\[
+\SSE_k - \SSE_{k+1} = \bY'\frac{\bM_k\bx\bx'\bM_k}{\bx'\bM_k\bx}\bY = \frac{(\bx'\bM_k\bY)^2}{\bx'\bM_k\bx} = \hat{\beta}_{k+1}^2 \cdot (\bx'\bM_k\bx) = \frac{\hat{\beta}_{k+1}^2}{[(\bX_{k+1}'\bX_{k+1})^{-1}]_{k+1,k+1}}.
+\]
+
+\textbf{Step 2: Express in terms of $t^2$.} The $t$-statistic for $\hat{\beta}_{k+1}$ in the enlarged model is $t_{k+1} = \hat{\beta}_{k+1}/(s_{k+1}\sqrt{[(\bX_{k+1}'\bX_{k+1})^{-1}]_{k+1,k+1}})$, where $s_{k+1}^2 = \MSE_{k+1}$. Therefore:
+\[
+\SSE_k - \SSE_{k+1} = t_{k+1}^2 \cdot \MSE_{k+1}, \qquad \text{i.e., } \SSE_k = \SSE_{k+1} + t_{k+1}^2 \cdot \MSE_{k+1}.
+\]
+
+\textbf{Step 3: Conclude.} Substituting into~\eqref{eq:mse-compare}:
+\begin{align*}
+\frac{\SSE_{k+1}}{n-k-2} &< \frac{\SSE_{k+1} + t_{k+1}^2 \cdot \MSE_{k+1}}{n-k-1}\\
+(n-k-1)\SSE_{k+1} &< (n-k-2)\SSE_{k+1} + (n-k-2)t_{k+1}^2 \cdot \MSE_{k+1}\\
+\SSE_{k+1} &< (n-k-2)t_{k+1}^2 \cdot \MSE_{k+1}.
+\end{align*}
+Since $\SSE_{k+1} = (n-k-2)\MSE_{k+1}$, dividing by $(n-k-2)\MSE_{k+1} > 0$ gives $1 < t_{k+1}^2$, i.e., $|t_{k+1}| > 1$.
+\end{proof}
+
+%=============================================================================
+\section{Hypothesis Testing and Confidence Regions}\label{sec:test}
+%=============================================================================
+
+\subsection{Individual Coefficient $t$ Test}
+
+\begin{theorem}[Individual $t$ Test]\label{thm:t-test}
+Under~\ref{A1}--\ref{A5}, for testing $H_0\colon \beta_j = \beta_j^0$:
+\begin{equation}\label{eq:t-test}
+t = \frac{\hat{\beta}_j - \beta_j^0}{\SE(\hat{\beta}_j)} \sim t_{n-k-1} \quad \text{under } H_0,
+\end{equation}
+where $\SE(\hat{\beta}_j) = s\sqrt{[(\bX'\bX)^{-1}]_{jj}}$ and $s = \sqrt{\MSE}$.
+\end{theorem}
+
+\begin{proof}
+\textbf{Step 1.} By Theorem~\ref{thm:beta-dist}, $\hat{\beta}_j \sim N\!\bigl(\beta_j,\; \sigma^2[(\bX'\bX)^{-1}]_{jj}\bigr)$. Standardizing:
+\[
+Z = \frac{\hat{\beta}_j - \beta_j}{\sigma\sqrt{[(\bX'\bX)^{-1}]_{jj}}} \sim N(0, 1).
+\]
+
+\textbf{Step 2.} By Theorem~\ref{thm:sse-dist}, $V = \SSE/\sigma^2 \sim \chi^2_{n-k-1}$ and is independent of $\hat{\bb}$ (hence independent of $Z$).
+
+\textbf{Step 3.} By definition, if $Z \sim N(0,1)$ and $V \sim \chi^2_\nu$ are independent, then $Z/\sqrt{V/\nu} \sim t_\nu$. Applying this:
+\begin{align*}
+\frac{Z}{\sqrt{V/(n-k-1)}} &= \frac{\hat{\beta}_j - \beta_j}{\sigma\sqrt{[(\bX'\bX)^{-1}]_{jj}}} \cdot \frac{1}{\sqrt{\SSE/[\sigma^2(n-k-1)]}}\\
+&= \frac{\hat{\beta}_j - \beta_j}{\sqrt{\MSE} \cdot \sqrt{[(\bX'\bX)^{-1}]_{jj}}} = \frac{\hat{\beta}_j - \beta_j}{s\sqrt{[(\bX'\bX)^{-1}]_{jj}}} \sim t_{n-k-1}.
+\end{align*}
+Under $H_0\colon \beta_j = \beta_j^0$, replace $\beta_j$ by $\beta_j^0$.
+\end{proof}
+
+\subsection{Overall $F$ Test}
+
+\begin{lemma}[Distribution of $\SSR/\sigma^2$ Under $H_0$]\label{lem:SSR-chisq}
+Define $\bH_0 = \frac{1}{n}\bone\bone'$. Under $H_0\colon \beta_1 = \cdots = \beta_k = 0$ (with~\ref{A1}--\ref{A5}):
+\[
+\frac{\SSR}{\sigma^2} \sim \chi^2_k, \qquad \text{and } \SSR \text{ is independent of } \SSE.
+\]
+\end{lemma}
+
+\begin{proof}
+\textbf{Step 1: Express $\SSR$ as a quadratic form.} We have $\SSR = (\hat{\bY} - \bar{Y}\bone)'(\hat{\bY} - \bar{Y}\bone)$. Since $\hat{\bY} = \bH\bY$ and $\bar{Y}\bone = \bH_0\bY$:
+\[
+\hat{\bY} - \bar{Y}\bone = (\bH - \bH_0)\bY.
+\]
+Under $H_0$, $\bb = (\beta_0, 0, \ldots, 0)'$, so $\bX\bb = \beta_0\bone$ and $\bY = \beta_0\bone + \be$. Since $(\bH - \bH_0)\bone = \bH\bone - \bH_0\bone = \bone - \bone = \bzero$ (because $\bone \in \calC(\bX)$ implies $\bH\bone = \bone$):
+\[
+(\bH - \bH_0)\bY = (\bH - \bH_0)\be.
+\]
+Let $\bz = \be/\sigma \sim N(\bzero, \bI_n)$. Then $\SSR/\sigma^2 = \bz'(\bH - \bH_0)\bz$.
+
+\textbf{Step 2: Verify $\bH - \bH_0$ is symmetric idempotent.} Symmetry is immediate. For idempotency, note that $\bH\bH_0 = \bH_0\bH = \bH_0$ (because $\bone \in \calC(\bX)$ implies $\bH_0 = \bH_0\bH = \bH\bH_0$). Therefore:
+\[
+(\bH - \bH_0)^2 = \bH^2 - \bH\bH_0 - \bH_0\bH + \bH_0^2 = \bH - \bH_0 - \bH_0 + \bH_0 = \bH - \bH_0.
+\]
+The rank is $\tr(\bH - \bH_0) = \tr(\bH) - \tr(\bH_0) = (k+1) - 1 = k$. By Theorem~\ref{thm:quadratic-chisq}, $\SSR/\sigma^2 \sim \chi^2_k$.
+
+\textbf{Step 3: Independence.} We verify $(\bH - \bH_0)\bM = \bzero$:
+\[
+(\bH - \bH_0)\bM = \bH\bM - \bH_0\bM = \bzero - \bH_0(\bI - \bH) = \bH_0 - \bH_0\bH = \bH_0 - \bH_0 = \bzero.
+\]
+By Cochran's theorem (Theorem~\ref{thm:cochran}), $\SSR/\sigma^2 = \bz'(\bH - \bH_0)\bz$ and $\SSE/\sigma^2 = \bz'\bM\bz$ are independent.
+\end{proof}
+
+\begin{theorem}[Overall $F$ Test]\label{thm:f-test}
+Under~\ref{A1}--\ref{A5}, for testing $H_0\colon \beta_1 = \beta_2 = \cdots = \beta_k = 0$:
+\begin{equation}\label{eq:f-test}
+\boxed{F = \frac{\MSR}{\MSE} = \frac{\SSR/k}{\SSE/(n-k-1)} = \frac{R^2/k}{(1-R^2)/(n-k-1)} \sim F_{k,\,n-k-1} \quad \text{under } H_0.}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+By Lemma~\ref{lem:SSR-chisq} and Theorem~\ref{thm:sse-dist}, under $H_0$: $\SSR/\sigma^2 \sim \chi^2_k$, $\SSE/\sigma^2 \sim \chi^2_{n-k-1}$, and they are independent. By the definition of the $F$ distribution:
+\[
+F = \frac{(\SSR/\sigma^2)/k}{(\SSE/\sigma^2)/(n-k-1)} = \frac{\SSR/k}{\SSE/(n-k-1)} = \frac{\MSR}{\MSE} \sim F_{k, n-k-1}.
+\]
+The equivalence $F = \frac{R^2/k}{(1-R^2)/(n-k-1)}$ follows from $R^2 = \SSR/\SST$ and $1 - R^2 = \SSE/\SST$.
+\end{proof}
+
+\subsection{General Linear Hypothesis}
+
+\begin{theorem}[General $F$ Test]\label{thm:general-F}
+Under~\ref{A1}--\ref{A5}, consider $H_0\colon \bR\bb = \br$ where $\bR$ is a $q \times (k+1)$ matrix of rank $q$ and $\br \in \Real^q$. The test statistic
+\begin{equation}\label{eq:general-F}
+\boxed{F = \frac{(\bR\hat{\bb} - \br)'[\bR(\bX'\bX)^{-1}\bR']^{-1}(\bR\hat{\bb} - \br)}{q \cdot s^2} \sim F_{q,\, n-k-1} \quad \text{under } H_0.}
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+\textbf{Step 1.} By Theorem~\ref{thm:beta-dist}, $\hat{\bb} \sim N(\bb, \sigma^2(\bX'\bX)^{-1})$. By Theorem~\ref{thm:mvn-linear}:
+\[
+\bR\hat{\bb} \sim N\!\bigl(\bR\bb,\; \sigma^2\bR(\bX'\bX)^{-1}\bR'\bigr).
+\]
+Under $H_0$, $\bR\bb = \br$, so $\bR\hat{\bb} - \br \sim N(\bzero, \sigma^2\bR(\bX'\bX)^{-1}\bR')$.
+
+\textbf{Step 2.} Let $\boldsymbol\Sigma_R = \bR(\bX'\bX)^{-1}\bR'$ (a $q \times q$ positive definite matrix since $\rank(\bR) = q$ and $(\bX'\bX)^{-1}$ is positive definite). Then:
+\[
+W = \frac{(\bR\hat{\bb} - \br)'\boldsymbol\Sigma_R^{-1}(\bR\hat{\bb} - \br)}{\sigma^2} \sim \chi^2_q.
+\]
+This follows from Theorem~\ref{thm:quadratic-chisq}: standardize $\bR\hat{\bb} - \br$ via $\boldsymbol\Sigma_R^{-1/2}$ to obtain a standard normal vector, and note that the resulting quadratic form equals $W$.
+
+\textbf{Step 3.} By Theorem~\ref{thm:sse-dist}, $V = \SSE/\sigma^2 \sim \chi^2_{n-k-1}$, independent of $\hat{\bb}$ (hence independent of $W$). Then:
+\[
+F = \frac{W/q}{V/(n-k-1)} = \frac{(\bR\hat{\bb} - \br)'\boldsymbol\Sigma_R^{-1}(\bR\hat{\bb} - \br)/(q\sigma^2)}{\SSE/[\sigma^2(n-k-1)]} = \frac{(\bR\hat{\bb} - \br)'\boldsymbol\Sigma_R^{-1}(\bR\hat{\bb} - \br)}{q \cdot s^2} \sim F_{q, n-k-1}. \qedhere
+\]
+\end{proof}
+
+\begin{remark}[Special cases]
+The individual $t$ test (Theorem~\ref{thm:t-test}) is the case $q = 1$, $\bR = \mathbf{e}_j'$ (the $j$-th standard basis vector), $\br = \beta_j^0$, where $t^2 = F \sim F_{1, n-k-1}$. The overall $F$ test (Theorem~\ref{thm:f-test}) is the case $\bR = [\bzero_{k \times 1} \mid \bI_k]$, $\br = \bzero_k$.
+\end{remark}
+
+\begin{corollary}[Nested $F$ Test via Residual Sum of Squares]\label{cor:nested-F}
+Let $\SSE_U$ and $\SSE_R$ be the residual sums of squares from the full and reduced models under $H_0\colon \bR\bb = \br$ ($q$ constraints). Then the $F$ statistic in Theorem~\ref{thm:general-F} is equivalently expressed as
+\begin{equation}\label{eq:nested-F}
+F = \frac{(\SSE_R - \SSE_U)/q}{\SSE_U/(n-k-1)}.
+\end{equation}
+\end{corollary}
+
+\begin{proof}
+By Theorem~\ref{thm:cls}, $\hat{\bb}_R = \hat{\bb} - (\bX'\bX)^{-1}\bR'[\bR(\bX'\bX)^{-1}\bR']^{-1}(\bR\hat{\bb} - \br)$. Expand $\SSE_R = \|\bY - \bX\hat{\bb}_R\|^2 = \|\mathbf{e} + \bX(\hat{\bb} - \hat{\bb}_R)\|^2 = \SSE_U + \|\bX(\hat{\bb} - \hat{\bb}_R)\|^2 + 2\mathbf{e}'\bX(\hat{\bb} - \hat{\bb}_R)$. The cross term vanishes by $\bX'\mathbf{e} = \bzero$. Writing $\bX(\hat{\bb} - \hat{\bb}_R) = \bH(\bX'\bX)^{-1}\bR'[\bR(\bX'\bX)^{-1}\bR']^{-1}(\bR\hat{\bb} - \br)$ and simplifying the squared norm:
+\[
+\SSE_R - \SSE_U = (\bR\hat{\bb} - \br)'[\bR(\bX'\bX)^{-1}\bR']^{-1}(\bR\hat{\bb} - \br).
+\]
+Dividing both sides of Theorem~\ref{thm:general-F} by $q s^2 = q \cdot \SSE_U/(n-k-1)$ gives~\eqref{eq:nested-F}.
+\end{proof}
+
+\begin{corollary}[$t^2 = F$ for a Single Linear Constraint]\label{cor:t2F}
+For testing $H_0\colon \bc'\bb = r_0$ (a single constraint, $q = 1$), the $F$ statistic from Theorem~\ref{thm:general-F} equals the square of the $t$ statistic:
+\[
+t = \frac{\bc'\hat{\bb} - r_0}{s\sqrt{\bc'(\bX'\bX)^{-1}\bc}}, \qquad F = t^2 \sim F_{1, n-k-1}.
+\]
+\end{corollary}
+
+\begin{proof}
+With $q = 1$, $\bR = \bc'$, $\br = r_0$, the general $F$ statistic becomes:
+\[
+F = \frac{(\bc'\hat{\bb} - r_0)[\bc'(\bX'\bX)^{-1}\bc]^{-1}(\bc'\hat{\bb} - r_0)}{1 \cdot s^2} = \left(\frac{\bc'\hat{\bb} - r_0}{s\sqrt{\bc'(\bX'\bX)^{-1}\bc}}\right)^2 = t^2. \qedhere
+\]
+\end{proof}
+
+\subsection{Confidence Intervals and Regions}
+
+\begin{theorem}[Confidence Interval for $\bc'\bb$]\label{thm:ci}
+Under~\ref{A1}--\ref{A5}, a $(1-\alpha) \times 100\%$ confidence interval for $\bc'\bb$ is
+\begin{equation}\label{eq:ci}
+\bc'\hat{\bb} \pm t_{\alpha/2,\, n-k-1} \cdot s\sqrt{\bc'(\bX'\bX)^{-1}\bc},
+\end{equation}
+where $t_{\alpha/2, n-k-1}$ is the upper $\alpha/2$ quantile of $t_{n-k-1}$.
+\end{theorem}
+
+\begin{proof}
+By Theorem~\ref{thm:mvn-linear}, $\bc'\hat{\bb} \sim N(\bc'\bb,\; \sigma^2\bc'(\bX'\bX)^{-1}\bc)$. Standardizing and replacing $\sigma$ by $s$ produces a $t_{n-k-1}$ pivotal quantity (by the same argument as Theorem~\ref{thm:t-test}):
+\[
+\frac{\bc'\hat{\bb} - \bc'\bb}{s\sqrt{\bc'(\bX'\bX)^{-1}\bc}} \sim t_{n-k-1}.
+\]
+Hence $\prb\!\left(-t_{\alpha/2} \leqslant \frac{\bc'\hat{\bb} - \bc'\bb}{s\sqrt{\bc'(\bX'\bX)^{-1}\bc}} \leqslant t_{\alpha/2}\right) = 1 - \alpha$. Rearranging gives the confidence interval.
+\end{proof}
+
+\begin{theorem}[Joint Confidence Ellipsoid]\label{thm:ellipsoid}
+Under~\ref{A1}--\ref{A5}, a $(1-\alpha) \times 100\%$ joint confidence region for $\bb$ is
+\begin{equation}\label{eq:ellipsoid}
+\bigl\{\bb \in \Real^{k+1} : (\hat{\bb} - \bb)'(\bX'\bX)(\hat{\bb} - \bb) \leqslant (k+1) s^2 F_{\alpha, k+1, n-k-1}\bigr\}.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+By Theorem~\ref{thm:beta-dist}, $\hat{\bb} - \bb \sim N(\bzero, \sigma^2(\bX'\bX)^{-1})$. Hence:
+\[
+\frac{(\hat{\bb} - \bb)'(\bX'\bX)(\hat{\bb} - \bb)}{\sigma^2} \sim \chi^2_{k+1}.
+\]
+This chi-square random variable is independent of $\SSE/\sigma^2 \sim \chi^2_{n-k-1}$ (Theorem~\ref{thm:sse-dist}). Forming the $F$ ratio:
+\[
+\frac{(\hat{\bb} - \bb)'(\bX'\bX)(\hat{\bb} - \bb)/[(k+1)\sigma^2]}{\SSE/[\sigma^2(n-k-1)]} = \frac{(\hat{\bb} - \bb)'(\bX'\bX)(\hat{\bb} - \bb)}{(k+1)s^2} \sim F_{k+1, n-k-1}.
+\]
+The confidence region is $\{$this $F$ statistic $\leqslant F_{\alpha, k+1, n-k-1}\}$.
+\end{proof}
+
+%=============================================================================
+\section{Partitioned Regression}\label{sec:fwl}
+%=============================================================================
+
+\subsection{The Frisch--Waugh--Lovell Theorem}
+
+\begin{theorem}[Frisch--Waugh--Lovell]\label{thm:fwl}
+Partition $\bX = [\bX_1 \;\; \bX_2]$ and $\bb = (\bb_1', \bb_2')'$, so the model is $\bY = \bX_1\bb_1 + \bX_2\bb_2 + \be$. Let $\bM_2 = \bI - \bX_2(\bX_2'\bX_2)^{-1}\bX_2'$ be the residual maker for $\bX_2$. Then:
+\begin{enumerate}[label=\textup{(\roman*)}]
+\item\label{fwl:i} $\hat{\bb}_1 = (\bX_1'\bM_2\bX_1)^{-1}\bX_1'\bM_2\bY$.
+\item\label{fwl:ii} The residual vector $\mathbf{e}$ from the full regression equals the residual vector from regressing $\bM_2\bY$ on $\bM_2\bX_1$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+\textbf{(i).} The normal equations for the full model are:
+\[
+\begin{pmatrix} \bX_1'\bX_1 & \bX_1'\bX_2 \\ \bX_2'\bX_1 & \bX_2'\bX_2 \end{pmatrix} \begin{pmatrix} \hat{\bb}_1 \\ \hat{\bb}_2 \end{pmatrix} = \begin{pmatrix} \bX_1'\bY \\ \bX_2'\bY \end{pmatrix}.
+\]
+The second block equation gives $\hat{\bb}_2 = (\bX_2'\bX_2)^{-1}\bX_2'(\bY - \bX_1\hat{\bb}_1)$. Substituting into the first block equation:
+\begin{align*}
+\bX_1'\bX_1\hat{\bb}_1 + \bX_1'\bX_2(\bX_2'\bX_2)^{-1}\bX_2'(\bY - \bX_1\hat{\bb}_1) &= \bX_1'\bY\\
+\bX_1'\bX_1\hat{\bb}_1 + \bX_1'(\bI - \bM_2)\bY - \bX_1'(\bI - \bM_2)\bX_1\hat{\bb}_1 &= \bX_1'\bY\\
+\bX_1'[\bX_1 - (\bI - \bM_2)\bX_1]\hat{\bb}_1 &= \bX_1'[\bI - (\bI - \bM_2)]\bY\\
+\bX_1'\bM_2\bX_1\hat{\bb}_1 &= \bX_1'\bM_2\bY.
+\end{align*}
+Hence $\hat{\bb}_1 = (\bX_1'\bM_2\bX_1)^{-1}\bX_1'\bM_2\bY$.
+
+\textbf{(ii).} Let $\tilde{\bY} = \bM_2\bY$ and $\tilde{\bX}_1 = \bM_2\bX_1$. The OLS residual from regressing $\tilde{\bY}$ on $\tilde{\bX}_1$ is:
+\begin{align*}
+\tilde{\mathbf{e}} &= \tilde{\bY} - \tilde{\bX}_1\hat{\bb}_1 = \bM_2\bY - \bM_2\bX_1\hat{\bb}_1 = \bM_2(\bY - \bX_1\hat{\bb}_1).
+\end{align*}
+From the full regression, $\bY - \bX_1\hat{\bb}_1 = \bX_2\hat{\bb}_2 + \mathbf{e}$. Thus:
+\[
+\tilde{\mathbf{e}} = \bM_2(\bX_2\hat{\bb}_2 + \mathbf{e}) = \bM_2\bX_2\hat{\bb}_2 + \bM_2\mathbf{e} = \bzero + \bM_2\mathbf{e}.
+\]
+Now $\mathbf{e} = \bM\bY$ where $\bM = \bI - \bH$ is the residual maker for the full model. Since $\calC(\bX_2) \subseteq \calC(\bX)$, we have $\bM\bX_2 = \bzero$, so $\bH_2\bM = (\bI - \bM_2 - \bH + \bH\bM_2)$---but more directly, $\bM_2\mathbf{e} = \bM_2\bM\bY$, and since the column space of $\bX_2$ is a subspace of that of $\bX$, $\bM$ annihilates $\bX_2$, so $\bM_2\bM = \bM$. Hence $\tilde{\mathbf{e}} = \bM\bY = \mathbf{e}$.
+\end{proof}
+
+\subsection{Omitted Variable Bias}
+
+\begin{theorem}[Omitted Variable Bias]\label{thm:ovb}
+Suppose the true model is $\bY = \bX_1\bb_1 + \bX_2\bb_2 + \be$, but the researcher estimates the ``short'' regression $\bY = \bX_1\boldsymbol\gamma + \mathbf{u}$, obtaining $\tilde{\boldsymbol\gamma} = (\bX_1'\bX_1)^{-1}\bX_1'\bY$. Then:
+\begin{equation}\label{eq:ovb}
+\expc[\tilde{\boldsymbol\gamma}] = \bb_1 + \underbrace{(\bX_1'\bX_1)^{-1}\bX_1'\bX_2}_{\text{auxiliary regression coefficients}}\,\bb_2.
+\end{equation}
+The estimator $\tilde{\boldsymbol\gamma}$ is unbiased for $\bb_1$ if and only if $\bX_1'\bX_2\bb_2 = \bzero$, which holds when either $\bX_1'\bX_2 = \bzero$ ($\bX_1$ and $\bX_2$ are orthogonal) or $\bb_2 = \bzero$ (the omitted variables are irrelevant).
+\end{theorem}
+
+\begin{proof}
+Substituting the true DGP $\bY = \bX_1\bb_1 + \bX_2\bb_2 + \be$ into the short-regression estimator:
+\begin{align*}
+\tilde{\boldsymbol\gamma} &= (\bX_1'\bX_1)^{-1}\bX_1'\bY = (\bX_1'\bX_1)^{-1}\bX_1'(\bX_1\bb_1 + \bX_2\bb_2 + \be)\\
+&= \bb_1 + (\bX_1'\bX_1)^{-1}\bX_1'\bX_2\bb_2 + (\bX_1'\bX_1)^{-1}\bX_1'\be.
+\end{align*}
+Taking expectations (using $\expc[\be] = \bzero$):
+\[
+\expc[\tilde{\boldsymbol\gamma}] = \bb_1 + (\bX_1'\bX_1)^{-1}\bX_1'\bX_2\bb_2. \qedhere
+\]
+\end{proof}
+
+%=============================================================================
+\section{Prediction}\label{sec:pred}
+%=============================================================================
+
+Let $\bx_0 \in \Real^{k+1}$ be a new observation's regressor vector. The predicted value is $\hat{Y}_0 = \bx_0'\hat{\bb}$.
+
+\begin{theorem}[Confidence Interval for the Conditional Mean]\label{thm:ci-mean}
+Under~\ref{A1}--\ref{A5}, a $(1-\alpha) \times 100\%$ confidence interval for $\expc[Y_0 \mid \bx_0] = \bx_0'\bb$ is
+\begin{equation}\label{eq:ci-mean}
+\bx_0'\hat{\bb} \pm t_{\alpha/2,\,n-k-1} \cdot s\sqrt{\bx_0'(\bX'\bX)^{-1}\bx_0}.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+This is the special case $\bc = \bx_0$ of Theorem~\ref{thm:ci}.
+\end{proof}
+
+\begin{theorem}[Prediction Interval for a New Observation]\label{thm:pred}
+Under~\ref{A1}--\ref{A5}, a $(1-\alpha) \times 100\%$ prediction interval for a new observation $Y_0 = \bx_0'\bb + \varepsilon_0$ is
+\begin{equation}\label{eq:pred}
+\bx_0'\hat{\bb} \pm t_{\alpha/2,\,n-k-1} \cdot s\sqrt{1 + \bx_0'(\bX'\bX)^{-1}\bx_0}.
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+\textbf{Step 1.} The prediction error is $\hat{Y}_0 - Y_0 = \bx_0'\hat{\bb} - \bx_0'\bb - \varepsilon_0 = \bx_0'(\hat{\bb} - \bb) - \varepsilon_0$. The two components $\hat{\bb} - \bb$ (depending on $\be$) and $\varepsilon_0$ (the future error) are independent.
+
+\textbf{Step 2.} Compute the variance:
+\begin{align*}
+\var(\hat{Y}_0 - Y_0) &= \var\!\bigl(\bx_0'(\hat{\bb} - \bb)\bigr) + \var(\varepsilon_0)\\
+&= \bx_0'\var(\hat{\bb})\bx_0 + \sigma^2\\
+&= \sigma^2\bx_0'(\bX'\bX)^{-1}\bx_0 + \sigma^2\\
+&= \sigma^2\bigl(1 + \bx_0'(\bX'\bX)^{-1}\bx_0\bigr).
+\end{align*}
+
+\textbf{Step 3.} The distribution is $\hat{Y}_0 - Y_0 \sim N\!\bigl(0,\; \sigma^2(1 + \bx_0'(\bX'\bX)^{-1}\bx_0)\bigr)$, independent of $\SSE$. Replacing $\sigma$ by $s$ yields a $t_{n-k-1}$ pivotal quantity:
+\[
+\frac{\hat{Y}_0 - Y_0}{s\sqrt{1 + \bx_0'(\bX'\bX)^{-1}\bx_0}} \sim t_{n-k-1}.
+\]
+The prediction interval follows by inverting this pivotal quantity.
+\end{proof}
+
+\begin{remark}
+The prediction interval is always wider than the confidence interval for the mean, because the prediction variance includes the additional $\sigma^2$ term from the irreducible noise $\varepsilon_0$.
+\end{remark}
+
+%=============================================================================
+\section{Constrained Least Squares and Modeling Remarks}\label{sec:special}
+%=============================================================================
+
+\subsection{Remarks on Model Specification}
+
+\begin{remark}[No-intercept model]
+When the model omits the intercept, $\bX$ has no column of ones. The OLS formula $\hat{\bb} = (\bX'\bX)^{-1}\bX'\bY$ still applies, but $\sum e_i \neq 0$ in general and the decomposition $\SST = \SSR + \SSE$ may fail, so the centered $R^2$ can be negative. Use the uncentered $R^2 = 1 - \SSE/\sum Y_i^2$ instead.
+\end{remark}
+
+\begin{remark}[Dummy variable trap]
+A categorical variable with $g$ levels requires $g-1$ dummy regressors when the model includes an intercept. Including all $g$ dummies creates the linear dependence $\bone = D_1 + \cdots + D_g$, violating~\ref{A4}.
+\end{remark}
+
+\subsection{Constrained Least Squares}
+
+\begin{theorem}[Constrained OLS]\label{thm:cls}
+Consider $\min_{\bb} \|\bY - \bX\bb\|^2$ subject to $\bR\bb = \br$ ($q$ linear constraints, $\rank(\bR) = q$). The constrained estimator is:
+\begin{equation}\label{eq:cls}
+\hat{\bb}_R = \hat{\bb} - (\bX'\bX)^{-1}\bR'\bigl[\bR(\bX'\bX)^{-1}\bR'\bigr]^{-1}(\bR\hat{\bb} - \br),
+\end{equation}
+and $\SSE_R \geqslant \SSE_U$ (where $\SSE_U$ is the unconstrained residual sum of squares).
+\end{theorem}
+
+\begin{proof}
+\textbf{Step 1: Lagrangian.} The Lagrangian is $\mathcal{L}(\bb, \boldsymbol\lambda) = (\bY - \bX\bb)'(\bY - \bX\bb) + 2\boldsymbol\lambda'(\bR\bb - \br)$. First-order conditions:
+\begin{align*}
+\frac{\partial \mathcal{L}}{\partial \bb} &= -2\bX'\bY + 2\bX'\bX\bb + 2\bR'\boldsymbol\lambda = \bzero, \tag{i}\\
+\frac{\partial \mathcal{L}}{\partial \boldsymbol\lambda} &= 2(\bR\bb - \br) = \bzero. \tag{ii}
+\end{align*}
+From (i): $\bX'\bX\hat{\bb}_R = \bX'\bY - \bR'\hat{\boldsymbol\lambda}$, so $\hat{\bb}_R = (\bX'\bX)^{-1}\bX'\bY - (\bX'\bX)^{-1}\bR'\hat{\boldsymbol\lambda} = \hat{\bb} - (\bX'\bX)^{-1}\bR'\hat{\boldsymbol\lambda}$.
+
+\textbf{Step 2: Solve for $\hat{\boldsymbol\lambda}$.} From (ii), $\bR\hat{\bb}_R = \br$:
+\[
+\bR\hat{\bb} - \bR(\bX'\bX)^{-1}\bR'\hat{\boldsymbol\lambda} = \br \implies \hat{\boldsymbol\lambda} = [\bR(\bX'\bX)^{-1}\bR']^{-1}(\bR\hat{\bb} - \br).
+\]
+Substituting back gives~\eqref{eq:cls}.
+
+\textbf{Step 3: $\SSE_R \geqslant \SSE_U$.} The constrained problem minimizes over $\{\bb : \bR\bb = \br\} \subseteq \Real^{k+1}$. Since $\hat{\bb}_U$ minimizes over the full space, the minimum over a subset cannot be smaller: $\SSE_R \geqslant \SSE_U$.
+\end{proof}
+
+%=============================================================================
+\section{Exercises}\label{sec:exercises}
+%=============================================================================
+
+\setcounter{exercise}{0}
+
+\subsection*{Tier A: Reproduce the Derivation}
+
+\begin{exercise}\label{ex:A1}
+Derive the OLS estimator $\hat{\bb} = (\bX'\bX)^{-1}\bX'\bY$ by minimizing $\|\bY - \bX\bb\|^2$. Verify the second-order condition.
+\end{exercise}
+
+\begin{exercise}\label{ex:A2}
+Prove that $\expc[\hat{\bb}] = \bb$ under (A1)--(A2), and derive $\var(\hat{\bb}) = \sigma^2(\bX'\bX)^{-1}$ under (A1)--(A4).
+\end{exercise}
+
+\begin{exercise}\label{ex:A3}
+State and prove the Gauss--Markov theorem.
+\end{exercise}
+
+\begin{exercise}\label{ex:A4}
+Prove that $\MSE = \SSE/(n-k-1)$ is an unbiased estimator of $\sigma^2$.
+\end{exercise}
+
+\begin{exercise}\label{ex:A5}
+Under (A1)--(A5), prove $\SSE/\sigma^2 \sim \chi^2_{n-k-1}$ and that $\SSE$ is independent of $\hat{\bb}$.
+\end{exercise}
+
+\begin{exercise}\label{ex:A6}
+Prove the variance decomposition $\SST = \SSR + \SSE$, and derive the overall $F$ statistic including the proof that $\SSR/\sigma^2 \sim \chi^2_k$ under $H_0$.
+\end{exercise}
+
+\subsection*{Tier B: Apply the Theory}
+
+\begin{exercise}\label{ex:B1}
+Let $\bH = \bX(\bX'\bX)^{-1}\bX'$. (a)~Show $0 \leqslant h_{ii} \leqslant 1$. (b)~Show $\sum_{i=1}^n h_{ii} = k+1$. (c)~Derive $\var(e_i) = \sigma^2(1-h_{ii})$.
+\end{exercise}
+
+\begin{exercise}\label{ex:B2}
+Consider testing $H_0\colon \bc'\bb = r_0$ for a given vector $\bc$. (a)~Derive the distribution of $\bc'\hat{\bb}$. (b)~Construct the $t$ statistic and prove $t^2 \sim F_{1, n-k-1}$ under $H_0$.
+\end{exercise}
+
+\begin{exercise}\label{ex:B3}
+Consider two nested models: the full model with $k$ regressors and a reduced model with $k_0 < k$ regressors. Let $\SSE_R$ and $\SSE_U$ denote the respective residual sums of squares. (a)~Prove $\SSE_R \geqslant \SSE_U$. (b)~Show that $\frac{(\SSE_R - \SSE_U)/(k-k_0)}{\SSE_U/(n-k-1)} \sim F_{k-k_0, n-k-1}$ under $H_0$.
+\end{exercise}
+
+\begin{exercise}\label{ex:B4}
+Suppose $\var(\be) = \sigma^2\boldsymbol\Omega$ where $\boldsymbol\Omega$ is known, symmetric, and positive definite (but $\neq \bI$). (a)~Show that OLS is unbiased but derive its actual (incorrect) variance. (b)~Define $\hat{\bb}_{\mathrm{GLS}} = (\bX'\boldsymbol\Omega^{-1}\bX)^{-1}\bX'\boldsymbol\Omega^{-1}\bY$ and prove it is BLUE.
+\end{exercise}
+
+\begin{exercise}\label{ex:B5}
+Let $\hat{Y}_0 = \bx_0'\hat{\bb}$ be the predicted value at a new point $\bx_0$. (a)~Derive $\var(\hat{Y}_0 - \expc[Y_0])$. (b)~Derive $\var(\hat{Y}_0 - Y_0)$. (c)~Explain why (b) always exceeds (a).
+\end{exercise}
+
+\begin{exercise}\label{ex:B6}
+Show that under (A1)--(A5), the OLS estimator coincides with the MLE. Is $\hat{\sigma}^2_{\mathrm{MLE}} = \SSE/n$ unbiased?
+\end{exercise}
+
+\subsection*{Tier C: Extend and Connect}
+
+\begin{exercise}\label{ex:C1}
+\textbf{(Frisch--Waugh--Lovell.)} Partition $\bX = [\bX_1 \;\; \bX_2]$. Let $\bM_2 = \bI - \bX_2(\bX_2'\bX_2)^{-1}\bX_2'$. Prove: (a)~$\hat{\bb}_1 = (\bX_1'\bM_2\bX_1)^{-1}\bX_1'\bM_2\bY$. (b)~The full regression residuals equal those from regressing $\bM_2\bY$ on $\bM_2\bX_1$.
+\end{exercise}
+
+\begin{exercise}\label{ex:C2}
+\textbf{(Omitted variable bias.)} The true model is $\bY = \bX_1\bb_1 + \bX_2\bb_2 + \be$, but only $\bY = \bX_1\boldsymbol\gamma + \mathbf{u}$ is estimated. Show $\expc[\tilde{\boldsymbol\gamma}] = \bb_1 + (\bX_1'\bX_1)^{-1}\bX_1'\bX_2\bb_2$. Under what conditions is $\tilde{\boldsymbol\gamma}$ unbiased?
+\end{exercise}
+
+\begin{exercise}\label{ex:C3}
+\textbf{(Monotonicity of $R^2$ and the adjusted $R^2$ criterion.)} (a)~Prove that adding a regressor cannot decrease $R^2$. (b)~Show that $\bar{R}^2$ increases if and only if the added variable's $|t|$-statistic exceeds $1$.
+\end{exercise}
+
+\begin{exercise}\label{ex:C4}
+\textbf{(Constrained least squares.)} Consider $\min_{\bb}\|\bY - \bX\bb\|^2$ subject to $\bR\bb = \br$. (a)~Derive the constrained estimator $\hat{\bb}_R$ via Lagrange multipliers. (b)~Show $\hat{\bb}_R = \hat{\bb} - (\bX'\bX)^{-1}\bR'[\bR(\bX'\bX)^{-1}\bR']^{-1}(\bR\hat{\bb} - \br)$. (c)~Prove $\SSE_R \geqslant \SSE_U$.
+\end{exercise}
+
+%=============================================================================
+\section{Solutions to Exercises}\label{sec:solutions}
+%=============================================================================
+
+\subsection*{Solutions to Tier A}
+
+\textbf{Solution to Exercise~\ref{ex:A1}.} See the proof of Theorem~\ref{thm:ols}.
+
+\textbf{Solution to Exercise~\ref{ex:A2}.} See the proofs of Theorems~\ref{thm:unbiased} and~\ref{thm:var-beta}.
+
+\textbf{Solution to Exercise~\ref{ex:A3}.} See the proof of Theorem~\ref{thm:gm}.
+
+\textbf{Solution to Exercise~\ref{ex:A4}.} See the proof of Theorem~\ref{thm:mse-unbiased}.
+
+\textbf{Solution to Exercise~\ref{ex:A5}.} See the proof of Theorem~\ref{thm:sse-dist}.
+
+\textbf{Solution to Exercise~\ref{ex:A6}.} See the proofs of Theorems~\ref{thm:anova}, \ref{thm:f-test}, and Lemma~\ref{lem:SSR-chisq}.
+
+\subsection*{Solutions to Tier B}
+
+\textbf{Solution to Exercise~\ref{ex:B1}.} See the proofs of Theorems~\ref{thm:leverage} and~\ref{thm:var-resid}.
+
+\textbf{Solution to Exercise~\ref{ex:B2}.} (a)~By Theorem~\ref{thm:mvn-linear}, $\bc'\hat{\bb} \sim N(\bc'\bb,\; \sigma^2\bc'(\bX'\bX)^{-1}\bc)$. (b)~See Corollary~\ref{cor:t2F}.
+
+\textbf{Solution to Exercise~\ref{ex:B3}.} (a)~The reduced model minimizes SSE over a subspace $\{\bb : \beta_{k_0+1} = \cdots = \beta_k = 0\}$. Since the unconstrained minimum is taken over the full space, $\SSE_R \geqslant \SSE_U$. (b)~This is a special case of the general $F$ test (Theorem~\ref{thm:general-F}) with $\bR = [\bzero \mid \bI_{k-k_0}]$ and $\br = \bzero$, or equivalently, by Cochran's theorem: define $\bM_R$ and $\bM_U$ as the residual makers for the reduced and full models. Then $\SSE_R - \SSE_U = \be'(\bM_R - \bM_U)\be/\sigma^2 \cdot \sigma^2$, where $\bM_R - \bM_U$ is symmetric idempotent of rank $k - k_0$ and $(\bM_R - \bM_U)\bM_U = \bzero$. By Theorems~\ref{thm:quadratic-chisq} and~\ref{thm:cochran}, $(\SSE_R - \SSE_U)/\sigma^2 \sim \chi^2_{k-k_0}$, independent of $\SSE_U/\sigma^2 \sim \chi^2_{n-k-1}$. Hence $F = \frac{(\SSE_R - \SSE_U)/(k-k_0)}{\SSE_U/(n-k-1)} \sim F_{k-k_0, n-k-1}$.
+
+\textbf{Solution to Exercise~\ref{ex:B4}.} (a)~Unbiasedness: $\expc[\hat{\bb}] = \bb + (\bX'\bX)^{-1}\bX'\expc[\be] = \bb$ (unchanged; unbiasedness does not use~\ref{A3}). Actual variance: $\var(\hat{\bb}) = (\bX'\bX)^{-1}\bX'(\sigma^2\boldsymbol\Omega)\bX(\bX'\bX)^{-1} = \sigma^2(\bX'\bX)^{-1}\bX'\boldsymbol\Omega\bX(\bX'\bX)^{-1} \neq \sigma^2(\bX'\bX)^{-1}$.
+
+(b)~Let $\boldsymbol\Omega = \bP\bP'$ (Cholesky or symmetric square root). Transform: $\bP^{-1}\bY = \bP^{-1}\bX\bb + \bP^{-1}\be$, where $\var(\bP^{-1}\be) = \sigma^2\bP^{-1}\boldsymbol\Omega(\bP^{-1})' = \sigma^2\bI$. The OLS estimator applied to this transformed model is $\hat{\bb}_{\mathrm{GLS}} = [(\bP^{-1}\bX)'(\bP^{-1}\bX)]^{-1}(\bP^{-1}\bX)'(\bP^{-1}\bY) = (\bX'\boldsymbol\Omega^{-1}\bX)^{-1}\bX'\boldsymbol\Omega^{-1}\bY$. Since the transformed model satisfies (A1)--(A4), the Gauss--Markov theorem (Theorem~\ref{thm:gm}) guarantees $\hat{\bb}_{\mathrm{GLS}}$ is BLUE in the transformed model. By a change-of-variables argument, it is also BLUE in the original model.
+
+\textbf{Solution to Exercise~\ref{ex:B5}.} See the proof of Theorem~\ref{thm:pred}. Part~(a): $\var(\hat{Y}_0 - \expc[Y_0]) = \sigma^2\bx_0'(\bX'\bX)^{-1}\bx_0$. Part~(b): $\var(\hat{Y}_0 - Y_0) = \sigma^2(1 + \bx_0'(\bX'\bX)^{-1}\bx_0)$. Part~(c): the prediction variance exceeds the estimation variance by exactly $\sigma^2$, the irreducible noise variance of $\varepsilon_0$.
+
+\textbf{Solution to Exercise~\ref{ex:B6}.} See the proof of Theorem~\ref{thm:mle}. $\hat{\sigma}^2_{\mathrm{MLE}} = \SSE/n$ is biased: $\expc[\SSE/n] = (n-k-1)\sigma^2/n \neq \sigma^2$.
+
+\subsection*{Solutions to Tier C}
+
+\textbf{Solution to Exercise~\ref{ex:C1}.} See the proof of Theorem~\ref{thm:fwl}.
+
+\textbf{Solution to Exercise~\ref{ex:C2}.} See the proof of Theorem~\ref{thm:ovb}. Unbiasedness holds iff $(\bX_1'\bX_1)^{-1}\bX_1'\bX_2\bb_2 = \bzero$, which occurs when $\bX_1 \perp \bX_2$ (orthogonal regressors) or $\bb_2 = \bzero$ (omitted variables are irrelevant).
+
+\textbf{Solution to Exercise~\ref{ex:C3}.} See the proofs of Theorems~\ref{thm:R2-monotone} and~\ref{thm:adj-R2}.
+
+\textbf{Solution to Exercise~\ref{ex:C4}.} See the proof of Theorem~\ref{thm:cls}.
+
+\end{document}

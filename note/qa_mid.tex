@@ -1,0 +1,802 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[left=2.2cm,right=2.2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!70!black,urlcolor=blue!80!black}
+
+\theoremstyle{definition}
+\newtheorem{exercise}{Problem}
+\newtheorem*{solution*}{Solution}
+
+\newcommand\expc{\mathsf{E}}
+\newcommand\prb{\mathsf{P}}
+\DeclareMathOperator\var{var}
+\DeclareMathOperator\cov{cov}
+\DeclareMathOperator\tr{tr}
+\DeclareMathOperator\rank{rank}
+\DeclareMathOperator\diag{diag}
+\DeclareMathOperator{\avec}{vec}
+\DeclareMathOperator{\avech}{vech}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\SST}{\mathrm{SST}}
+\newcommand{\SSR}{\mathrm{SSR}}
+\newcommand{\SSE}{\mathrm{SSE}}
+\newcommand{\MSR}{\mathrm{MSR}}
+\newcommand{\MSE}{\mathrm{MSE}}
+\newcommand{\SE}{\mathrm{SE}}
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\bY}{\mathbf{Y}}
+\newcommand{\bx}{\mathbf{x}}
+\def\bb{\boldsymbol{\beta}}
+\newcommand{\be}{\boldsymbol{\varepsilon}}
+\newcommand{\bI}{\mathbf{I}}
+\newcommand{\bH}{\mathbf{H}}
+\newcommand{\bM}{\mathbf{M}}
+\newcommand{\bR}{\mathbf{R}}
+\newcommand{\br}{\mathbf{r}}
+\def\bc{\mathbf{c}}
+\newcommand{\bone}{\mathbf{1}}
+\newcommand{\bzero}{\mathbf{0}}
+\newcommand{\bz}{\mathbf{z}}
+\newcommand{\bA}{\mathbf{A}}
+\newcommand{\bC}{\mathbf{C}}
+\newcommand{\bD}{\mathbf{D}}
+\newcommand{\bP}{\mathbf{P}}
+\newcommand{\ba}{\mathbf{a}}
+\newcommand{\bv}{\mathbf{v}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\calC}{\mathcal{C}}
+
+\title{\textbf{Multivariate Analysis: Midterm Test Bank}\\[2mm]\large Matrix Calculus \& Multiple Linear Models}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\noindent This test bank covers two parts:
+\begin{itemize}[nosep]
+\item \textbf{Part I} (Problems 1--16): Matrix calculus --- algebraic tools, differentials, derivatives, optimization.
+\item \textbf{Part II} (Problems 17--32): Multiple linear regression --- OLS theory, inference, extensions.
+\end{itemize}
+Within each part: \textbf{A}~=~reproduce a key derivation, \textbf{B}~=~apply the theory, \textbf{C}~=~extend and connect.
+
+\medskip\noindent\textbf{Conventions.}\; $\dd X$ is the differential of $X$; $\dd^2 X = \dd(\dd X)$. For scalar $f$: $Df(x) = \partial f/\partial x'$ (row vector); $Hf(x) = \partial^2 f/\partial x\,\partial x'$ (Hessian). For matrix $F(X)$: $DF(X) = \partial\avec F/\partial(\avec X)'$. Let $e_i$ denote the $i$-th standard basis vector.
+
+\medskip\noindent\textbf{Identities you may cite without proof.}
+\begin{enumerate}[label=(I\arabic*),nosep]
+\item $\tr A' = \tr A$; \; $\dd(\tr X) = \tr\dd X$; \; $\dd A = 0$ for constant $A$.
+\item $\dd(XY) = (\dd X)Y + X\,\dd Y$; \; transpose of a scalar: $(\dd x)'Ax = x'A'\dd x$.
+\item $\dd^2 x = 0$ when $x$ is the independent variable.
+\item $K_{mn}\avec A = \avec A'$ (commutation matrix); \; $D_n\avech(A) = \avec A$ for symmetric $A$ (duplication matrix).
+\end{enumerate}
+
+%=============================================================================
+\bigskip
+\begin{center}
+\rule{0.6\textwidth}{0.4pt}\\[2mm]
+{\Large\bfseries Part I: Matrix Calculus}\\[1mm]
+\rule{0.6\textwidth}{0.4pt}
+\end{center}
+
+\subsection*{Tier A: Reproduce the Derivation}
+
+%--- MC-1 ---
+\begin{exercise}[Trace cycling]\label{mc:A1}
+Prove that for any two matrices $A$ and $B$ of the same order, $\tr A'B = \tr BA'$.
+\end{exercise}
+
+\begin{solution*}
+By definition of the trace and matrix product:
+\[
+\tr A'B = \sum_j (A'B)_{jj} = \sum_j \sum_i (A')_{ji}\, b_{ij} = \sum_j \sum_i a_{ij}\, b_{ij}.
+\]
+Interchanging the order of summation:
+\[
+= \sum_i \sum_j b_{ij}\, a_{ij} = \sum_i (BA')_{ii} = \tr BA'. \tag*{\qed}
+\]
+\end{solution*}
+
+%--- MC-2 ---
+\begin{exercise}[Quadratic form equals zero for all $x$]\label{mc:A2}
+Prove: (a)~$x'Ax = 0$ for every $x$ if and only if $A$ is skew-symmetric ($A' = -A$). (b)~If additionally $A = A'$, then $A = 0$.
+\end{exercise}
+
+\begin{solution*}
+\textbf{(a) ($\Leftarrow$):} If $A' = -A$, then $x'Ax$ is a scalar, so $x'Ax = (x'Ax)' = x'A'x = -x'Ax$. Hence $2x'Ax = 0$, i.e., $x'Ax = 0$ for all $x$.
+
+\textbf{($\Rightarrow$):} Assume $x'Ax = 0$ for every $x$. Setting $x = e_i$ (the $i$-th standard basis vector): $e_i'Ae_i = a_{ii} = 0$ for all $i$. Setting $x = e_i + e_j$ ($i \neq j$):
+\[
+(e_i + e_j)'A(e_i + e_j) = a_{ii} + a_{ij} + a_{ji} + a_{jj} = 0.
+\]
+Since $a_{ii} = a_{jj} = 0$, we get $a_{ij} + a_{ji} = 0$ for all $i \neq j$. Combined with $a_{ii} = 0$, this gives $A' = -A$.
+
+\textbf{(b)} From part (a), $x'Ax = 0$ for all $x$ implies $A = -A'$. Combined with $A = A'$: $A = -A$, so $2A = 0$ and $A = 0$. \qed
+\end{solution*}
+
+%--- MC-3 ---
+\begin{exercise}[Mixed-product property of the Kronecker product]\label{mc:A3}
+Prove that $(A \otimes B)(C \otimes D) = AC \otimes BD$, where $A$ is $m \times n$, $B$ is $p \times q$, $C$ is $n \times s$, $D$ is $q \times t$.
+\end{exercise}
+
+\begin{solution*}
+Both sides are $mp \times st$ matrices. By definition, the $(i,j)$ block of $A \otimes B$ is $a_{ij}B$ (of size $p \times q$), and the $(j,k)$ block of $C \otimes D$ is $c_{jk}D$ (of size $q \times t$). The $(i,k)$ block of the product $(A \otimes B)(C \otimes D)$ is:
+\[
+\sum_{j=1}^{n} (a_{ij}B)(c_{jk}D) = \left(\sum_{j=1}^{n} a_{ij}c_{jk}\right) BD = (AC)_{ik}\, BD,
+\]
+which is exactly the $(i,k)$ block of $AC \otimes BD$. Since all blocks match, the two matrices are equal. \qed
+\end{solution*}
+
+%--- MC-4 ---
+\begin{exercise}[$\avec(ABC) = (C' \otimes A)\avec B$]\label{mc:A4}
+Prove that for any compatible matrices $A$, $B$, $C$: $\avec(ABC) = (C' \otimes A)\avec B$.\\
+\textit{You may use: $\avec(ab') = b \otimes a$ for vectors $a$, $b$.}
+\end{exercise}
+
+\begin{solution*}
+Let $b_j$ denote the $j$-th column of $B$ and $e_j$ the $j$-th standard basis vector (of appropriate dimension). Then $B = \sum_{j} b_j e_j'$, so
+\[
+ABC = \sum_{j} A(b_j e_j')C = \sum_{j} (Ab_j)(C'e_j)'.
+\]
+Applying $\avec(\cdot)$ and using $\avec(ab') = b \otimes a$:
+\begin{align*}
+\avec(ABC) &= \sum_{j} \avec\bigl((Ab_j)(C'e_j)'\bigr) = \sum_{j} (C'e_j) \otimes (Ab_j) \\
+&= \sum_{j} (C' \otimes A)(e_j \otimes b_j) = (C' \otimes A) \sum_{j} \avec(b_j e_j') = (C' \otimes A)\avec B. \tag*{\qed}
+\end{align*}
+\end{solution*}
+
+%--- MC-5 ---
+\begin{exercise}[Differential of the determinant]\label{mc:A5}
+Prove that for nonsingular $X$: $\dd|X| = |X|\,\tr X^{-1}\dd X$, and hence $\dd\log|X| = \tr X^{-1}\dd X$ when $|X| > 0$.\\
+\textit{You may use: $\partial|X|/\partial x_{ij} = C_{ij}$ (the $(i,j)$ cofactor), and $C_{ij} = |X|\,(X^{-1})_{ji}$.}
+\end{exercise}
+
+\begin{solution*}
+By the chain rule for scalar functions:
+\[
+\dd|X| = \sum_{i,j} \frac{\partial|X|}{\partial x_{ij}}\,\dd x_{ij} = \sum_{i,j} C_{ij}\,\dd x_{ij}.
+\]
+Substituting $C_{ij} = |X|(X^{-1})_{ji}$:
+\begin{align*}
+\dd|X| &= |X| \sum_{i,j} (X^{-1})_{ji}\,\dd x_{ij} = |X| \sum_{j} \sum_{i} (X^{-1})_{ji}\,\dd x_{ij} = |X| \sum_{j} (X^{-1}\dd X)_{jj} = |X|\,\tr X^{-1}\dd X.
+\end{align*}
+For $|X| > 0$: $\dd\log|X| = \dd|X|/|X| = \tr X^{-1}\dd X$. \qed
+\end{solution*}
+
+%--- MC-6 ---
+\begin{exercise}[Differential of the inverse]\label{mc:A6}
+Prove that for nonsingular $X$: $\dd X^{-1} = -X^{-1}(\dd X)X^{-1}$.
+\end{exercise}
+
+\begin{solution*}
+Start from the identity $X^{-1}X = I$. Differentiating both sides using the product rule:
+\[
+(\dd X^{-1})X + X^{-1}(\dd X) = \dd I = 0.
+\]
+Solving for $\dd X^{-1}$:
+\[
+(\dd X^{-1})X = -X^{-1}(\dd X).
+\]
+Postmultiplying both sides by $X^{-1}$:
+\[
+\dd X^{-1} = -X^{-1}(\dd X) X^{-1}. \tag*{\qed}
+\]
+\end{solution*}
+
+\subsection*{Tier B: Apply the Theory}
+
+%--- MC-7 ---
+\begin{exercise}[$\avec(ab') = b \otimes a$]\label{mc:B1}
+Let $a$ be $m \times 1$ and $b$ be $n \times 1$. Show that $\avec(ab') = b \otimes a$.
+\end{exercise}
+
+\begin{solution*}
+The matrix $ab'$ is $m \times n$. Its $j$-th column is $b_j a$ (the scalar $b_j$ times the vector $a$). The $\avec$ operator stacks the columns:
+\[
+\avec(ab') = \begin{pmatrix} b_1 a \\ b_2 a \\ \vdots \\ b_n a \end{pmatrix} = b \otimes a,
+\]
+by the definition of the Kronecker product (each entry $b_j$ of $b$ multiplies the vector $a$). \qed
+\end{solution*}
+
+%--- MC-8 ---
+\begin{exercise}[Derivatives of $a'x$ and $x'Ax$ via differentials]\label{mc:B2}
+Let $a$ be an $n \times 1$ constant vector and $A$ an $n \times n$ constant matrix.\\
+(a) Using differentials, show that $\partial(a'x)/\partial x' = a'$.\\
+(b) Using differentials, show that $\partial(x'Ax)/\partial x' = x'(A + A')$.\\
+(c) When $A$ is symmetric, simplify (b).
+\end{exercise}
+
+\begin{solution*}
+\textbf{(a)} Since $a$ is constant, $\dd a = 0$:
+\[
+\dd(a'x) = (\dd a)'x + a'(\dd x) = 0 + a'\dd x = a'\dd x.
+\]
+By the identification theorem ($\dd f = c'\dd x \Rightarrow \partial f/\partial x' = c'$), the derivative is $a'$.
+
+\textbf{(b)} Since $A$ is constant, $\dd A = 0$:
+\[
+\dd(x'Ax) = (\dd x)'Ax + x'(\dd A)x + x'A(\dd x) = (\dd x)'Ax + x'A\,\dd x.
+\]
+The first term is a $1 \times 1$ scalar, so it equals its own transpose: $(\dd x)'Ax = ((\dd x)'Ax)' = x'A'\dd x$. Hence:
+\[
+\dd(x'Ax) = x'A'\dd x + x'A\,\dd x = x'(A + A')\dd x.
+\]
+By the identification theorem, $\partial(x'Ax)/\partial x' = x'(A+A')$.
+
+\textbf{(c)} When $A = A'$: $A + A' = 2A$, so the derivative is $2x'A$. \qed
+\end{solution*}
+
+%--- MC-9 ---
+\begin{exercise}[Derivative of $\tr X'AX$]\label{mc:B3}
+Let $A$ be a constant $m \times m$ matrix and $X$ an $m \times n$ matrix variable. Show that $Df(X) = (\avec((A+A')X))'$ where $f(X) = \tr X'AX$.
+\end{exercise}
+
+\begin{solution*}
+Using $\dd(\tr M) = \tr(\dd M)$ and the product rule:
+\begin{align*}
+\dd f(X) &= \dd(\tr X'AX) = \tr\dd(X'AX) = \tr\bigl[(\dd X)'AX + X'A(\dd X)\bigr].
+\end{align*}
+For the first term, use $\tr M = \tr M'$:
+\[
+\tr(\dd X)'AX = \tr\bigl((\dd X)'AX\bigr)' = \tr(X'A'\dd X).
+\]
+Combining:
+\[
+\dd f = \tr X'A'\dd X + \tr X'A\,\dd X = \tr X'(A+A')\dd X = \tr C'\dd X,
+\]
+where $C = (A+A')X$. By the identification theorem for matrices ($\dd f = \tr C'\dd X \Leftrightarrow Df = (\avec C)'$):
+\[
+Df(X) = \bigl(\avec\bigl((A+A')X\bigr)\bigr)'. \tag*{\qed}
+\]
+\end{solution*}
+
+%--- MC-10 ---
+\begin{exercise}[Derivative of $\log|X'X|$]\label{mc:B4}
+Let $X$ be an $m \times n$ matrix with full column rank. Show that $Df(X) = 2(\avec(X(X'X)^{-1}))'$ where $f(X) = \log|X'X|$.
+\end{exercise}
+
+\begin{solution*}
+Let $Y = X'X$. Using $\dd\log|Y| = \tr Y^{-1}\dd Y$:
+\[
+\dd f = \tr(X'X)^{-1}\dd(X'X) = \tr(X'X)^{-1}\bigl[(\dd X)'X + X'\dd X\bigr].
+\]
+For the first term: $\tr(X'X)^{-1}(\dd X)'X$ is a scalar, so it equals its transpose. Computing:
+\[
+\bigl[(X'X)^{-1}(\dd X)'X\bigr]' = X'(\dd X)(X'X)^{-1},
+\]
+so $\tr(X'X)^{-1}(\dd X)'X = \tr X'(\dd X)(X'X)^{-1} = \tr(X'X)^{-1}X'\dd X$ (by trace cycling). Hence:
+\[
+\dd f = 2\tr(X'X)^{-1}X'\dd X = 2\tr C'\dd X,
+\]
+where $C = X(X'X)^{-1}$. By the identification theorem: $Df(X) = 2(\avec C)'$. \qed
+\end{solution*}
+
+%--- MC-11 ---
+\begin{exercise}[Derivative of $\tr X^k$]\label{mc:B5}
+Let $f_k(X) = \tr X^k$ ($k = 1, 2, \ldots$), $X$ square. Find $Df_k(X)$.
+\end{exercise}
+
+\begin{solution*}
+Using the product rule for $\dd(X^k) = \dd(X \cdot X^{k-1})$:
+\[
+\dd(X^k) = (\dd X)X^{k-1} + X(\dd X)X^{k-2} + \cdots + X^{k-1}(\dd X).
+\]
+Taking the trace and applying trace cycling ($\tr X^j(\dd X)X^{k-1-j} = \tr X^{k-1}\dd X$) to each of the $k$ terms:
+\[
+\dd f_k = k\,\tr X^{k-1}\dd X.
+\]
+Writing $\tr X^{k-1}\dd X = \tr((X')^{k-1})'\dd X = (\avec (X')^{k-1})'\dd\avec X$ (by $\tr A'B = (\avec A)'\avec B$), we obtain $Df_k(X) = k(\avec (X')^{k-1})'$.
+
+Special cases: $D(\tr X) = (\avec I)'$; \; $D(\tr X^2) = 2(\avec X')'$. \qed
+\end{solution*}
+
+%--- MC-12 ---
+\begin{exercise}[Derivative of $F(X) = AX^{-1}B$]\label{mc:B6}
+$X$ nonsingular, $A$ and $B$ constant. Show $DF(X) = -(X^{-1}B)' \otimes (AX^{-1})$.
+\end{exercise}
+
+\begin{solution*}
+Using $\dd X^{-1} = -X^{-1}(\dd X)X^{-1}$ (Problem~\ref{mc:A6}):
+\[
+\dd F(X) = A(\dd X^{-1})B = -AX^{-1}(\dd X)X^{-1}B.
+\]
+This has the form $M_1(\dd X)M_3$ with $M_1 = -AX^{-1}$ and $M_3 = X^{-1}B$. Vectorizing using $\avec(M_1(\dd X)M_3) = (M_3' \otimes M_1)\dd\avec X$:
+\[
+\dd\avec F = -\bigl((X^{-1}B)' \otimes (AX^{-1})\bigr)\dd\avec X.
+\]
+By the identification theorem for matrices: $DF(X) = -(X^{-1}B)' \otimes (AX^{-1})$. \qed
+\end{solution*}
+
+\subsection*{Tier C: Extend and Connect}
+
+%--- MC-13 ---
+\begin{exercise}[Unconstrained and constrained quadratic optimization]\label{mc:C1}
+Let $A$ be positive definite, $b$ a constant vector, $c \neq 0$.\\
+(a) Minimize $f(x) = \frac{1}{2}x'Ax - b'x$. Prove the critical point is a global minimum.\\
+(b) Minimize $f(x)$ subject to $c'x = 0$. Derive the constrained optimum $\tilde{x}$.
+\end{exercise}
+
+\begin{solution*}
+\textbf{(a)} Since $A$ is positive definite, it is symmetric ($A = A'$). The differential is:
+\[
+\dd f(x) = x'A\,\dd x - b'\dd x = (Ax - b)'\dd x.
+\]
+Setting $Ax - b = 0$ gives $\hat{x} = A^{-1}b$. To confirm this is a global minimum, define $y = x - \hat{x}$:
+\[
+y'Ay = (x - A^{-1}b)'A(x - A^{-1}b) = x'Ax - 2b'x + b'A^{-1}b = 2f(x) + b'A^{-1}b.
+\]
+Since $A$ is positive definite, $y'Ay \geqslant 0$ with equality iff $y = 0$. Hence $f(x) \geqslant -\frac{1}{2}b'A^{-1}b = f(\hat{x})$ for all $x$.
+
+\textbf{(b)} The Lagrangian is $\mathcal{L}(x) = \frac{1}{2}x'Ax - b'x - \lambda c'x$. Its differential is:
+\[
+\dd\mathcal{L}(x) = (Ax - b - \lambda c)'\dd x.
+\]
+First-order conditions: $Ax = b + \lambda c$ and $c'x = 0$. From the first: $x = A^{-1}(b + \lambda c)$. Substituting into $c'x = 0$:
+\[
+c'A^{-1}(b + \lambda c) = c'A^{-1}b + \lambda\,c'A^{-1}c = 0.
+\]
+Since $A \succ 0$ implies $c'A^{-1}c > 0$: $\tilde{\lambda} = -c'A^{-1}b/(c'A^{-1}c)$. Hence:
+\[
+\tilde{x} = A^{-1}b - \frac{c'A^{-1}b}{c'A^{-1}c}\,A^{-1}c. \tag*{\qed}
+\]
+\end{solution*}
+
+%--- MC-14 ---
+\begin{exercise}[Hessian of $x'Ax$ via second differentials]\label{mc:C2}
+Let $f(x) = x'Ax$, $A$ constant.\\
+(a) Show $\dd^2 f = (\dd x)'(A+A')\dd x$ and state the Hessian.\\
+(b) Obtain the same result by differentiating $\dd f = (\dd x)'Ax + x'A\dd x$ without first simplifying, and apply the symmetrization rule $Hf = (B+B')/2$.
+\end{exercise}
+
+\begin{solution*}
+\textbf{(a)} From Problem~\ref{mc:B2}, $\dd f = x'(A+A')\dd x$. Differentiating again:
+\[
+\dd^2 f = (\dd x)'(A+A')\dd x + x'(A+A')\dd^2 x = (\dd x)'(A+A')\dd x,
+\]
+since $\dd^2 x = 0$ (when $x$ is the independent variable). The matrix in the quadratic form $(\dd x)'B\,\dd x$ is $B = A + A'$, which is already symmetric. Hence $Hf(x) = A + A'$.
+
+\textbf{(b)} Start from the unsimplified first differential: $\dd f = (\dd x)'Ax + x'A\,\dd x$. Differentiate:
+\begin{align*}
+\dd^2 f &= (\dd^2 x)'Ax + (\dd x)'A\,\dd x + (\dd x)'A\,\dd x + x'A\,\dd^2 x \\
+&= 0 + (\dd x)'A\,\dd x + (\dd x)'A\,\dd x + 0 = 2(\dd x)'A\,\dd x.
+\end{align*}
+Here $B = 2A$, which is not symmetric in general. The symmetrization rule gives:
+\[
+Hf(x) = \frac{B + B'}{2} = \frac{2A + 2A'}{2} = A + A'.
+\]
+Consistent with part (a). \qed
+\end{solution*}
+
+%--- MC-15 ---
+\begin{exercise}[Nonsingularity of $R(A'A)^{-1}R'$]\label{mc:C3}
+Let $A$ be $n \times k$ with $\rank(A) = k$ and $R$ an $m \times k$ matrix. Show that $V = R(A'A)^{-1}R'$ is nonsingular if and only if $\rank(R) = m$.
+\end{exercise}
+
+\begin{solution*}
+Let $(A'A)^{-1/2}$ denote the symmetric positive definite square root of $(A'A)^{-1}$, and define $B = R(A'A)^{-1/2}$. Since $(A'A)^{-1/2}$ is a $k \times k$ nonsingular matrix, the map $R \mapsto R(A'A)^{-1/2}$ preserves rank: $\rank(B) = \rank(R)$.
+
+Now observe that $V = R(A'A)^{-1}R' = R(A'A)^{-1/2}(A'A)^{-1/2}R' = BB'$. A standard result states that $\rank(BB') = \rank(B)$ (since the null spaces of $B$ and $BB'$ coincide). Hence $\rank(V) = \rank(B) = \rank(R)$.
+
+Since $V$ is $m \times m$, it is nonsingular if and only if $\rank(V) = m$, which happens if and only if $\rank(R) = m$ (i.e., $R$ has full row rank). \qed
+\end{solution*}
+
+%--- MC-16 ---
+\begin{exercise}[MLE for the multivariate normal]\label{mc:C4}
+Let $y_1, \ldots, y_n \overset{\mathrm{iid}}{\sim} N_m(\mu, \Omega)$, $\Omega \succ 0$, $n \geqslant m+1$. The log-likelihood is
+\[
+\Lambda(\mu, \Omega) = -\frac{mn}{2}\log 2\pi - \frac{n}{2}\log|\Omega| - \frac{1}{2}\sum_{i=1}^{n}(y_i - \mu)'\Omega^{-1}(y_i - \mu).
+\]
+Using matrix differentials, derive the MLEs $\hat{\mu}$ and $\hat{\Omega}$.
+\end{exercise}
+
+\begin{solution*}
+Define $S(\mu) = \frac{1}{n}\sum_{i=1}^{n}(y_i - \mu)(y_i - \mu)'$.
+
+\emph{Differential w.r.t.\ $\mu$ (holding $\Omega$ fixed):} The last term gives:
+\[
+\dd_\mu\Lambda = \frac{1}{2}\sum_{i=1}^{n}\bigl[(\dd\mu)'\Omega^{-1}(y_i-\mu) + (y_i-\mu)'\Omega^{-1}\dd\mu\bigr] = \sum_{i=1}^{n}(y_i-\mu)'\Omega^{-1}\dd\mu,
+\]
+using the scalar-transpose trick. Setting to zero for all $\dd\mu$: $\sum_i(y_i - \hat\mu) = 0$, so $\hat\mu = \bar{y} = \frac{1}{n}\sum_i y_i$.
+
+\emph{Differential w.r.t.\ $\Omega$ (holding $\mu$ fixed):} Using $\dd\log|\Omega| = \tr\Omega^{-1}\dd\Omega$ and $\dd\Omega^{-1} = -\Omega^{-1}(\dd\Omega)\Omega^{-1}$, and writing the quadratic form under a trace ($a'Ba = \tr Baa'$):
+\begin{align*}
+\dd_\Omega\Lambda &= -\frac{n}{2}\tr\Omega^{-1}\dd\Omega + \frac{1}{2}\sum_{i=1}^{n}(y_i-\mu)'\Omega^{-1}(\dd\Omega)\Omega^{-1}(y_i-\mu) \\
+&= -\frac{n}{2}\tr\Omega^{-1}\dd\Omega + \frac{n}{2}\tr S\Omega^{-1}(\dd\Omega)\Omega^{-1} \\
+&= -\frac{n}{2}\tr(\Omega^{-1} - \Omega^{-1}S\Omega^{-1})\dd\Omega.
+\end{align*}
+Setting to zero for all symmetric $\dd\Omega$: since $\dd\Omega$ is constrained to be symmetric, $\tr A\,\dd\Omega = 0$ for all symmetric $\dd\Omega$ implies $A + A' = 0$. Here $A = \Omega^{-1} - \Omega^{-1}S\Omega^{-1}$, which is itself symmetric, so $A + A' = 2A = 0$, giving $\Omega^{-1} = \Omega^{-1}\hat{S}\hat\Omega^{-1}$, hence $\hat\Omega = \hat{S} = S(\hat\mu)$:
+\[
+\hat\Omega = \frac{1}{n}\sum_{i=1}^{n}(y_i - \bar{y})(y_i - \bar{y})'. \tag*{\qed}
+\]
+\end{solution*}
+
+%=============================================================================
+\bigskip
+\begin{center}
+\rule{0.6\textwidth}{0.4pt}\\[2mm]
+{\Large\bfseries Part II: Multiple Linear Regression}\\[1mm]
+\rule{0.6\textwidth}{0.4pt}
+\end{center}
+
+\medskip
+\noindent\textbf{Model.}\; $\bY = \bX\bb + \be$, $\bY$ is $n \times 1$, $\bX$ is $n \times (k+1)$, $\rank(\bX) = k+1$, $n > k+1$.
+
+\noindent\textbf{Notation.}\; $\bH = \bX(\bX'\bX)^{-1}\bX'$, $\bM = \bI - \bH$, $\hat{\bb} = (\bX'\bX)^{-1}\bX'\bY$, $\mathbf{e} = \bM\bY$, $s^2 = \MSE = \SSE/(n{-}k{-}1)$.
+
+\noindent\textbf{Assumptions.}\; (A1)~$\expc[\bY|\bX]=\bX\bb$; (A2)~$\expc[\be|\bX]=\bzero$; (A3)~$\var(\be|\bX)=\sigma^2\bI$; (A4)~$\rank(\bX)=k{+}1$, $n>k{+}1$; (A5)~$\be|\bX \sim N(\bzero,\sigma^2\bI)$.
+
+\subsection*{Tier A: Reproduce the Derivation}
+
+%--- LM-1 ---
+\begin{exercise}[OLS Derivation]\label{prob:A1}
+Derive $\hat{\bb} = (\bX'\bX)^{-1}\bX'\bY$ by minimizing $\|\bY - \bX\bb\|^2$. Verify the second-order condition.
+\end{exercise}
+
+\begin{solution*}
+Expand $Q(\bb) = (\bY - \bX\bb)^\top(\bY - \bX\bb)$:
+\[
+Q(\bb) = \bY'\bY - 2\bb'\bX'\bY + \bb'\bX'\bX\bb,
+\]
+using the fact that $\bY'\bX\bb$ is a scalar and equals $\bb'\bX'\bY$.
+
+\emph{First-order condition.} $\frac{\partial Q}{\partial \bb} = -2\bX'\bY + 2\bX'\bX\bb = \bzero$, giving the normal equations $\bX'\bX\hat{\bb} = \bX'\bY$. Since $\rank(\bX) = k+1$, $\bX'\bX$ is invertible: $\hat{\bb} = (\bX'\bX)^{-1}\bX'\bY$.
+
+\emph{Second-order condition.} The Hessian is $2\bX'\bX$. For any $\bv \neq \bzero$, $\bv'\bX'\bX\bv = \|\bX\bv\|^2 > 0$ (since $\bX\bv \neq \bzero$ by full rank). Hence $\bX'\bX$ is positive definite, confirming a global minimum. \qed
+\end{solution*}
+
+%--- LM-2 ---
+\begin{exercise}[Unbiasedness and Variance]\label{prob:A2}
+(a) Prove $\expc[\hat{\bb}] = \bb$ under (A1)--(A2).\\
+(b) Derive $\var(\hat{\bb}) = \sigma^2(\bX'\bX)^{-1}$ under (A1)--(A4).
+\end{exercise}
+
+\begin{solution*}
+\textbf{(a)} Substituting $\bY = \bX\bb + \be$:
+\[
+\hat{\bb} = (\bX'\bX)^{-1}\bX'(\bX\bb + \be) = \bb + (\bX'\bX)^{-1}\bX'\be.
+\]
+Taking expectations: $\expc[\hat{\bb}] = \bb + (\bX'\bX)^{-1}\bX'\expc[\be] = \bb + \bzero = \bb$.
+
+\textbf{(b)} From $\hat{\bb} - \bb = (\bX'\bX)^{-1}\bX'\be$:
+\begin{align*}
+\var(\hat{\bb}) &= \expc[(\hat{\bb}-\bb)(\hat{\bb}-\bb)^\top] = (\bX'\bX)^{-1}\bX'\expc[\be\be^\top]\bX(\bX'\bX)^{-1}.
+\end{align*}
+By (A2)--(A3), $\expc[\be\be^\top] = \sigma^2\bI$. Hence:
+\[
+\var(\hat{\bb}) = \sigma^2(\bX'\bX)^{-1}\bX'\bX(\bX'\bX)^{-1} = \sigma^2(\bX'\bX)^{-1}. \tag*{\qed}
+\]
+\end{solution*}
+
+%--- LM-3 ---
+\begin{exercise}[Gauss--Markov Theorem]\label{prob:A3}
+State and prove the Gauss--Markov theorem: under (A1)--(A4), OLS is BLUE.
+\end{exercise}
+
+\begin{solution*}
+\emph{Statement.} For any linear unbiased estimator $\tilde{\bb} = \bC\bY$, $\var(\tilde{\bb}) - \var(\hat{\bb}) \succeq \bzero$.
+
+\emph{Proof.} Unbiasedness requires $\bC\bX = \bI_{k+1}$. Write $\bC = (\bX'\bX)^{-1}\bX' + \bD$ where $\bD = \bC - (\bX'\bX)^{-1}\bX'$. Then $\bD\bX = \bC\bX - \bI = \bzero$.
+
+\begin{align*}
+\var(\tilde{\bb}) &= \sigma^2\bC\bC' = \sigma^2[(\bX'\bX)^{-1}\bX' + \bD][\bX(\bX'\bX)^{-1} + \bD'].
+\end{align*}
+The cross terms vanish: $\bD\bX(\bX'\bX)^{-1} = \bzero$ and $(\bX'\bX)^{-1}\bX'\bD' = (\bD\bX(\bX'\bX)^{-1})^\top = \bzero$. Hence:
+\[
+\var(\tilde{\bb}) = \sigma^2(\bX'\bX)^{-1} + \sigma^2\bD\bD' = \var(\hat{\bb}) + \sigma^2\bD\bD' \succeq \var(\hat{\bb}),
+\]
+since $\bD\bD' \succeq \bzero$ ($\bv'\bD\bD'\bv = \|\bD'\bv\|^2 \geqslant 0$). Equality iff $\bD = \bzero$, i.e., $\tilde{\bb} = \hat{\bb}$. \qed
+\end{solution*}
+
+%--- LM-4 ---
+\begin{exercise}[Unbiasedness of MSE]\label{prob:A4}
+Prove that $s^2 = \SSE/(n-k-1)$ is an unbiased estimator of $\sigma^2$ under (A1)--(A4).\\
+\textit{You may use: $\expc[\bz^\top\bA\bz] = \tr(\bA\boldsymbol\Sigma) + \boldsymbol\mu^\top\bA\boldsymbol\mu$.}
+\end{exercise}
+
+\begin{solution*}
+Since $\mathbf{e} = \bM\be$ (because $\bM\bX = \bzero$) and $\bM$ is symmetric idempotent ($\bM'\bM = \bM$):
+\[
+\SSE = \mathbf{e}^\top\mathbf{e} = \be^\top\bM\be.
+\]
+Apply the trace identity with $\bz = \be$, $\boldsymbol\mu = \expc[\be] = \bzero$, $\boldsymbol\Sigma = \sigma^2\bI$, $\bA = \bM$:
+\[
+\expc[\SSE] = \tr(\bM \cdot \sigma^2\bI) + \bzero = \sigma^2\tr(\bM).
+\]
+Now $\tr(\bM) = \tr(\bI - \bH) = n - \tr(\bH)$. Since $\bH$ is idempotent, its eigenvalues are $0$ or $1$, so $\tr(\bH) = \rank(\bH) = k+1$ (the dimension of $\calC(\bX)$). Hence $\tr(\bM) = n - k - 1$, giving:
+\[
+\expc[\MSE] = \frac{\sigma^2(n-k-1)}{n-k-1} = \sigma^2. \tag*{\qed}
+\]
+\end{solution*}
+
+%--- LM-5 ---
+\begin{exercise}[Chi-square distribution and independence of SSE]\label{prob:A5}
+Under (A1)--(A5), prove: (a)~$\SSE/\sigma^2 \sim \chi^2_{n-k-1}$. (b)~$\SSE$ is independent of $\hat{\bb}$.\\
+\textit{You may use: if $\bz \sim N(\bzero, \bI_n)$ and $\bA$ is symmetric idempotent, then $\bz^\top\bA\bz \sim \chi^2_{\tr(\bA)}$.}
+\end{exercise}
+
+\begin{solution*}
+\textbf{(a)} Let $\bz = \be/\sigma \sim N(\bzero, \bI_n)$. Then $\SSE/\sigma^2 = \be^\top\bM\be/\sigma^2 = \bz^\top\bM\bz$. Since $\bM$ is symmetric idempotent with $\tr(\bM) = n-k-1$, the given result yields $\bz^\top\bM\bz \sim \chi^2_{n-k-1}$.
+
+\textbf{(b)} Both $\hat{\bb} - \bb = (\bX'\bX)^{-1}\bX'\be$ and $\mathbf{e} = \bM\be$ are linear in $\be \sim N(\bzero, \sigma^2\bI)$, so they are jointly normal. For jointly normal vectors, independence is equivalent to zero cross-covariance:
+\[
+\cov\bigl((\bX'\bX)^{-1}\bX'\be,\;\bM\be\bigr) = (\bX'\bX)^{-1}\bX'(\sigma^2\bI)\bM = \sigma^2(\bX'\bX)^{-1}\bX'\bM = \bzero,
+\]
+since $\bX'\bM = (\bM\bX)^\top = \bzero' = \bzero$. Hence $\hat{\bb}$ and $\mathbf{e}$ are independent, and so are $\hat{\bb}$ and $\SSE = \|\mathbf{e}\|^2$. \qed
+\end{solution*}
+
+%--- LM-6 ---
+\begin{exercise}[ANOVA and the Overall $F$ Test]\label{prob:A6}
+(a) Prove $\SST = \SSR + \SSE$.\\
+(b) Under (A1)--(A5) and $H_0\colon \beta_1 = \cdots = \beta_k = 0$, prove $\SSR/\sigma^2 \sim \chi^2_k$ and that $\SSR$ is independent of $\SSE$. Hence derive $F = \MSR/\MSE \sim F_{k, n-k-1}$.\\
+\textit{Hint: define $\bH_0 = \frac{1}{n}\bone\bone'$ and show $\bH - \bH_0$ is symmetric idempotent of rank $k$.}
+\end{exercise}
+
+\begin{solution*}
+\textbf{(a)} Decompose $\bY - \bar{Y}\bone = \mathbf{e} + (\hat{\bY} - \bar{Y}\bone)$. Squaring:
+\[
+\SST = \|\mathbf{e}\|^2 + \|\hat{\bY} - \bar{Y}\bone\|^2 + 2\mathbf{e}^\top(\hat{\bY} - \bar{Y}\bone).
+\]
+Cross term: $\mathbf{e}^\top\hat{\bY} - \bar{Y}\mathbf{e}^\top\bone = 0 - \bar{Y} \cdot 0 = 0$ (since $\bX'\mathbf{e} = \bzero$ implies $\hat{\bY}^\top\mathbf{e} = 0$ and $\bone'\mathbf{e} = 0$). Hence $\SST = \SSE + \SSR$.
+
+\textbf{(b)} Define $\bH_0 = \frac{1}{n}\bone\bone'$. Then $\hat{\bY} - \bar{Y}\bone = (\bH - \bH_0)\bY$. Under $H_0$, $\bb = (\beta_0, 0, \ldots, 0)^\top$, so $\bX\bb = \beta_0\bone$ and $\bY = \beta_0\bone + \be$. Since $(\bH - \bH_0)\bone = \bone - \bone = \bzero$: $(\bH - \bH_0)\bY = (\bH - \bH_0)\be$, giving $\SSR/\sigma^2 = \bz^\top(\bH - \bH_0)\bz$, $\bz = \be/\sigma \sim N(\bzero, \bI)$.
+
+\emph{Idempotency:} $\bH\bH_0 = \bH_0\bH = \bH_0$ (since $\bone \in \calC(\bX)$). Hence $(\bH - \bH_0)^2 = \bH - \bH_0 - \bH_0 + \bH_0 = \bH - \bH_0$. Rank: $\tr(\bH - \bH_0) = (k+1) - 1 = k$. So $\SSR/\sigma^2 \sim \chi^2_k$.
+
+\emph{Independence:} $(\bH - \bH_0)\bM = \bH\bM - \bH_0(\bI - \bH) = \bzero - \bH_0 + \bH_0 = \bzero$. By Cochran's theorem, $\SSR$ and $\SSE$ are independent.
+
+\emph{$F$ distribution:} $F = \frac{(\SSR/\sigma^2)/k}{(\SSE/\sigma^2)/(n-k-1)} = \MSR/\MSE \sim F_{k,n-k-1}$. \qed
+\end{solution*}
+
+\subsection*{Tier B: Apply the Theory}
+
+%--- LM-7 ---
+\begin{exercise}[Leverages and Residual Variance]\label{prob:B1}
+Let $h_{ii}$ denote the $i$-th diagonal entry of $\bH$.\\
+(a) Show $0 \leqslant h_{ii} \leqslant 1$. \; (b) Show $\sum_{i=1}^n h_{ii} = k+1$. \; (c) Derive $\var(e_i) = \sigma^2(1-h_{ii})$.
+\end{exercise}
+
+\begin{solution*}
+\textbf{(a)} Since $\bH$ is idempotent, $\bH = \bH^2$. Comparing the $(i,i)$ entry: $h_{ii} = \sum_j h_{ij}h_{ji} = \sum_j h_{ij}^2 \geqslant 0$ (by symmetry $h_{ji} = h_{ij}$). Since $h_{ii}^2$ is one term in $\sum_j h_{ij}^2 = h_{ii}$, we have $h_{ii} \geqslant h_{ii}^2$, i.e., $h_{ii}(1-h_{ii}) \geqslant 0$. Combined with $h_{ii} \geqslant 0$: $0 \leqslant h_{ii} \leqslant 1$.
+
+\textbf{(b)} $\sum h_{ii} = \tr(\bH) = \rank(\bH) = k+1$ (since $\bH$ is idempotent and projects onto $\calC(\bX)$).
+
+\textbf{(c)} $\var(\mathbf{e}) = \var(\bM\be) = \bM(\sigma^2\bI)\bM' = \sigma^2\bM^2 = \sigma^2\bM$ (by idempotency). The $(i,i)$ entry: $\var(e_i) = \sigma^2[\bM]_{ii} = \sigma^2(1 - h_{ii})$. \qed
+\end{solution*}
+
+%--- LM-8 ---
+\begin{exercise}[Testing $\bc'\bb = r_0$]\label{prob:B2}
+For a given $\bc \neq \bzero$ and scalar $r_0$, consider $H_0\colon \bc'\bb = r_0$.\\
+(a) Derive the distribution of $\bc'\hat{\bb}$. \; (b) Construct the $t$ statistic. \; (c) Show $t^2 \sim F_{1,n-k-1}$.
+\end{exercise}
+
+\begin{solution*}
+\textbf{(a)} $\hat{\bb} \sim N(\bb, \sigma^2(\bX'\bX)^{-1})$. By linearity of the normal: $\bc'\hat{\bb} \sim N(\bc'\bb,\; \sigma^2\bc'(\bX'\bX)^{-1}\bc)$.
+
+\textbf{(b)} Standardize: $Z = \frac{\bc'\hat{\bb} - \bc'\bb}{\sigma\sqrt{\bc'(\bX'\bX)^{-1}\bc}} \sim N(0,1)$. This is independent of $V = \SSE/\sigma^2 \sim \chi^2_{n-k-1}$ (by Problem~\ref{prob:A5}). By the definition of $t$: $t = Z/\sqrt{V/(n-k-1)}$:
+\[
+t = \frac{\bc'\hat{\bb} - r_0}{s\sqrt{\bc'(\bX'\bX)^{-1}\bc}} \sim t_{n-k-1} \quad \text{under } H_0.
+\]
+
+\textbf{(c)} $F = \frac{(\bc'\hat{\bb} - r_0)^2}{s^2\,\bc'(\bX'\bX)^{-1}\bc} = t^2$. Since $t \sim t_{n-k-1}$, $t^2 \sim F_{1,n-k-1}$. \qed
+\end{solution*}
+
+%--- LM-9 ---
+\begin{exercise}[Nested $F$ Test]\label{prob:B3}
+Full model with $k$ regressors; reduced model with $k_0 < k$.\\
+(a) Prove $\SSE_R \geqslant \SSE_U$. \; (b) Under $H_0$, show $F = \frac{(\SSE_R - \SSE_U)/(k-k_0)}{\SSE_U/(n-k-1)} \sim F_{k-k_0, n-k-1}$.
+\end{exercise}
+
+\begin{solution*}
+\textbf{(a)} The full model minimizes $\|\bY - \bX\bb\|^2$ over all $\bb \in \Real^{k+1}$. The reduced model minimizes over the subspace $\{\bb : \beta_{k_0+1} = \cdots = \beta_k = 0\}$. Since the unconstrained minimum is taken over a larger set, $\SSE_U \leqslant \SSE_R$.
+
+\textbf{(b)} Let $\bM_U$, $\bM_R$ be the residual makers for the full and reduced models. Then $\SSE_U = \be^\top\bM_U\be$ and $\SSE_R = \be^\top\bM_R\be$. The matrix $\bM_R - \bM_U$ is symmetric idempotent: since $\calC(\bX_{\text{red}}) \subseteq \calC(\bX)$, we have $\bH_U\bH_R = \bH_R$, giving $(\bM_R - \bM_U)^2 = \bM_R - \bM_U$. Its rank is $\tr(\bM_R - \bM_U) = (n-k_0-1) - (n-k-1) = k - k_0$. Also $(\bM_R - \bM_U)\bM_U = \bM_R\bM_U - \bM_U = \bM_U - \bM_U = \bzero$. By Cochran's theorem:
+\[
+\frac{\SSE_R - \SSE_U}{\sigma^2} = \bz^\top(\bM_R - \bM_U)\bz \sim \chi^2_{k-k_0}, \quad \text{independent of } \frac{\SSE_U}{\sigma^2} \sim \chi^2_{n-k-1}.
+\]
+Hence $F = \frac{(\SSE_R - \SSE_U)/(k-k_0)}{\SSE_U/(n-k-1)} \sim F_{k-k_0, n-k-1}$. \qed
+\end{solution*}
+
+%--- LM-10 ---
+\begin{exercise}[GLS is BLUE]\label{prob:B4}
+Suppose $\var(\be) = \sigma^2\boldsymbol\Omega$ where $\boldsymbol\Omega$ is known, positive definite, $\neq \bI$.\\
+(a) Show OLS is still unbiased. Derive its actual variance.\\
+(b) Define $\hat{\bb}_{\mathrm{GLS}} = (\bX'\boldsymbol\Omega^{-1}\bX)^{-1}\bX'\boldsymbol\Omega^{-1}\bY$. Prove it is BLUE.
+\end{exercise}
+
+\begin{solution*}
+\textbf{(a)} \emph{Unbiasedness:} $\expc[\hat{\bb}] = \bb + (\bX'\bX)^{-1}\bX'\expc[\be] = \bb$ (uses only (A1)--(A2), not (A3)).
+
+\emph{Actual variance:}
+\[
+\var(\hat{\bb}) = (\bX'\bX)^{-1}\bX'\var(\be)\bX(\bX'\bX)^{-1} = \sigma^2(\bX'\bX)^{-1}\bX'\boldsymbol\Omega\bX(\bX'\bX)^{-1}.
+\]
+This differs from $\sigma^2(\bX'\bX)^{-1}$ when $\boldsymbol\Omega \neq \bI$, so the usual OLS standard errors are incorrect.
+
+\textbf{(b)} Let $\boldsymbol\Omega^{1/2}$ be the symmetric positive definite square root. Transform:
+\[
+\boldsymbol\Omega^{-1/2}\bY = \boldsymbol\Omega^{-1/2}\bX\bb + \boldsymbol\Omega^{-1/2}\be.
+\]
+Define $\bY^* = \boldsymbol\Omega^{-1/2}\bY$, $\bX^* = \boldsymbol\Omega^{-1/2}\bX$, $\be^* = \boldsymbol\Omega^{-1/2}\be$. Then $\var(\be^*) = \boldsymbol\Omega^{-1/2}(\sigma^2\boldsymbol\Omega)\boldsymbol\Omega^{-1/2} = \sigma^2\bI$. The transformed model has spherical errors, so by Gauss--Markov, OLS on the transformed model is BLUE:
+\[
+(\bX^{*\top}\bX^*)^{-1}\bX^{*\top}\bY^* = (\bX'\boldsymbol\Omega^{-1}\bX)^{-1}\bX'\boldsymbol\Omega^{-1}\bY = \hat{\bb}_{\mathrm{GLS}}. \tag*{\qed}
+\]
+\end{solution*}
+
+%--- LM-11 ---
+\begin{exercise}[Prediction Interval]\label{prob:B5}
+Let $\hat{Y}_0 = \bx_0^\top\hat{\bb}$, where $Y_0 = \bx_0^\top\bb + \varepsilon_0$ with $\varepsilon_0 \sim N(0, \sigma^2)$ independent of the sample.\\
+(a) Derive $\var(\hat{Y}_0 - \expc[Y_0 \mid \bx_0])$. \; (b) Derive $\var(\hat{Y}_0 - Y_0)$. \; (c) Explain why (b) $>$ (a).
+\end{exercise}
+
+\begin{solution*}
+\textbf{(a)} $\hat{Y}_0 - \expc[Y_0] = \bx_0^\top(\hat{\bb} - \bb)$, so:
+\[
+\var(\hat{Y}_0 - \expc[Y_0]) = \bx_0^\top\var(\hat{\bb})\bx_0 = \sigma^2\bx_0^\top(\bX'\bX)^{-1}\bx_0.
+\]
+
+\textbf{(b)} $\hat{Y}_0 - Y_0 = \bx_0^\top(\hat{\bb} - \bb) - \varepsilon_0$. Since $\varepsilon_0$ is independent of $\hat{\bb}$:
+\[
+\var(\hat{Y}_0 - Y_0) = \sigma^2\bx_0^\top(\bX'\bX)^{-1}\bx_0 + \sigma^2 = \sigma^2\bigl(1 + \bx_0^\top(\bX'\bX)^{-1}\bx_0\bigr).
+\]
+
+\textbf{(c)} The prediction variance exceeds the estimation variance by exactly $\sigma^2 = \var(\varepsilon_0)$, the irreducible noise of the future observation. Since $\sigma^2 > 0$, the prediction interval is always wider. \qed
+\end{solution*}
+
+%--- LM-12 ---
+\begin{exercise}[OLS Equals MLE Under Normality]\label{prob:B6}
+Under (A1)--(A5): (a)~Write $\ell(\bb, \sigma^2)$. (b)~Show $\hat{\bb}_{\mathrm{MLE}} = \hat{\bb}_{\mathrm{OLS}}$. (c)~Derive $\hat{\sigma}^2_{\mathrm{MLE}} = \SSE/n$; verify the second-order condition; is it unbiased?
+\end{exercise}
+
+\begin{solution*}
+\textbf{(a)} Under (A5), $\bY \sim N(\bX\bb, \sigma^2\bI)$:
+\[
+\ell(\bb, \sigma^2) = -\frac{n}{2}\ln(2\pi) - \frac{n}{2}\ln\sigma^2 - \frac{1}{2\sigma^2}(\bY - \bX\bb)^\top(\bY - \bX\bb).
+\]
+
+\textbf{(b)} For any fixed $\sigma^2 > 0$, maximizing $\ell$ over $\bb$ is equivalent to minimizing $\|\bY - \bX\bb\|^2$, which is the OLS problem. Hence $\hat{\bb}_{\mathrm{MLE}} = \hat{\bb}_{\mathrm{OLS}}$.
+
+\textbf{(c)} Substituting $\hat{\bb}$ and differentiating with respect to $\sigma^2$:
+\[
+\frac{\partial\ell}{\partial\sigma^2} = -\frac{n}{2\sigma^2} + \frac{\SSE}{2(\sigma^2)^2} = 0 \implies \hat{\sigma}^2_{\mathrm{MLE}} = \frac{\SSE}{n}.
+\]
+Second-order condition: $\frac{\partial^2\ell}{\partial(\sigma^2)^2}\big|_{\hat{\sigma}^2} = \frac{n}{2(\SSE/n)^2} - \frac{\SSE}{(\SSE/n)^3} = \frac{n^3}{2\SSE^2} - \frac{n^3}{\SSE^2} = -\frac{n^3}{2\SSE^2} < 0$, confirming a maximum.
+
+Bias: $\expc[\hat{\sigma}^2_{\mathrm{MLE}}] = \expc[\SSE]/n = (n-k-1)\sigma^2/n \neq \sigma^2$. Biased downward. The unbiased estimator is $s^2 = \SSE/(n-k-1)$. \qed
+\end{solution*}
+
+\subsection*{Tier C: Extend and Connect}
+
+%--- LM-13 ---
+\begin{exercise}[Frisch--Waugh--Lovell Theorem]\label{prob:C1}
+Partition $\bX = [\bX_1 \;\; \bX_2]$, $\bb = (\bb_1^\top, \bb_2^\top)^\top$. Let $\bM_2 = \bI - \bX_2(\bX_2^\top\bX_2)^{-1}\bX_2^\top$.\\
+(a) Prove $\hat{\bb}_1 = (\bX_1^\top\bM_2\bX_1)^{-1}\bX_1^\top\bM_2\bY$.\\
+(b) Show that the full regression residuals equal those of regressing $\bM_2\bY$ on $\bM_2\bX_1$.
+\end{exercise}
+
+\begin{solution*}
+\textbf{(a)} The partitioned normal equations are:
+\[
+\bX_1^\top\bX_1\hat{\bb}_1 + \bX_1^\top\bX_2\hat{\bb}_2 = \bX_1^\top\bY, \qquad \bX_2^\top\bX_1\hat{\bb}_1 + \bX_2^\top\bX_2\hat{\bb}_2 = \bX_2^\top\bY.
+\]
+From the second: $\hat{\bb}_2 = (\bX_2^\top\bX_2)^{-1}\bX_2^\top(\bY - \bX_1\hat{\bb}_1)$. Substituting into the first and using $\bX_2(\bX_2^\top\bX_2)^{-1}\bX_2^\top = \bI - \bM_2$:
+\begin{align*}
+\bX_1^\top\bX_1\hat{\bb}_1 + \bX_1^\top(\bI - \bM_2)(\bY - \bX_1\hat{\bb}_1) &= \bX_1^\top\bY \\
+\bX_1^\top\bM_2\bX_1\hat{\bb}_1 &= \bX_1^\top\bM_2\bY.
+\end{align*}
+Hence $\hat{\bb}_1 = (\bX_1^\top\bM_2\bX_1)^{-1}\bX_1^\top\bM_2\bY$.
+
+\textbf{(b)} The residual from regressing $\bM_2\bY$ on $\bM_2\bX_1$ is:
+\[
+\tilde{\mathbf{e}} = \bM_2\bY - \bM_2\bX_1\hat{\bb}_1 = \bM_2(\bY - \bX_1\hat{\bb}_1) = \bM_2(\bX_2\hat{\bb}_2 + \mathbf{e}).
+\]
+Since $\bM_2\bX_2 = \bzero$: $\tilde{\mathbf{e}} = \bM_2\mathbf{e}$. Now $\mathbf{e} = \bM\bY$ where $\bM$ is the full residual maker. Since $\calC(\bX_2) \subseteq \calC(\bX)$, $\bM\bX_2 = \bzero$, so $\bM_2\bM = (\bI - \bX_2(\bX_2^\top\bX_2)^{-1}\bX_2^\top)\bM = \bM$. Hence $\tilde{\mathbf{e}} = \bM\bY = \mathbf{e}$. \qed
+\end{solution*}
+
+%--- LM-14 ---
+\begin{exercise}[Omitted Variable Bias]\label{prob:C2}
+True model: $\bY = \bX_1\bb_1 + \bX_2\bb_2 + \be$. Researcher estimates: $\tilde{\boldsymbol\gamma} = (\bX_1^\top\bX_1)^{-1}\bX_1^\top\bY$.\\
+(a) Show $\expc[\tilde{\boldsymbol\gamma}] = \bb_1 + (\bX_1^\top\bX_1)^{-1}\bX_1^\top\bX_2\,\bb_2$.\\
+(b) Under what conditions is $\tilde{\boldsymbol\gamma}$ unbiased for $\bb_1$?
+\end{exercise}
+
+\begin{solution*}
+\textbf{(a)} Substitute the true DGP:
+\begin{align*}
+\tilde{\boldsymbol\gamma} &= (\bX_1^\top\bX_1)^{-1}\bX_1^\top(\bX_1\bb_1 + \bX_2\bb_2 + \be) \\
+&= \bb_1 + (\bX_1^\top\bX_1)^{-1}\bX_1^\top\bX_2\bb_2 + (\bX_1^\top\bX_1)^{-1}\bX_1^\top\be.
+\end{align*}
+Taking expectations ($\expc[\be] = \bzero$): $\expc[\tilde{\boldsymbol\gamma}] = \bb_1 + (\bX_1^\top\bX_1)^{-1}\bX_1^\top\bX_2\bb_2$. The bias is $(\bX_1^\top\bX_1)^{-1}\bX_1^\top\bX_2\bb_2$, where $(\bX_1^\top\bX_1)^{-1}\bX_1^\top\bX_2$ is the matrix of coefficients from regressing columns of $\bX_2$ on $\bX_1$.
+
+\textbf{(b)} $\tilde{\boldsymbol\gamma}$ is unbiased iff $(\bX_1^\top\bX_1)^{-1}\bX_1^\top\bX_2\bb_2 = \bzero$, which holds when:
+\begin{itemize}[nosep]
+\item $\bX_1^\top\bX_2 = \bzero$ (included and omitted regressors are orthogonal), or
+\item $\bb_2 = \bzero$ (omitted variables have zero coefficients, i.e., are irrelevant). \qed
+\end{itemize}
+\end{solution*}
+
+%--- LM-15 ---
+\begin{exercise}[Monotonicity of $R^2$ and the Adjusted $R^2$ Criterion]\label{prob:C3}
+(a) Prove that adding a regressor cannot decrease $R^2$.\\
+(b) Show that $\bar{R}^2$ increases if and only if the absolute $t$-statistic of the added variable exceeds $1$.
+\end{exercise}
+
+\begin{solution*}
+\textbf{(a)} Let $\calC_k \subseteq \calC_{k+1}$ be the column spaces of the smaller and larger design matrices. The projection of $\bY$ onto $\calC_{k+1}$ is at least as close as the projection onto $\calC_k$: $\SSE_{k+1} \leqslant \SSE_k$. Since $\SST$ is unchanged, $R^2_{k+1} = 1 - \SSE_{k+1}/\SST \geqslant 1 - \SSE_k/\SST = R^2_k$.
+
+\textbf{(b)} $\bar{R}^2$ increases iff $\MSE_{k+1} < \MSE_k$, i.e., $\SSE_{k+1}/(n-k-2) < \SSE_k/(n-k-1)$.
+
+\emph{Key identity:} Write $\bX_{k+1} = [\bX_k \; \bx]$. From the partitioned normal equations, $\hat{\beta}_{k+1} = (\bx'\bM_k\bx)^{-1}\bx'\bM_k\bY$. By the rank-one projection update: $\SSE_k - \SSE_{k+1} = \hat{\beta}_{k+1}^2/[(\bX_{k+1}^\top\bX_{k+1})^{-1}]_{k+1,k+1} = t_{k+1}^2 \cdot \MSE_{k+1}$. Hence $\SSE_k = \SSE_{k+1} + t_{k+1}^2 \cdot \MSE_{k+1}$.
+
+Substituting:
+\begin{align*}
+(n-k-1)\SSE_{k+1} &< (n-k-2)\SSE_{k+1} + (n-k-2)t_{k+1}^2\MSE_{k+1} \\
+\SSE_{k+1} &< (n-k-2)t_{k+1}^2\MSE_{k+1}.
+\end{align*}
+Since $\SSE_{k+1} = (n-k-2)\MSE_{k+1}$, dividing by $(n-k-2)\MSE_{k+1} > 0$: $1 < t_{k+1}^2$, i.e., $|t_{k+1}| > 1$. \qed
+\end{solution*}
+
+%--- LM-16 ---
+\begin{exercise}[Constrained Least Squares]\label{prob:C4}
+Consider $\min_{\bb}\|\bY - \bX\bb\|^2$ subject to $\bR\bb = \br$ ($q$ constraints, $\rank(\bR) = q$).\\
+(a) Using Lagrange multipliers, derive the constrained estimator $\hat{\bb}_R$.\\
+(b) Show $\hat{\bb}_R = \hat{\bb} - (\bX'\bX)^{-1}\bR'[\bR(\bX'\bX)^{-1}\bR']^{-1}(\bR\hat{\bb} - \br)$.\\
+(c) Prove $\SSE_R \geqslant \SSE_U$.
+\end{exercise}
+
+\begin{solution*}
+\textbf{(a)} The Lagrangian is $\mathcal{L}(\bb, \boldsymbol\lambda) = (\bY - \bX\bb)^\top(\bY - \bX\bb) + 2\boldsymbol\lambda^\top(\bR\bb - \br)$. First-order conditions:
+\begin{align*}
+\frac{\partial\mathcal{L}}{\partial\bb} = -2\bX'\bY + 2\bX'\bX\bb + 2\bR'\boldsymbol\lambda &= \bzero, \\
+\frac{\partial\mathcal{L}}{\partial\boldsymbol\lambda} = 2(\bR\bb - \br) &= \bzero.
+\end{align*}
+From the first: $\hat{\bb}_R = (\bX'\bX)^{-1}(\bX'\bY - \bR'\hat{\boldsymbol\lambda}) = \hat{\bb} - (\bX'\bX)^{-1}\bR'\hat{\boldsymbol\lambda}$.
+
+\textbf{(b)} The constraint $\bR\hat{\bb}_R = \br$ gives:
+\[
+\bR\hat{\bb} - \bR(\bX'\bX)^{-1}\bR'\hat{\boldsymbol\lambda} = \br \implies \hat{\boldsymbol\lambda} = [\bR(\bX'\bX)^{-1}\bR']^{-1}(\bR\hat{\bb} - \br).
+\]
+Substituting: $\hat{\bb}_R = \hat{\bb} - (\bX'\bX)^{-1}\bR'[\bR(\bX'\bX)^{-1}\bR']^{-1}(\bR\hat{\bb} - \br)$.
+
+\textbf{(c)} The unconstrained OLS minimizes $\|\bY - \bX\bb\|^2$ over all $\bb \in \Real^{k+1}$. The constrained problem minimizes over the smaller set $\{\bb : \bR\bb = \br\} \subseteq \Real^{k+1}$. The minimum over a subset cannot be smaller: $\SSE_R \geqslant \SSE_U$. \qed
+\end{solution*}
+
+%=============================================================================
+\newpage
+\begin{center}
+\rule{0.6\textwidth}{0.4pt}\\[2mm]
+{\Large\bfseries Appendix: Key Derivations Checklist}\\[1mm]
+\rule{0.6\textwidth}{0.4pt}
+\end{center}
+
+\noindent\textbf{Matrix Calculus}
+\begin{enumerate}[label=\textbf{MC\arabic*.},leftmargin=2cm,nosep]
+\item $\tr A'B = \tr BA'$ (trace cycling).
+\item $x'Ax = 0$ for all $x$ $\Leftrightarrow$ $A$ skew-symmetric; $+$ symmetry $\Rightarrow$ $A = 0$.
+\item $(A \otimes B)(C \otimes D) = AC \otimes BD$.
+\item $\avec(ABC) = (C' \otimes A)\avec B$.
+\item $\dd|X| = |X|\tr X^{-1}\dd X$; \; $\dd\log|X| = \tr X^{-1}\dd X$.
+\item $\dd X^{-1} = -X^{-1}(\dd X)X^{-1}$.
+\item Derivatives: $a'x$, $x'Ax$, $\tr X'AX$, $\log|X'X|$, $\tr X^k$, $AX^{-1}B$.
+\item Hessian of $x'Ax$: $Hf = A+A'$; symmetrization rule $(B+B')/2$.
+\item Quadratic optimization: unconstrained ($\hat{x} = A^{-1}b$) and constrained ($c'x = 0$).
+\item MLE for multivariate normal: $\hat\mu = \bar{y}$, $\hat\Omega = \frac{1}{n}\sum(y_i-\bar{y})(y_i-\bar{y})'$.
+\end{enumerate}
+
+\medskip
+\noindent\textbf{Multiple Linear Regression}
+\begin{enumerate}[label=\textbf{LM\arabic*.},leftmargin=2cm,nosep]
+\item OLS estimator via differentiation and projection.
+\item $\bH$, $\bM$: symmetric idempotent, $\bH\bX=\bX$, $\bM\bX=\bzero$, traces.
+\item Unbiasedness of $\hat\bb$ and $\var(\hat\bb) = \sigma^2(\bX'\bX)^{-1}$.
+\item Gauss--Markov theorem (BLUE).
+\item Unbiasedness of $\MSE$ via trace identity.
+\item $\SSE/\sigma^2 \sim \chi^2_{n-k-1}$ and independence from $\hat\bb$.
+\item $\SST = \SSR + \SSE$.
+\item Overall $F$ test via $\bH - \bH_0$ idempotent.
+\item Individual $t$ test.
+\item General $F$ test for $\bR\bb = \br$.
+\end{enumerate}
+
+\end{document}
