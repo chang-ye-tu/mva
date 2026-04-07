@@ -81,6 +81,17 @@
 \DeclareMathOperator*{\esssup}{ess\,sup}
 \newcommand{\dd}{\mathrm{d}}
 
+\usepackage{parskip}
+\usepackage{etoolbox}
+\AtBeginEnvironment{definition}{\vspace{\parskip}}
+\AtBeginEnvironment{example}{\vspace{\parskip}}
+\AtBeginEnvironment{lemma}{\vspace{\parskip}}
+\AtBeginEnvironment{theorem}{\vspace{\parskip}}
+\AtBeginEnvironment{corollary}{\vspace{\parskip}}
+\AtBeginEnvironment{proposition}{\vspace{\parskip}}
+\AtBeginEnvironment{remark}{\vspace{\parskip}}
+\AtBeginEnvironment{exercise}{\vspace{\parskip}}
+
 \title{\textbf{Notes on the Modern Theory of Linear Models}}
 \author{}
 \date{}
@@ -88,15 +99,15 @@
 \begin{document}
 \maketitle
 
-\tableofcontents
-\newpage
+%\tableofcontents
+%\newpage
 
 \noindent\textbf{Notation and conventions.}\; Throughout, $\|\bv\| = \|\bv\|_2 = (\sum_i v_i^2)^{1/2}$ is the Euclidean norm, $\opnorm{\bA} = \sup_{\|\bv\|=1}\|\bA\bv\|$ is the operator (spectral) norm, $\fnorm{\bA} = (\tr(\bA'\bA))^{1/2}$ is the Frobenius norm, and $\sigma_{\min}(\bA)$, $\sigma_{\max}(\bA)$ denote the smallest and largest singular values of $\bA$. For a symmetric matrix $\bA$, $\lambda_{\min}(\bA)$ and $\lambda_{\max}(\bA)$ denote its extreme eigenvalues; then $\opnorm{\bA} = \max(|\lambda_{\min}(\bA)|, |\lambda_{\max}(\bA)|)$. We write $a \lesssim b$ to mean $a \leqslant Cb$ for a universal constant $C > 0$. For two symmetric matrices, $\bA \preceq \bA'$ means $\bA' - \bA$ is positive semi-definite. We write $a \wedge b = \min(a,b)$ and $a \vee b = \max(a,b)$. The standard Gaussian random vector in $\Real^n$ is denoted $\mathbf{g} \sim N(\bzero, \bI_n)$. In Part~3, $p$ replaces $k+1$ for the total number of regressors (including the intercept, if present).
 
 \bigskip\noindent\textbf{Prerequisites.}\; This document assumes familiarity with the material in \emph{Notes on the Classical Theory of Linear Models}. The primary references are R.\ Vershynin, \emph{High-Dimensional Probability} (HDP, 2018), and M.\,J.\ Wainwright, \emph{High-Dimensional Statistics} (HDS, 2019).
 
 %=============================================================================
-\newpage
+%\newpage
 \part{The Toolkit: Sub-Gaussian and Sub-Exponential Variables}\label{part:toolkit}
 %=============================================================================
 

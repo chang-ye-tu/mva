@@ -68,6 +68,17 @@
 \newcommand{\Real}{\mathbb{R}}
 \newcommand{\calC}{\mathcal{C}}
 
+\usepackage{parskip}
+\usepackage{etoolbox}
+\AtBeginEnvironment{definition}{\vspace{\parskip}}
+\AtBeginEnvironment{example}{\vspace{\parskip}}
+\AtBeginEnvironment{lemma}{\vspace{\parskip}}
+\AtBeginEnvironment{theorem}{\vspace{\parskip}}
+\AtBeginEnvironment{corollary}{\vspace{\parskip}}
+\AtBeginEnvironment{proposition}{\vspace{\parskip}}
+\AtBeginEnvironment{remark}{\vspace{\parskip}}
+\AtBeginEnvironment{exercise}{\vspace{\parskip}}
+
 \title{\textbf{Notes on the Classical Theory of Linear Models}}
 \author{}
 \date{}
@@ -75,8 +86,8 @@
 \begin{document}
 \maketitle
 
-\tableofcontents
-\newpage
+%\tableofcontents
+%\newpage
 
 %=============================================================================
 \section{The Multiple Linear Regression Model}\label{sec:model}
