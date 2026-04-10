@@ -313,13 +313,13 @@ By the identification theorem for matrices: $DF(X) = -(X^{-1}B)' \otimes (AX^{-1
 
 %--- MC-13 ---
 \begin{exercise}[Unconstrained and constrained quadratic optimization]\label{mc:C1}
-Let $A$ be positive definite, $b$ a constant vector, $c \neq 0$.\\
+Let $A$ be symmetric positive definite, $b$ a constant vector, $c \neq 0$.\\
 (a) Minimize $f(x) = \frac{1}{2}x'Ax - b'x$. Prove the critical point is a global minimum.\\
 (b) Minimize $f(x)$ subject to $c'x = 0$. Derive the constrained optimum $\tilde{x}$.
 \end{exercise}
 
 \begin{solution*}
-\textbf{(a)} Since $A$ is positive definite, it is symmetric ($A = A'$). The differential is:
+\textbf{(a)} The differential is:
 \[
 \dd f(x) = x'A\,\dd x - b'\dd x = (Ax - b)'\dd x.
 \]
