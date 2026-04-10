@@ -9,6 +9,10 @@
 \theoremstyle{definition}
 \newtheorem{exercise}{Problem}
 \newtheorem*{solution*}{Solution}
+\usepackage{parskip}
+\usepackage{etoolbox}
+\AtBeginEnvironment{exercise}{\vspace{\parskip}}
+\AtBeginEnvironment{solution*}{\vspace{\parskip}}
 
 \newcommand\expc{\mathsf{E}}
 \newcommand\prb{\mathsf{P}}
@@ -435,7 +439,7 @@ Derive $\hat{\bb} = (\bX'\bX)^{-1}\bX'\bY$ by minimizing $\|\bY - \bX\bb\|^2$. V
 \end{exercise}
 
 \begin{solution*}
-Expand $Q(\bb) = (\bY - \bX\bb)^\top(\bY - \bX\bb)$:
+Expand $Q(\bb) = (\bY - \bX\bb)'(\bY - \bX\bb)$:
 \[
 Q(\bb) = \bY'\bY - 2\bb'\bX'\bY + \bb'\bX'\bX\bb,
 \]
@@ -461,9 +465,9 @@ Taking expectations: $\expc[\hat{\bb}] = \bb + (\bX'\bX)^{-1}\bX'\expc[\be] = \b
 
 \textbf{(b)} From $\hat{\bb} - \bb = (\bX'\bX)^{-1}\bX'\be$:
 \begin{align*}
-\var(\hat{\bb}) &= \expc[(\hat{\bb}-\bb)(\hat{\bb}-\bb)^\top] = (\bX'\bX)^{-1}\bX'\expc[\be\be^\top]\bX(\bX'\bX)^{-1}.
+\var(\hat{\bb}) &= \expc[(\hat{\bb}-\bb)(\hat{\bb}-\bb)'] = (\bX'\bX)^{-1}\bX'\expc[\be\be']\bX(\bX'\bX)^{-1}.
 \end{align*}
-By (A2)--(A3), $\expc[\be\be^\top] = \sigma^2\bI$. Hence:
+By (A2)--(A3), $\expc[\be\be'] = \sigma^2\bI$. Hence:
 \[
 \var(\hat{\bb}) = \sigma^2(\bX'\bX)^{-1}\bX'\bX(\bX'\bX)^{-1} = \sigma^2(\bX'\bX)^{-1}. \tag*{\qed}
 \]
@@ -482,7 +486,7 @@ State and prove the Gauss--Markov theorem: under (A1)--(A4), OLS is BLUE.
 \begin{align*}
 \var(\tilde{\bb}) &= \sigma^2\bC\bC' = \sigma^2[(\bX'\bX)^{-1}\bX' + \bD][\bX(\bX'\bX)^{-1} + \bD'].
 \end{align*}
-The cross terms vanish: $\bD\bX(\bX'\bX)^{-1} = \bzero$ and $(\bX'\bX)^{-1}\bX'\bD' = (\bD\bX(\bX'\bX)^{-1})^\top = \bzero$. Hence:
+The cross terms vanish: $\bD\bX(\bX'\bX)^{-1} = \bzero$ and $(\bX'\bX)^{-1}\bX'\bD' = (\bD\bX(\bX'\bX)^{-1})' = \bzero$. Hence:
 \[
 \var(\tilde{\bb}) = \sigma^2(\bX'\bX)^{-1} + \sigma^2\bD\bD' = \var(\hat{\bb}) + \sigma^2\bD\bD' \succeq \var(\hat{\bb}),
 \]
@@ -492,13 +496,13 @@ since $\bD\bD' \succeq \bzero$ ($\bv'\bD\bD'\bv = \|\bD'\bv\|^2 \geqslant 0$). E
 %--- LM-4 ---
 \begin{exercise}[Unbiasedness of MSE]\label{prob:A4}
 Prove that $s^2 = \SSE/(n-k-1)$ is an unbiased estimator of $\sigma^2$ under (A1)--(A4).\\
-\textit{You may use: $\expc[\bz^\top\bA\bz] = \tr(\bA\boldsymbol\Sigma) + \boldsymbol\mu^\top\bA\boldsymbol\mu$.}
+\textit{You may use: $\expc[\bz'\bA\bz] = \tr(\bA\boldsymbol\Sigma) + \boldsymbol\mu'\bA\boldsymbol\mu$.}
 \end{exercise}
 
 \begin{solution*}
 Since $\mathbf{e} = \bM\be$ (because $\bM\bX = \bzero$) and $\bM$ is symmetric idempotent ($\bM'\bM = \bM$):
 \[
-\SSE = \mathbf{e}^\top\mathbf{e} = \be^\top\bM\be.
+\SSE = \mathbf{e}'\mathbf{e} = \be'\bM\be.
 \]
 Apply the trace identity with $\bz = \be$, $\boldsymbol\mu = \expc[\be] = \bzero$, $\boldsymbol\Sigma = \sigma^2\bI$, $\bA = \bM$:
 \[
@@ -513,17 +517,17 @@ Now $\tr(\bM) = \tr(\bI - \bH) = n - \tr(\bH)$. Since $\bH$ is idempotent, its e
 %--- LM-5 ---
 \begin{exercise}[Chi-square distribution and independence of SSE]\label{prob:A5}
 Under (A1)--(A5), prove: (a)~$\SSE/\sigma^2 \sim \chi^2_{n-k-1}$. (b)~$\SSE$ is independent of $\hat{\bb}$.\\
-\textit{You may use: if $\bz \sim N(\bzero, \bI_n)$ and $\bA$ is symmetric idempotent, then $\bz^\top\bA\bz \sim \chi^2_{\tr(\bA)}$.}
+\textit{You may use: if $\bz \sim N(\bzero, \bI_n)$ and $\bA$ is symmetric idempotent, then $\bz'\bA\bz \sim \chi^2_{\tr(\bA)}$.}
 \end{exercise}
 
 \begin{solution*}
-\textbf{(a)} Let $\bz = \be/\sigma \sim N(\bzero, \bI_n)$. Then $\SSE/\sigma^2 = \be^\top\bM\be/\sigma^2 = \bz^\top\bM\bz$. Since $\bM$ is symmetric idempotent with $\tr(\bM) = n-k-1$, the given result yields $\bz^\top\bM\bz \sim \chi^2_{n-k-1}$.
+\textbf{(a)} Let $\bz = \be/\sigma \sim N(\bzero, \bI_n)$. Then $\SSE/\sigma^2 = \be'\bM\be/\sigma^2 = \bz'\bM\bz$. Since $\bM$ is symmetric idempotent with $\tr(\bM) = n-k-1$, the given result yields $\bz'\bM\bz \sim \chi^2_{n-k-1}$.
 
 \textbf{(b)} Both $\hat{\bb} - \bb = (\bX'\bX)^{-1}\bX'\be$ and $\mathbf{e} = \bM\be$ are linear in $\be \sim N(\bzero, \sigma^2\bI)$, so they are jointly normal. For jointly normal vectors, independence is equivalent to zero cross-covariance:
 \[
 \cov\bigl((\bX'\bX)^{-1}\bX'\be,\;\bM\be\bigr) = (\bX'\bX)^{-1}\bX'(\sigma^2\bI)\bM = \sigma^2(\bX'\bX)^{-1}\bX'\bM = \bzero,
 \]
-since $\bX'\bM = (\bM\bX)^\top = \bzero' = \bzero$. Hence $\hat{\bb}$ and $\mathbf{e}$ are independent, and so are $\hat{\bb}$ and $\SSE = \|\mathbf{e}\|^2$. \qed
+since $\bX'\bM = (\bM\bX)' = \bzero' = \bzero$. Hence $\hat{\bb}$ and $\mathbf{e}$ are independent, and so are $\hat{\bb}$ and $\SSE = \|\mathbf{e}\|^2$. \qed
 \end{solution*}
 
 %--- LM-6 ---
@@ -536,11 +540,11 @@ since $\bX'\bM = (\bM\bX)^\top = \bzero' = \bzero$. Hence $\hat{\bb}$ and $\math
 \begin{solution*}
 \textbf{(a)} Decompose $\bY - \bar{Y}\bone = \mathbf{e} + (\hat{\bY} - \bar{Y}\bone)$. Squaring:
 \[
-\SST = \|\mathbf{e}\|^2 + \|\hat{\bY} - \bar{Y}\bone\|^2 + 2\mathbf{e}^\top(\hat{\bY} - \bar{Y}\bone).
+\SST = \|\mathbf{e}\|^2 + \|\hat{\bY} - \bar{Y}\bone\|^2 + 2\mathbf{e}'(\hat{\bY} - \bar{Y}\bone).
 \]
-Cross term: $\mathbf{e}^\top\hat{\bY} - \bar{Y}\mathbf{e}^\top\bone = 0 - \bar{Y} \cdot 0 = 0$ (since $\bX'\mathbf{e} = \bzero$ implies $\hat{\bY}^\top\mathbf{e} = 0$ and $\bone'\mathbf{e} = 0$). Hence $\SST = \SSE + \SSR$.
+Cross term: $\mathbf{e}'\hat{\bY} - \bar{Y}\mathbf{e}'\bone = 0 - \bar{Y} \cdot 0 = 0$ (since $\bX'\mathbf{e} = \bzero$ implies $\hat{\bY}'\mathbf{e} = 0$ and $\bone'\mathbf{e} = 0$). Hence $\SST = \SSE + \SSR$.
 
-\textbf{(b)} Define $\bH_0 = \frac{1}{n}\bone\bone'$. Then $\hat{\bY} - \bar{Y}\bone = (\bH - \bH_0)\bY$. Under $H_0$, $\bb = (\beta_0, 0, \ldots, 0)^\top$, so $\bX\bb = \beta_0\bone$ and $\bY = \beta_0\bone + \be$. Since $(\bH - \bH_0)\bone = \bone - \bone = \bzero$: $(\bH - \bH_0)\bY = (\bH - \bH_0)\be$, giving $\SSR/\sigma^2 = \bz^\top(\bH - \bH_0)\bz$, $\bz = \be/\sigma \sim N(\bzero, \bI)$.
+\textbf{(b)} Define $\bH_0 = \frac{1}{n}\bone\bone'$. Then $\hat{\bY} - \bar{Y}\bone = (\bH - \bH_0)\bY$. Under $H_0$, $\bb = (\beta_0, 0, \ldots, 0)'$, so $\bX\bb = \beta_0\bone$ and $\bY = \beta_0\bone + \be$. Since $(\bH - \bH_0)\bone = \bone - \bone = \bzero$: $(\bH - \bH_0)\bY = (\bH - \bH_0)\be$, giving $\SSR/\sigma^2 = \bz'(\bH - \bH_0)\bz$, $\bz = \be/\sigma \sim N(\bzero, \bI)$.
 
 \emph{Idempotency:} $\bH\bH_0 = \bH_0\bH = \bH_0$ (since $\bone \in \calC(\bX)$). Hence $(\bH - \bH_0)^2 = \bH - \bH_0 - \bH_0 + \bH_0 = \bH - \bH_0$. Rank: $\tr(\bH - \bH_0) = (k+1) - 1 = k$. So $\SSR/\sigma^2 \sim \chi^2_k$.
 
@@ -591,9 +595,9 @@ Full model with $k$ regressors; reduced model with $k_0 < k$.\\
 \begin{solution*}
 \textbf{(a)} The full model minimizes $\|\bY - \bX\bb\|^2$ over all $\bb \in \Real^{k+1}$. The reduced model minimizes over the subspace $\{\bb : \beta_{k_0+1} = \cdots = \beta_k = 0\}$. Since the unconstrained minimum is taken over a larger set, $\SSE_U \leqslant \SSE_R$.
 
-\textbf{(b)} Let $\bM_U$, $\bM_R$ be the residual makers for the full and reduced models. Then $\SSE_U = \be^\top\bM_U\be$ and $\SSE_R = \be^\top\bM_R\be$. The matrix $\bM_R - \bM_U$ is symmetric idempotent: since $\calC(\bX_{\text{red}}) \subseteq \calC(\bX)$, we have $\bH_U\bH_R = \bH_R$, giving $(\bM_R - \bM_U)^2 = \bM_R - \bM_U$. Its rank is $\tr(\bM_R - \bM_U) = (n-k_0-1) - (n-k-1) = k - k_0$. Also $(\bM_R - \bM_U)\bM_U = \bM_R\bM_U - \bM_U = \bM_U - \bM_U = \bzero$. By Cochran's theorem:
+\textbf{(b)} Let $\bM_U$, $\bM_R$ be the residual makers for the full and reduced models. Then $\SSE_U = \be'\bM_U\be$ and $\SSE_R = \be'\bM_R\be$. The matrix $\bM_R - \bM_U$ is symmetric idempotent: since $\calC(\bX_{\text{red}}) \subseteq \calC(\bX)$, we have $\bH_U\bH_R = \bH_R$, giving $(\bM_R - \bM_U)^2 = \bM_R - \bM_U$. Its rank is $\tr(\bM_R - \bM_U) = (n-k_0-1) - (n-k-1) = k - k_0$. Also $(\bM_R - \bM_U)\bM_U = \bM_R\bM_U - \bM_U = \bM_U - \bM_U = \bzero$. By Cochran's theorem:
 \[
-\frac{\SSE_R - \SSE_U}{\sigma^2} = \bz^\top(\bM_R - \bM_U)\bz \sim \chi^2_{k-k_0}, \quad \text{independent of } \frac{\SSE_U}{\sigma^2} \sim \chi^2_{n-k-1}.
+\frac{\SSE_R - \SSE_U}{\sigma^2} = \bz'(\bM_R - \bM_U)\bz \sim \chi^2_{k-k_0}, \quad \text{independent of } \frac{\SSE_U}{\sigma^2} \sim \chi^2_{n-k-1}.
 \]
 Hence $F = \frac{(\SSE_R - \SSE_U)/(k-k_0)}{\SSE_U/(n-k-1)} \sim F_{k-k_0, n-k-1}$. \qed
 \end{solution*}
@@ -626,19 +630,19 @@ Define $\bY^* = \boldsymbol\Omega^{-1/2}\bY$, $\bX^* = \boldsymbol\Omega^{-1/2}\
 
 %--- LM-11 ---
 \begin{exercise}[Prediction Interval]\label{prob:B5}
-Let $\hat{Y}_0 = \bx_0^\top\hat{\bb}$, where $Y_0 = \bx_0^\top\bb + \varepsilon_0$ with $\varepsilon_0 \sim N(0, \sigma^2)$ independent of the sample.\\
+Let $\hat{Y}_0 = \bx_0'\hat{\bb}$, where $Y_0 = \bx_0'\bb + \varepsilon_0$ with $\varepsilon_0 \sim N(0, \sigma^2)$ independent of the sample.\\
 (a) Derive $\var(\hat{Y}_0 - \expc[Y_0 \mid \bx_0])$. \; (b) Derive $\var(\hat{Y}_0 - Y_0)$. \; (c) Explain why (b) $>$ (a).
 \end{exercise}
 
 \begin{solution*}
-\textbf{(a)} $\hat{Y}_0 - \expc[Y_0] = \bx_0^\top(\hat{\bb} - \bb)$, so:
+\textbf{(a)} $\hat{Y}_0 - \expc[Y_0] = \bx_0'(\hat{\bb} - \bb)$, so:
 \[
-\var(\hat{Y}_0 - \expc[Y_0]) = \bx_0^\top\var(\hat{\bb})\bx_0 = \sigma^2\bx_0^\top(\bX'\bX)^{-1}\bx_0.
+\var(\hat{Y}_0 - \expc[Y_0]) = \bx_0'\var(\hat{\bb})\bx_0 = \sigma^2\bx_0'(\bX'\bX)^{-1}\bx_0.
 \]
 
-\textbf{(b)} $\hat{Y}_0 - Y_0 = \bx_0^\top(\hat{\bb} - \bb) - \varepsilon_0$. Since $\varepsilon_0$ is independent of $\hat{\bb}$:
+\textbf{(b)} $\hat{Y}_0 - Y_0 = \bx_0'(\hat{\bb} - \bb) - \varepsilon_0$. Since $\varepsilon_0$ is independent of $\hat{\bb}$:
 \[
-\var(\hat{Y}_0 - Y_0) = \sigma^2\bx_0^\top(\bX'\bX)^{-1}\bx_0 + \sigma^2 = \sigma^2\bigl(1 + \bx_0^\top(\bX'\bX)^{-1}\bx_0\bigr).
+\var(\hat{Y}_0 - Y_0) = \sigma^2\bx_0'(\bX'\bX)^{-1}\bx_0 + \sigma^2 = \sigma^2\bigl(1 + \bx_0'(\bX'\bX)^{-1}\bx_0\bigr).
 \]
 
 \textbf{(c)} The prediction variance exceeds the estimation variance by exactly $\sigma^2 = \var(\varepsilon_0)$, the irreducible noise of the future observation. Since $\sigma^2 > 0$, the prediction interval is always wider. \qed
@@ -652,7 +656,7 @@ Under (A1)--(A5): (a)~Write $\ell(\bb, \sigma^2)$. (b)~Show $\hat{\bb}_{\mathrm{
 \begin{solution*}
 \textbf{(a)} Under (A5), $\bY \sim N(\bX\bb, \sigma^2\bI)$:
 \[
-\ell(\bb, \sigma^2) = -\frac{n}{2}\ln(2\pi) - \frac{n}{2}\ln\sigma^2 - \frac{1}{2\sigma^2}(\bY - \bX\bb)^\top(\bY - \bX\bb).
+\ell(\bb, \sigma^2) = -\frac{n}{2}\ln(2\pi) - \frac{n}{2}\ln\sigma^2 - \frac{1}{2\sigma^2}(\bY - \bX\bb)'(\bY - \bX\bb).
 \]
 
 \textbf{(b)} For any fixed $\sigma^2 > 0$, maximizing $\ell$ over $\bb$ is equivalent to minimizing $\|\bY - \bX\bb\|^2$, which is the OLS problem. Hence $\hat{\bb}_{\mathrm{MLE}} = \hat{\bb}_{\mathrm{OLS}}$.
@@ -670,48 +674,48 @@ Bias: $\expc[\hat{\sigma}^2_{\mathrm{MLE}}] = \expc[\SSE]/n = (n-k-1)\sigma^2/n 
 
 %--- LM-13 ---
 \begin{exercise}[Frisch--Waugh--Lovell Theorem]\label{prob:C1}
-Partition $\bX = [\bX_1 \;\; \bX_2]$, $\bb = (\bb_1^\top, \bb_2^\top)^\top$. Let $\bM_2 = \bI - \bX_2(\bX_2^\top\bX_2)^{-1}\bX_2^\top$.\\
-(a) Prove $\hat{\bb}_1 = (\bX_1^\top\bM_2\bX_1)^{-1}\bX_1^\top\bM_2\bY$.\\
+Partition $\bX = [\bX_1 \;\; \bX_2]$, $\bb = (\bb_1', \bb_2')'$. Let $\bM_2 = \bI - \bX_2(\bX_2'\bX_2)^{-1}\bX_2'$.\\
+(a) Prove $\hat{\bb}_1 = (\bX_1'\bM_2\bX_1)^{-1}\bX_1'\bM_2\bY$.\\
 (b) Show that the full regression residuals equal those of regressing $\bM_2\bY$ on $\bM_2\bX_1$.
 \end{exercise}
 
 \begin{solution*}
 \textbf{(a)} The partitioned normal equations are:
 \[
-\bX_1^\top\bX_1\hat{\bb}_1 + \bX_1^\top\bX_2\hat{\bb}_2 = \bX_1^\top\bY, \qquad \bX_2^\top\bX_1\hat{\bb}_1 + \bX_2^\top\bX_2\hat{\bb}_2 = \bX_2^\top\bY.
+\bX_1'\bX_1\hat{\bb}_1 + \bX_1'\bX_2\hat{\bb}_2 = \bX_1'\bY, \qquad \bX_2'\bX_1\hat{\bb}_1 + \bX_2'\bX_2\hat{\bb}_2 = \bX_2'\bY.
 \]
-From the second: $\hat{\bb}_2 = (\bX_2^\top\bX_2)^{-1}\bX_2^\top(\bY - \bX_1\hat{\bb}_1)$. Substituting into the first and using $\bX_2(\bX_2^\top\bX_2)^{-1}\bX_2^\top = \bI - \bM_2$:
+From the second: $\hat{\bb}_2 = (\bX_2'\bX_2)^{-1}\bX_2'(\bY - \bX_1\hat{\bb}_1)$. Substituting into the first and using $\bX_2(\bX_2'\bX_2)^{-1}\bX_2' = \bI - \bM_2$:
 \begin{align*}
-\bX_1^\top\bX_1\hat{\bb}_1 + \bX_1^\top(\bI - \bM_2)(\bY - \bX_1\hat{\bb}_1) &= \bX_1^\top\bY \\
-\bX_1^\top\bM_2\bX_1\hat{\bb}_1 &= \bX_1^\top\bM_2\bY.
+\bX_1'\bX_1\hat{\bb}_1 + \bX_1'(\bI - \bM_2)(\bY - \bX_1\hat{\bb}_1) &= \bX_1'\bY \\
+\bX_1'\bM_2\bX_1\hat{\bb}_1 &= \bX_1'\bM_2\bY.
 \end{align*}
-Hence $\hat{\bb}_1 = (\bX_1^\top\bM_2\bX_1)^{-1}\bX_1^\top\bM_2\bY$.
+Hence $\hat{\bb}_1 = (\bX_1'\bM_2\bX_1)^{-1}\bX_1'\bM_2\bY$.
 
 \textbf{(b)} The residual from regressing $\bM_2\bY$ on $\bM_2\bX_1$ is:
 \[
 \tilde{\mathbf{e}} = \bM_2\bY - \bM_2\bX_1\hat{\bb}_1 = \bM_2(\bY - \bX_1\hat{\bb}_1) = \bM_2(\bX_2\hat{\bb}_2 + \mathbf{e}).
 \]
-Since $\bM_2\bX_2 = \bzero$: $\tilde{\mathbf{e}} = \bM_2\mathbf{e}$. Now $\mathbf{e} = \bM\bY$ where $\bM$ is the full residual maker. Since $\calC(\bX_2) \subseteq \calC(\bX)$, $\bM\bX_2 = \bzero$, so $\bM_2\bM = (\bI - \bX_2(\bX_2^\top\bX_2)^{-1}\bX_2^\top)\bM = \bM$. Hence $\tilde{\mathbf{e}} = \bM\bY = \mathbf{e}$. \qed
+Since $\bM_2\bX_2 = \bzero$: $\tilde{\mathbf{e}} = \bM_2\mathbf{e}$. Now $\mathbf{e} = \bM\bY$ where $\bM$ is the full residual maker. Since $\calC(\bX_2) \subseteq \calC(\bX)$, $\bM\bX_2 = \bzero$, so $\bM_2\bM = (\bI - \bX_2(\bX_2'\bX_2)^{-1}\bX_2')\bM = \bM$. Hence $\tilde{\mathbf{e}} = \bM\bY = \mathbf{e}$. \qed
 \end{solution*}
 
 %--- LM-14 ---
 \begin{exercise}[Omitted Variable Bias]\label{prob:C2}
-True model: $\bY = \bX_1\bb_1 + \bX_2\bb_2 + \be$. Researcher estimates: $\tilde{\boldsymbol\gamma} = (\bX_1^\top\bX_1)^{-1}\bX_1^\top\bY$.\\
-(a) Show $\expc[\tilde{\boldsymbol\gamma}] = \bb_1 + (\bX_1^\top\bX_1)^{-1}\bX_1^\top\bX_2\,\bb_2$.\\
+True model: $\bY = \bX_1\bb_1 + \bX_2\bb_2 + \be$. Researcher estimates: $\tilde{\boldsymbol\gamma} = (\bX_1'\bX_1)^{-1}\bX_1'\bY$.\\
+(a) Show $\expc[\tilde{\boldsymbol\gamma}] = \bb_1 + (\bX_1'\bX_1)^{-1}\bX_1'\bX_2\,\bb_2$.\\
 (b) Under what conditions is $\tilde{\boldsymbol\gamma}$ unbiased for $\bb_1$?
 \end{exercise}
 
 \begin{solution*}
 \textbf{(a)} Substitute the true DGP:
 \begin{align*}
-\tilde{\boldsymbol\gamma} &= (\bX_1^\top\bX_1)^{-1}\bX_1^\top(\bX_1\bb_1 + \bX_2\bb_2 + \be) \\
-&= \bb_1 + (\bX_1^\top\bX_1)^{-1}\bX_1^\top\bX_2\bb_2 + (\bX_1^\top\bX_1)^{-1}\bX_1^\top\be.
+\tilde{\boldsymbol\gamma} &= (\bX_1'\bX_1)^{-1}\bX_1'(\bX_1\bb_1 + \bX_2\bb_2 + \be) \\
+&= \bb_1 + (\bX_1'\bX_1)^{-1}\bX_1'\bX_2\bb_2 + (\bX_1'\bX_1)^{-1}\bX_1'\be.
 \end{align*}
-Taking expectations ($\expc[\be] = \bzero$): $\expc[\tilde{\boldsymbol\gamma}] = \bb_1 + (\bX_1^\top\bX_1)^{-1}\bX_1^\top\bX_2\bb_2$. The bias is $(\bX_1^\top\bX_1)^{-1}\bX_1^\top\bX_2\bb_2$, where $(\bX_1^\top\bX_1)^{-1}\bX_1^\top\bX_2$ is the matrix of coefficients from regressing columns of $\bX_2$ on $\bX_1$.
+Taking expectations ($\expc[\be] = \bzero$): $\expc[\tilde{\boldsymbol\gamma}] = \bb_1 + (\bX_1'\bX_1)^{-1}\bX_1'\bX_2\bb_2$. The bias is $(\bX_1'\bX_1)^{-1}\bX_1'\bX_2\bb_2$, where $(\bX_1'\bX_1)^{-1}\bX_1'\bX_2$ is the matrix of coefficients from regressing columns of $\bX_2$ on $\bX_1$.
 
-\textbf{(b)} $\tilde{\boldsymbol\gamma}$ is unbiased iff $(\bX_1^\top\bX_1)^{-1}\bX_1^\top\bX_2\bb_2 = \bzero$, which holds when:
+\textbf{(b)} $\tilde{\boldsymbol\gamma}$ is unbiased iff $(\bX_1'\bX_1)^{-1}\bX_1'\bX_2\bb_2 = \bzero$, which holds when:
 \begin{itemize}[nosep]
-\item $\bX_1^\top\bX_2 = \bzero$ (included and omitted regressors are orthogonal), or
+\item $\bX_1'\bX_2 = \bzero$ (included and omitted regressors are orthogonal), or
 \item $\bb_2 = \bzero$ (omitted variables have zero coefficients, i.e., are irrelevant). \qed
 \end{itemize}
 \end{solution*}
@@ -727,7 +731,7 @@ Taking expectations ($\expc[\be] = \bzero$): $\expc[\tilde{\boldsymbol\gamma}] =
 
 \textbf{(b)} $\bar{R}^2$ increases iff $\MSE_{k+1} < \MSE_k$, i.e., $\SSE_{k+1}/(n-k-2) < \SSE_k/(n-k-1)$.
 
-\emph{Key identity:} Write $\bX_{k+1} = [\bX_k \; \bx]$. From the partitioned normal equations, $\hat{\beta}_{k+1} = (\bx'\bM_k\bx)^{-1}\bx'\bM_k\bY$. By the rank-one projection update: $\SSE_k - \SSE_{k+1} = \hat{\beta}_{k+1}^2/[(\bX_{k+1}^\top\bX_{k+1})^{-1}]_{k+1,k+1} = t_{k+1}^2 \cdot \MSE_{k+1}$. Hence $\SSE_k = \SSE_{k+1} + t_{k+1}^2 \cdot \MSE_{k+1}$.
+\emph{Key identity:} Write $\bX_{k+1} = [\bX_k \; \bx]$. From the partitioned normal equations, $\hat{\beta}_{k+1} = (\bx'\bM_k\bx)^{-1}\bx'\bM_k\bY$. By the rank-one projection update: $\SSE_k - \SSE_{k+1} = \hat{\beta}_{k+1}^2/[(\bX_{k+1}'\bX_{k+1})^{-1}]_{k+1,k+1} = t_{k+1}^2 \cdot \MSE_{k+1}$. Hence $\SSE_k = \SSE_{k+1} + t_{k+1}^2 \cdot \MSE_{k+1}$.
 
 Substituting:
 \begin{align*}
@@ -746,7 +750,7 @@ Consider $\min_{\bb}\|\bY - \bX\bb\|^2$ subject to $\bR\bb = \br$ ($q$ constrain
 \end{exercise}
 
 \begin{solution*}
-\textbf{(a)} The Lagrangian is $\mathcal{L}(\bb, \boldsymbol\lambda) = (\bY - \bX\bb)^\top(\bY - \bX\bb) + 2\boldsymbol\lambda^\top(\bR\bb - \br)$. First-order conditions:
+\textbf{(a)} The Lagrangian is $\mathcal{L}(\bb, \boldsymbol\lambda) = (\bY - \bX\bb)'(\bY - \bX\bb) + 2\boldsymbol\lambda'(\bR\bb - \br)$. First-order conditions:
 \begin{align*}
 \frac{\partial\mathcal{L}}{\partial\bb} = -2\bX'\bY + 2\bX'\bX\bb + 2\bR'\boldsymbol\lambda &= \bzero, \\
 \frac{\partial\mathcal{L}}{\partial\boldsymbol\lambda} = 2(\bR\bb - \br) &= \bzero.
