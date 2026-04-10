@@ -15,10 +15,17 @@
 - [Härdle, W., Hlávka, Z., 2019. Multivariate Statistics: Exercises and Solutions. 2nd ed., Springer.](https://link.springer.com/book/10.1007/978-3-642-36005-3)
 -->
 
-- Vershynin, R., 2019. High-Dimensional Probability: An Introduction with Applications in Data Science. Cambridge University Press.
-- Wainwright, M., 2019. High-Dimensional Statistics: A Non-Asymptotic Viewpoint. Cambridge University Press.
+### Matrix Calculus
+
+- Magnus, J. R., Neudecker, H., 2019. Matrix Differential Calculus with Applications in Statistics and Econometrics. 3rd ed., John Wiley & Sons.
+- Abadir, K., Magnus, J., 2005. Matrix Algebra. Cambridge University Press.
 - [Harville, D., 2001. Matrix Algebra: Exercises and Solutions. Springer.](https://link.springer.com/book/10.1007/978-1-4613-0181-3)
 - [Harville, D., 1997. Matrix Algebra From a Statistician's Perspective. Springer.](https://link.springer.com/book/10.1007/b98818)
+
+### High-Dimensional Probability and Statistics
+
+- Vershynin, R., 2019. High-Dimensional Probability: An Introduction with Applications in Data Science. Cambridge University Press.
+- Wainwright, M., 2019. High-Dimensional Statistics: A Non-Asymptotic Viewpoint. Cambridge University Press.
 
 ## 評分標準
 
