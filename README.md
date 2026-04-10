@@ -18,7 +18,7 @@
 ### Matrix Calculus
 
 - Magnus, J. R., Neudecker, H., 2019. Matrix Differential Calculus with Applications in Statistics and Econometrics. 3rd ed., John Wiley & Sons.
-- Abadir, K., Magnus, J., 2005. Matrix Algebra. Cambridge University Press.
+- Abadir, K., Magnus, J. R., 2005. Matrix Algebra. Cambridge University Press.
 - [Harville, D., 2001. Matrix Algebra: Exercises and Solutions. Springer.](https://link.springer.com/book/10.1007/978-1-4613-0181-3)
 - [Harville, D., 1997. Matrix Algebra From a Statistician's Perspective. Springer.](https://link.springer.com/book/10.1007/b98818)
 
