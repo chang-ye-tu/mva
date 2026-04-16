@@ -1,5 +1,5 @@
-\documentclass[11pt,a4paper]{article}
-\usepackage[left=2.2cm,right=2.2cm,top=2cm,bottom=2cm]{geometry}
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=15mm]{geometry}
 \usepackage{amsmath,amsthm,amssymb,amsfonts}
 \usepackage{enumitem}
 \usepackage{xcolor}
@@ -60,12 +60,12 @@
 \begin{document}
 \maketitle
 
-\noindent This test bank covers two parts:
-\begin{itemize}[nosep]
-\item \textbf{Part I} (Problems 1--16): Matrix calculus --- algebraic tools, differentials, derivatives, optimization.
-\item \textbf{Part II} (Problems 17--32): Multiple linear regression --- OLS theory, inference, extensions.
-\end{itemize}
-Within each part: \textbf{A}~=~reproduce a key derivation, \textbf{B}~=~apply the theory, \textbf{C}~=~extend and connect.
+%\noindent This test bank covers two parts:
+%\begin{itemize}[nosep]
+%\item \textbf{Part I} (Problems 1--16): Matrix calculus --- algebraic tools, differentials, derivatives, optimization.
+%\item \textbf{Part II} (Problems 17--32): Multiple linear regression --- OLS theory, inference, extensions.
+%\end{itemize}
+%Within each part: \textbf{A}~=~reproduce a key derivation, \textbf{B}~=~apply the theory, \textbf{C}~=~extend and connect.
 
 \medskip\noindent\textbf{Conventions.}\; $\dd X$ is the differential of $X$; $\dd^2 X = \dd(\dd X)$. For scalar $f$: $Df(x) = \partial f/\partial x'$ (row vector); $Hf(x) = \partial^2 f/\partial x\,\partial x'$ (Hessian). For matrix $F(X)$: $DF(X) = \partial\avec F/\partial(\avec X)'$. Let $e_i$ denote the $i$-th standard basis vector.
 
@@ -767,40 +767,40 @@ Substituting: $\hat{\bb}_R = \hat{\bb} - (\bX'\bX)^{-1}\bR'[\bR(\bX'\bX)^{-1}\bR
 \end{solution*}
 
 %=============================================================================
-\newpage
-\begin{center}
-\rule{0.6\textwidth}{0.4pt}\\[2mm]
-{\Large\bfseries Appendix: Key Derivations Checklist}\\[1mm]
-\rule{0.6\textwidth}{0.4pt}
-\end{center}
-
-\noindent\textbf{Matrix Calculus}
-\begin{enumerate}[label=\textbf{MC\arabic*.},leftmargin=2cm,nosep]
-\item $\tr A'B = \tr BA'$ (trace cycling).
-\item $x'Ax = 0$ for all $x$ $\Leftrightarrow$ $A$ skew-symmetric; $+$ symmetry $\Rightarrow$ $A = 0$.
-\item $(A \otimes B)(C \otimes D) = AC \otimes BD$.
-\item $\avec(ABC) = (C' \otimes A)\avec B$.
-\item $\dd|X| = |X|\tr X^{-1}\dd X$; \; $\dd\log|X| = \tr X^{-1}\dd X$.
-\item $\dd X^{-1} = -X^{-1}(\dd X)X^{-1}$.
-\item Derivatives: $a'x$, $x'Ax$, $\tr X'AX$, $\log|X'X|$, $\tr X^k$, $AX^{-1}B$.
-\item Hessian of $x'Ax$: $Hf = A+A'$; symmetrization rule $(B+B')/2$.
-\item Quadratic optimization: unconstrained ($\hat{x} = A^{-1}b$) and constrained ($c'x = 0$).
-\item MLE for multivariate normal: $\hat\mu = \bar{y}$, $\hat\Omega = \frac{1}{n}\sum(y_i-\bar{y})(y_i-\bar{y})'$.
-\end{enumerate}
-
-\medskip
-\noindent\textbf{Multiple Linear Regression}
-\begin{enumerate}[label=\textbf{LM\arabic*.},leftmargin=2cm,nosep]
-\item OLS estimator via differentiation and projection.
-\item $\bH$, $\bM$: symmetric idempotent, $\bH\bX=\bX$, $\bM\bX=\bzero$, traces.
-\item Unbiasedness of $\hat\bb$ and $\var(\hat\bb) = \sigma^2(\bX'\bX)^{-1}$.
-\item Gauss--Markov theorem (BLUE).
-\item Unbiasedness of $\MSE$ via trace identity.
-\item $\SSE/\sigma^2 \sim \chi^2_{n-k-1}$ and independence from $\hat\bb$.
-\item $\SST = \SSR + \SSE$.
-\item Overall $F$ test via $\bH - \bH_0$ idempotent.
-\item Individual $t$ test.
-\item General $F$ test for $\bR\bb = \br$.
-\end{enumerate}
+%\newpage
+%\begin{center}
+%\rule{0.6\textwidth}{0.4pt}\\[2mm]
+%{\Large\bfseries Appendix: Key Derivations Checklist}\\[1mm]
+%\rule{0.6\textwidth}{0.4pt}
+%\end{center}
+%
+%\noindent\textbf{Matrix Calculus}
+%\begin{enumerate}[label=\textbf{MC\arabic*.},leftmargin=2cm,nosep]
+%\item $\tr A'B = \tr BA'$ (trace cycling).
+%\item $x'Ax = 0$ for all $x$ $\Leftrightarrow$ $A$ skew-symmetric; $+$ symmetry $\Rightarrow$ $A = 0$.
+%\item $(A \otimes B)(C \otimes D) = AC \otimes BD$.
+%\item $\avec(ABC) = (C' \otimes A)\avec B$.
+%\item $\dd|X| = |X|\tr X^{-1}\dd X$; \; $\dd\log|X| = \tr X^{-1}\dd X$.
+%\item $\dd X^{-1} = -X^{-1}(\dd X)X^{-1}$.
+%\item Derivatives: $a'x$, $x'Ax$, $\tr X'AX$, $\log|X'X|$, $\tr X^k$, $AX^{-1}B$.
+%\item Hessian of $x'Ax$: $Hf = A+A'$; symmetrization rule $(B+B')/2$.
+%\item Quadratic optimization: unconstrained ($\hat{x} = A^{-1}b$) and constrained ($c'x = 0$).
+%\item MLE for multivariate normal: $\hat\mu = \bar{y}$, $\hat\Omega = \frac{1}{n}\sum(y_i-\bar{y})(y_i-\bar{y})'$.
+%\end{enumerate}
+%
+%\medskip
+%\noindent\textbf{Multiple Linear Regression}
+%\begin{enumerate}[label=\textbf{LM\arabic*.},leftmargin=2cm,nosep]
+%\item OLS estimator via differentiation and projection.
+%\item $\bH$, $\bM$: symmetric idempotent, $\bH\bX=\bX$, $\bM\bX=\bzero$, traces.
+%\item Unbiasedness of $\hat\bb$ and $\var(\hat\bb) = \sigma^2(\bX'\bX)^{-1}$.
+%\item Gauss--Markov theorem (BLUE).
+%\item Unbiasedness of $\MSE$ via trace identity.
+%\item $\SSE/\sigma^2 \sim \chi^2_{n-k-1}$ and independence from $\hat\bb$.
+%\item $\SST = \SSR + \SSE$.
+%\item Overall $F$ test via $\bH - \bH_0$ idempotent.
+%\item Individual $t$ test.
+%\item General $F$ test for $\bR\bb = \br$.
+%\end{enumerate}
 
 \end{document}
