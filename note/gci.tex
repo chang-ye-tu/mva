@@ -1,0 +1,1001 @@
+\documentclass[12pt,a4paper]{article}
+
+%%% Packages
+\usepackage[margin=15mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!70!black,citecolor=green!40!black,urlcolor=blue!60!black}
+\usepackage{cleveref}
+
+%%% Theorem environments
+\theoremstyle{definition}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{notation}[theorem]{Notation}
+\newtheorem{remark}[theorem]{Remark}
+
+\usepackage{parskip}
+\usepackage{etoolbox}
+\AtBeginEnvironment{definition}{\vspace{\parskip}}
+\AtBeginEnvironment{example}{\vspace{\parskip}}
+\AtBeginEnvironment{lemma}{\vspace{\parskip}}
+\AtBeginEnvironment{theorem}{\vspace{\parskip}}
+\AtBeginEnvironment{corollary}{\vspace{\parskip}}
+\AtBeginEnvironment{conjecture}{\vspace{\parskip}}
+\AtBeginEnvironment{proposition}{\vspace{\parskip}}
+\AtBeginEnvironment{notation}{\vspace{\parskip}}
+\AtBeginEnvironment{remark}{\vspace{\parskip}}
+\AtBeginEnvironment{exercise}{\vspace{\parskip}}
+
+%%% Macros
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\PP}{\mathsf{P}}
+\newcommand{\EE}{\mathsf{E}}
+\newcommand{\Var}{\operatorname{var}}
+\newcommand{\Cov}{\operatorname{cov}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\ind}{\mathbf{1}}
+\newcommand{\caln}{\mathcal{N}}
+\newcommand{\Mn}{M_{n\times m}}
+
+%%% Title
+\title{\bfseries The Gaussian Correlation Inequality\\
+  after Royen}
+\author{after T.\ Royen (2014) and R.\ Lata{\l}a \& D.\ Matlak (2015)}
+\date{}
+
+\begin{document}
+\maketitle
+
+
+%% ====================================================================
+\section{Introduction}\label{sec:intro}
+%% ====================================================================
+
+\begin{theorem}[Gaussian correlation inequality]\label{thm:gcc_geom}
+  For any closed symmetric convex sets $K,L\subseteq\R^d$ and any
+  centered Gaussian measure $\mu$ on $\R^d$,
+  \begin{equation}\label{eq:gcc}
+    \mu(K\cap L)\;\geqslant\;\mu(K)\,\mu(L).
+  \end{equation}
+\end{theorem}
+
+These notes prove \Cref{thm:gcc_geom} by Royen's analytic argument,
+following Lata{\l}a--Matlak's Gaussian-only exposition.  The inputs
+are the Laplace transform of a squared Gaussian, a determinant
+expansion, dominated convergence, and integration by parts.
+Historical background and further remarks are collected in
+\Cref{sec:notes}.
+
+\begin{notation}\label{not:conventions}
+  \begin{itemize}[nosep]
+    \item $\caln(0,C)$: centered Gaussian distribution with covariance
+      $C$.
+    \item $M_{n\times m}$: real $n\times m$ matrices.
+    \item For $A=(a_{ij})_{i,j\leqslant n}$ and
+      $J\subseteq[n]:=\{1,\ldots,n\}$,
+      $A_J:=(a_{ij})_{i,j\in J}$ is the principal submatrix,
+      $|A|$ the determinant, $|J|$ the cardinality.
+    \item $I_n$: $n\times n$ identity.
+    \item For $\varepsilon\in\{-1,1\}^n$, $x\in(0,\infty)^n$:
+      $\sqrt{x}_\varepsilon:=(\varepsilon_i\sqrt{x_i})_{i\leqslant n}$.
+  \end{itemize}
+\end{notation}
+
+
+%% ====================================================================
+\section{Setup and reduction to rectangles}\label{sec:setup}
+%% ====================================================================
+
+\begin{definition}[Centered Gaussian measure]\label{def:gaussian}
+  For $C\succ 0$, the measure $\caln(0,C)$ on $\R^n$ has density
+  \[
+    \phi_C(x)
+    \;=\;
+    (2\pi)^{-n/2}|C|^{-1/2}
+    \exp\bigl(-\tfrac{1}{2}\langle C^{-1}x,x\rangle\bigr).
+  \]
+\end{definition}
+
+We assume $C\succ 0$ throughout the proof; the extension to singular
+$C\succeq 0$ is deferred to \Cref{note:singular}.
+
+\begin{definition}\label{def:symconvex}
+  $K\subseteq\R^n$ is \emph{symmetric} if $K=-K$.  A \emph{symmetric
+  slab} is
+  $S_{v,t}:=\{x\in\R^n:|\langle v,x\rangle|\leqslant t\}$ for
+  $v\in\R^n\setminus\{0\}$, $t>0$.
+\end{definition}
+
+\begin{lemma}[Slab approximation]\label{lem:slab_approx}
+  Every closed symmetric convex set $K\subseteq\R^d$ is a countable
+  intersection of symmetric slabs $S_{v,t}$.
+\end{lemma}
+
+\begin{proof}
+  \emph{Step 1: reduction to bounded $K$.}  Set
+  $K_m:=K\cap[-m,m]^d$, a closed symmetric convex set.  Since
+  $K=\bigcup_m K_m$, by monotone convergence $\mu(K)=\lim_m\mu(K_m)$
+  and similarly for $K\cap L$, so it suffices to prove the slab
+  approximation for bounded $K$; we assume $K\subseteq B(0,R)$ for
+  some $R<\infty$ below.
+
+  \emph{Step 2: bounded case.}  Let
+  $\mathcal V:=\{(v,t)\in\mathbb{Q}^d\times\mathbb{Q}_{>0}:K\subseteq S_{v,t}\}$,
+  countable.  Trivially $K\subseteq\bigcap_{(v,t)\in\mathcal V}S_{v,t}$.
+
+  Conversely, fix $y\notin K$ and let $\varepsilon>0$ with
+  $B(y,\varepsilon)\cap K=\varnothing$.  Strict separation of two
+  disjoint closed convex sets (one compact) yields $w\in\R^d\setminus\{0\}$
+  and $a\in\R$ with
+  $\sup_{x\in K}\langle w,x\rangle\leqslant a$ and
+  $\langle w,y\rangle\geqslant a+\varepsilon|w|$.  Since $0\in K$ we
+  have $a\geqslant 0$; and $K=-K$ gives
+  $\sup_{x\in K}|\langle w,x\rangle|\leqslant a$.
+  Pick $(w',a')\in\mathbb{Q}^d\times\mathbb{Q}_{>0}$ with
+  $|w'-w|<\delta$, $|a'-a|<\delta$.  Then
+  \[
+    \sup_{x\in K}|\langle w',x\rangle|
+    \leqslant a+\delta R,\qquad
+    |\langle w',y\rangle|\geqslant a+\varepsilon|w|-\delta|y|.
+  \]
+  Choosing $\delta<\min(\varepsilon|w|/(|y|+R+1),\varepsilon|w|/2)$
+  and $a':=a+\delta R+\delta/2\in\mathbb{Q}_{>0}$ gives
+  $K\subseteq S_{w',a'}$ and $y\notin S_{w',a'}$.
+\end{proof}
+
+By \Cref{lem:slab_approx} and monotone convergence, the GCI reduces
+to the case where $K$ and $L$ are finite intersections of symmetric
+slabs.  Writing
+\[
+  K=\bigl\{x : |\langle v_i,x\rangle|\leqslant t_i,\;1\leqslant i\leqslant n_1\bigr\},
+  \qquad
+  L=\bigl\{x : |\langle v_i,x\rangle|\leqslant t_i,\;n_1{+}1\leqslant i\leqslant n\bigr\},
+\]
+setting $n=n_1+n_2$ and $X_i:=\langle v_i,G\rangle$ for $G\sim\mu$,
+the GCI reduces to:
+
+\begin{theorem}[GCI, analytic form]\label{thm:gcc2}
+  Let $X=(X_1,\ldots,X_n)$ be centered Gaussian with $C\succ 0$,
+  $n=n_1+n_2$.  For any $t_1,\ldots,t_n>0$,
+  \begin{equation}\label{eq:gcc2}
+    \PP(|X_i|\leqslant t_i,\;i\leqslant n)
+    \;\geqslant\;
+    \PP(|X_i|\leqslant t_i,\;i\leqslant n_1)\,
+    \PP(|X_i|\leqslant t_i,\;n_1{<}i\leqslant n).
+  \end{equation}
+\end{theorem}
+
+
+%% ====================================================================
+\section{Auxiliary lemmas}\label{sec:lemmas}
+%% ====================================================================
+
+\subsection{Laplace transform of squared Gaussian vectors}
+
+\begin{lemma}\label{lem:Lap}
+  For $X\sim\caln(0,C)$ in $\R^n$ and $\lambda_i\geqslant 0$,
+  \[
+    \EE\exp\Bigl(-\sum_{i=1}^n\lambda_iX_i^2\Bigr)
+    \;=\;|I_n+2\Lambda C|^{-1/2},
+    \qquad\Lambda:=\diag(\lambda_1,\ldots,\lambda_n).
+  \]
+\end{lemma}
+
+\begin{proof}
+  The Gaussian integral $\int_{\R^n}e^{-\langle Ax,x\rangle}\,\dd x
+  =\pi^{n/2}|A|^{-1/2}$ (for $A\succ 0$) gives, for $Y\sim\caln(0,I_n)$
+  and any symmetric $B$ with $I_n-2B\succ 0$,
+  \begin{equation}\label{eq:gauss_quad}
+    \EE e^{\langle BY,Y\rangle}
+    =(2\pi)^{-n/2}\int e^{-\langle(\frac12 I_n-B)x,x\rangle}\,\dd x
+    =|I_n-2B|^{-1/2}.
+  \end{equation}
+  Since $C\succ 0$, there exists $A\in M_{n\times n}$ with $C=AA^\top$
+  (e.g.\ $A=C^{1/2}$); then $X:=AY\sim\caln(0,C)$.  Apply
+  \eqref{eq:gauss_quad} with $B:=-A^\top\Lambda A$.  For
+  $\lambda_i\geqslant 0$, $B\preceq 0$ so $I_n-2B\succeq I_n\succ 0$ and
+  \eqref{eq:gauss_quad} applies.  Then
+  \[
+    \EE\exp\Bigl(-\sum_i\lambda_iX_i^2\Bigr)
+    =\EE\exp(-\langle A^\top\Lambda A\,Y,Y\rangle)
+    =|I_n+2A^\top\Lambda A|^{-1/2}.
+  \]
+  Finally, $|I_n+A_1A_2|=|I_n+A_2A_1|$ (Sylvester's determinant
+  identity) with $A_1:=A^\top$, $A_2:=2\Lambda A$ yields
+  $|I_n+2A^\top\Lambda A|=|I_n+2\Lambda AA^\top|=|I_n+2\Lambda C|$.
+\end{proof}
+
+
+\subsection{A determinant identity}
+
+\begin{lemma}\label{lem:det}
+  \begin{enumerate}[label=(\roman*),nosep]
+    \item For $A\in M_{n\times n}$,
+    \begin{equation}\label{eq:det1}
+      |I_n+A|\;=\;1+\sum_{\varnothing\ne J\subseteq[n]}|A_J|.
+    \end{equation}
+    \item For $A=\bigl(\begin{smallmatrix}A_{11}&A_{12}\\A_{21}&A_{22}
+      \end{smallmatrix}\bigr)$ with $A_{ii}$ invertible,
+    \begin{equation}\label{eq:det2}
+      |A|=|A_{11}||A_{22}|\cdot
+      \bigl|I_{n_1}-A_{11}^{-1/2}A_{12}A_{22}^{-1}A_{21}A_{11}^{-1/2}\bigr|.
+    \end{equation}
+    If $A\succ 0$, then $0\leqslant A_{11}^{-1/2}A_{12}A_{22}^{-1}A_{21}
+    A_{11}^{-1/2}\leqslant I_{n_1}$.
+  \end{enumerate}
+\end{lemma}
+
+\begin{proof}
+  \textit{(i).}  By Leibniz,
+  $|I_n+A|=\sum_\sigma\mathrm{sgn}(\sigma)\prod_i
+  (\delta_{i\sigma(i)}+a_{i\sigma(i)})$.  Expanding the product, each
+  summand corresponds to a choice of $J\subseteq[n]$ (positions where
+  $a_{i\sigma(i)}$ is selected); non-zero contributions require
+  $\sigma(i)=i$ for $i\notin J$.  The $\sigma$'s fixing $[n]\setminus J$
+  correspond to permutations of $J$, giving $\sum_J|A_J|$; the $J=\varnothing$
+  term is $1$.
+
+  \textit{(ii).}  Write
+  $A_{11}^{1/2},A_{22}^{1/2}$ for the positive symmetric square roots.
+  With $P:=A_{11}^{-1/2}A_{12}A_{22}^{-1/2}$ and
+  $Q:=A_{22}^{-1/2}A_{21}A_{11}^{-1/2}$,
+  \[
+    A=\diag(A_{11}^{1/2},A_{22}^{1/2})\,
+    \bigl(\begin{smallmatrix}I&P\\Q&I\end{smallmatrix}\bigr)\,
+    \diag(A_{11}^{1/2},A_{22}^{1/2}).
+  \]
+  Row-reducing the middle block matrix by $R_1\leftarrow R_1-PR_2$ gives
+  $\bigl(\begin{smallmatrix}I-PQ&0\\Q&I\end{smallmatrix}\bigr)$ with
+  determinant $|I-PQ|$; taking determinants yields \eqref{eq:det2}.
+
+  When $A\succ 0$: for all $s,t\in\R$ and $x\in\R^{n_1}$,
+  $y\in\R^{n_2}$,
+  \[
+    \langle A(sx,ty)^\top,(sx,ty)^\top\rangle
+    =s^2\langle A_{11}x,x\rangle+2st\langle A_{21}x,y\rangle
+    +t^2\langle A_{22}y,y\rangle\geqslant 0.
+  \]
+  Nonnegativity of this quadratic in $(s,t)$ forces
+  $\langle A_{21}x,y\rangle^2\leqslant\langle A_{11}x,x\rangle
+  \langle A_{22}y,y\rangle$.
+  Setting $x:=A_{11}^{-1/2}u$, $y:=A_{22}^{-1/2}v$:
+  $\langle Qu,v\rangle^2\leqslant|u|^2|v|^2$, i.e.,
+  $\|Q\|_{\mathrm{op}}\leqslant 1$, equivalently
+  $0\preceq Q^\top Q\preceq I_{n_1}$.  For $A$ symmetric, $Q=P^\top$, so
+  $A_{11}^{-1/2}A_{12}A_{22}^{-1}A_{21}A_{11}^{-1/2}=PP^\top=Q^\top Q$.
+\end{proof}
+
+
+\subsection{Density of $Z(\tau)$ and the interchange lemma}
+
+Partition
+\begin{equation}\label{eq:partition}
+  C=\begin{pmatrix}C_{11}&C_{12}\\C_{21}&C_{22}\end{pmatrix},
+  \quad C_{ij}\in M_{n_i\times n_j},\;n_1+n_2=n,
+\end{equation}
+and define the interpolating family
+\begin{equation}\label{eq:Ctau}
+  C(\tau):=\begin{pmatrix}C_{11}&\tau C_{12}\\
+    \tau C_{21}&C_{22}\end{pmatrix}
+  =\tau C(1)+(1-\tau)C(0),\qquad\tau\in[0,1].
+\end{equation}
+Since $C(0)=\diag(C_{11},C_{22})\succ 0$ and $C(1)=C\succ 0$, each
+$C(\tau)\succ 0$ by convexity.  Let $X(\tau)\sim\caln(0,C(\tau))$ and
+$Z_i(\tau):=\tfrac{1}{2}X_i(\tau)^2$.
+
+\begin{lemma}[Density and interchange]\label{lem:diff}
+  Let $f(x,\tau)$ denote the density of $Z(\tau)$ on $(0,\infty)^n$.
+  \begin{enumerate}[label=(\roman*),nosep]
+    \item
+    \begin{equation}\label{eq:fxtau}
+      f(x,\tau)
+      =|C(\tau)|^{-1/2}(4\pi)^{-n/2}
+      \frac{1}{\sqrt{x_1\cdots x_n}}
+      \sum_{\varepsilon\in\{-1,1\}^n}
+      e^{-\langle C(\tau)^{-1}\sqrt{x}_\varepsilon,
+        \sqrt{x}_\varepsilon\rangle}
+      \ind_{(0,\infty)^n}(x).
+    \end{equation}
+    \item For any Borel $K\subseteq[0,\infty)^n$ and
+    $\lambda_i\geqslant 0$,
+    \begin{equation}\label{eq:interchange}
+      \int_K e^{-\sum_i\lambda_ix_i}\,
+      \frac{\partial}{\partial\tau}f(x,\tau)\,\dd x
+      \;=\;
+      \frac{\partial}{\partial\tau}\int_K e^{-\sum_i\lambda_ix_i}\,
+      f(x,\tau)\,\dd x.
+    \end{equation}
+  \end{enumerate}
+\end{lemma}
+
+\begin{proof}
+  \textit{(i).}  The density of $X(\tau)$ is
+  $\phi_{C(\tau)}$ from \Cref{def:gaussian}.  The map
+  $y\mapsto x=(\tfrac12 y_i^2)_i$ is a bijection
+  $(\R\setminus\{0\})^n\to(0,\infty)^n$ on each of the $2^n$ sign
+  orthants, with Jacobian $\prod_i|y_i|^{-1}=\prod_i(2x_i)^{-1/2}$.
+  Summing over sign patterns $\varepsilon\in\{-1,1\}^n$ (where
+  $y_i=\varepsilon_i\sqrt{2x_i}$) and using $\langle
+  C(\tau)^{-1}y,y\rangle=2\langle C(\tau)^{-1}\sqrt{x}_\varepsilon,
+  \sqrt{x}_\varepsilon\rangle$ gives \eqref{eq:fxtau}.
+
+  \textit{(ii).}  The family $\{C(\tau):\tau\in[0,1]\}$ is a compact
+  subset of $\{C'\succ 0\}$, so there is $a_0>0$ with $C(\tau)\succeq
+  a_0I_n$ for all $\tau$, equivalently $C(\tau)^{-1}\succeq a_0'I_n$
+  for some $a_0'>0$ (the smallest eigenvalue of $C(\tau)^{-1}$ is
+  continuous in $\tau$).  Since
+  $\langle C(\tau)^{-1}\sqrt{x}_\varepsilon,
+  \sqrt{x}_\varepsilon\rangle\geqslant a_0'|\sqrt{x}_\varepsilon|^2
+  =a_0'\sum_i x_i$, set $a:=a_0'$.  Similarly,
+  $\tau\mapsto|C(\tau)|^{-1/2}$ and
+  $\tau\mapsto C(\tau)^{-1}$ are $C^1$ on $[0,1]$, so their
+  $\tau$-derivatives are bounded in operator norm, giving $M<\infty$ and
+  $b<\infty$ with the claimed bounds (the derivative formula
+  $\tfrac{\dd}{\dd\tau}C(\tau)^{-1}=-C(\tau)^{-1}C'(\tau)C(\tau)^{-1}$
+  follows from differentiating $C(\tau)C(\tau)^{-1}=I_n$, and
+  $C'(\tau)=C(1)-C(0)$ is constant).
+
+  Differentiating \eqref{eq:fxtau} term by term,
+  \[
+    \bigl|\partial_\tau f(x,\tau)\bigr|
+    \leqslant c_1\bigl(M+b\textstyle\sum_ix_i\bigr)
+    \frac{1}{\sqrt{x_1\cdots x_n}}e^{-a\sum_ix_i}\cdot 2^n
+    \leqslant g(x):=c\,\frac{1+\sum_ix_i}{\sqrt{x_1\cdots x_n}}
+    e^{-a\sum_ix_i},
+  \]
+  uniformly in $\tau\in[0,1]$, with $c$ depending only on $C,n$.
+  Since
+  $\int_0^\infty x^{-1/2}(1+x)e^{-ax}\,\dd x<\infty$ and the
+  $n$-dimensional integrand factors,
+  $\int_{(0,\infty)^n}g(x)\,\dd x<\infty$.
+  As $e^{-\sum_i\lambda_ix_i}\leqslant 1$, the bound
+  $e^{-\sum_i\lambda_ix_i}|\partial_\tau f|\leqslant g$ persists, and
+  dominated convergence justifies interchanging
+  $\tfrac{\dd}{\dd\tau}$ and $\int_K$ to give \eqref{eq:interchange}.
+\end{proof}
+
+
+\subsection{The noncentral gamma and the $h$-family}
+
+\begin{definition}\label{def:ncgamma}
+  For $\alpha>0$, $y\geqslant 0$, the \emph{noncentral gamma density} is
+  \[
+    g_\alpha(x,y)
+    :=e^{-x-y}\sum_{k=0}^\infty
+    \frac{x^{k+\alpha-1}}{\Gamma(k+\alpha)}\,\frac{y^k}{k!},
+    \qquad x>0.
+  \]
+\end{definition}
+
+\begin{remark}\label{rem:ncgamma_poisson}
+  Equivalently,
+  \[
+    g_\alpha(x,y)=\sum_{k\geqslant 0}e^{-y}\tfrac{y^k}{k!}g_{\alpha+k}(x),
+  \]
+  a Poisson$(y)$ mixture of central gamma$(\alpha+k)$ densities; so
+  $g_\alpha(\cdot,y)$ is a probability density for each $y\geqslant 0$.
+\end{remark}
+
+\begin{definition}\label{def:h_family}
+  For $\mu>0$, $\alpha\in(0,\infty)^n$, and
+  $Y=(Y_1,\ldots,Y_n)$ with $Y_i\geqslant 0$ a.s.,
+  \[
+    h_{\alpha,\mu,Y}(x)
+    :=\EE\prod_{i=1}^n
+      \tfrac{1}{\mu}\,g_{\alpha_i}\!\bigl(\tfrac{x_i}{\mu},Y_i\bigr),
+    \qquad x\in(0,\infty)^n.
+  \]
+\end{definition}
+
+\begin{lemma}[Properties of the $h$-family]\label{lem:proph}
+  Write $h_\alpha:=h_{\alpha,\mu,Y}$.
+  \begin{enumerate}[label=(\roman*)]
+    \item $h_\alpha\geqslant 0$ and $\int h_\alpha\,\dd x=1$.
+    \item If $\alpha_i>1$, then $h_\alpha(x)\to 0$ as $x_i\to 0+$,
+      and
+      \begin{equation}\label{eq:deriv_h}
+        \frac{\partial}{\partial x_i}h_\alpha=h_{\alpha-e_i}-h_\alpha.
+      \end{equation}
+    \item If $\alpha\in(1,\infty)^n$, then for any $J\subseteq[n]$
+      and $\lambda_i\geqslant 0$,
+      $\partial^{|J|}h_\alpha/\partial x_J\in L_1((0,\infty)^n)$ and
+      \begin{equation}\label{eq:proph_iii}
+        \int e^{-\sum_i\lambda_ix_i}
+          \frac{\partial^{|J|}}{\partial x_J}h_\alpha\,\dd x
+        \;=\;
+        \Bigl(\prod_{i\in J}\lambda_i\Bigr)
+        \int e^{-\sum_i\lambda_ix_i}h_\alpha\,\dd x.
+      \end{equation}
+  \end{enumerate}
+\end{lemma}
+
+\begin{proof}
+  \textit{(i).}  $\int_0^\infty\mu^{-1}g_\alpha(x_i/\mu,Y_i)\,\dd x_i
+  =\int_0^\infty g_\alpha(u,Y_i)\,\dd u=1$ for each $\omega$
+  (\Cref{rem:ncgamma_poisson}); Fubini gives
+  $\int h_\alpha=\EE[1]=1$.
+
+  \textit{(ii).}  \emph{Gamma bound.}  $\Gamma$ is strictly convex on
+  $(0,\infty)$ (its second derivative on $\log$-scale is positive) with
+  unique minimum at some $s_0\in(1,2)$ and $\Gamma(s_0)>\tfrac12$
+  (numerically $s_0\approx 1.462$, $\Gamma(s_0)\approx 0.886$), so
+  \begin{equation}\label{eq:gamma_lb}
+    \Gamma(s)\geqslant\tfrac12\quad\text{for all }s>0.
+  \end{equation}
+  For $k=0$, \eqref{eq:gamma_lb} gives $\Gamma(\alpha)^{-1}\leqslant 2$.
+  For $k\geqslant 1$, $\alpha>0$, induction on $k$ via
+  $\Gamma(k+\alpha)=(k-1+\alpha)\Gamma(k-1+\alpha)$ yields
+  $\Gamma(k+\alpha)\geqslant\tfrac12(k-1)!$.  Substituting into
+  $g_\alpha(x,y)$ and using $y^ke^{-y}/k!\leqslant 1$,
+  $\sum_{k\geqslant 1}x^{k-1}/(k-1)!=e^x$,
+  \begin{equation}\label{eq:gbound}
+    g_\alpha(x,y)\leqslant 2x^{\alpha-1}(e^{-x}+x);
+  \end{equation}
+  substituting into \Cref{def:h_family},
+  \begin{equation}\label{eq:hbound}
+    h_\alpha(x)\leqslant(2/\mu)^n\prod_{i}(x_i/\mu)^{\alpha_i-1}(1+x_i/\mu).
+  \end{equation}
+  When $\alpha_i>1$, the factor $(x_i/\mu)^{\alpha_i-1}\to 0$ as
+  $x_i\to 0+$, yielding $h_\alpha(x)\to 0$.
+
+  \emph{Derivative formula.}  Differentiating the series in
+  \Cref{def:ncgamma} term by term (using
+  $\Gamma(k+\alpha)=(k+\alpha-1)\Gamma(k+\alpha-1)$, valid when
+  $\alpha>0$),
+  \begin{equation}\label{eq:g_deriv}
+    \partial_x g_\alpha(x,y)=g_{\alpha-1}(x,y)-g_\alpha(x,y),
+    \qquad\alpha>1,
+  \end{equation}
+  with convergence locally uniform by \eqref{eq:gbound} applied to
+  $g_{\alpha-1}$ (valid since $\alpha-1>0$).  Inserting into
+  \Cref{def:h_family}: the integrand and its $x_i$-derivative are
+  bounded by an integrable function of $(x,\omega)$ uniformly in $x_i$
+  on compact subsets of $(0,\infty)$ (use \eqref{eq:gbound}
+  for $g_{\alpha_i-1}(\cdot,Y_i)$ and $g_{\alpha_i}(\cdot,Y_i)$),
+  justifying dominated convergence to differentiate under $\EE$, which
+  gives \eqref{eq:deriv_h}.
+
+  \textit{(iii).}  Iterating \eqref{eq:deriv_h},
+  \begin{equation}\label{eq:derivJ_h}
+    \frac{\partial^{|J|}}{\partial x_J}h_\alpha
+    =\sum_{\delta\in\{0,1\}^J}(-1)^{|J|-|\delta|}
+      h_{\alpha-\sum_{i\in J}\delta_ie_i},
+  \end{equation}
+  each summand in $L_1$ by (i) (all $\alpha_i-\delta_i\geqslant\alpha_i-1>0$).
+  Integration by parts in each $x_j$, $j\in J$: the boundary term at
+  $x_j\to\infty$ vanishes by \eqref{eq:hbound} (exponential decay
+  in every coordinate via $\int_0^\infty x^{\alpha-1}(1+x)e^{-ax}\,\dd x<\infty$,
+  implying pointwise decay of the partial integral); at $x_j\to 0+$
+  by (ii), applied to the $\alpha'_j:=\alpha_j-\delta_j\geqslant\alpha_j-1>0$
+  shape, together with the extra factor
+  $e^{-\sum_i\lambda_ix_i}$ which is bounded.  Each integration by parts
+  brings down a $\lambda_j$, giving \eqref{eq:proph_iii}.
+\end{proof}
+
+
+\subsection{The family $h_{k,C}$ and its Laplace transform}
+  \label{sec:hkC}
+
+\begin{definition}\label{def:hkC}
+  For $C\succ 0$ and $\mu>0$ with $C-\mu I_n\succ 0$, write
+  $C=\mu I_n+AA^\top$.  Let $(g_j^{(l)})$, $j\leqslant n$, $l\leqslant k$, be
+  i.i.d.\ $\caln(0,1)$, and
+  \begin{equation}\label{eq:defhkC}
+    Y_i:=\sum_{l=1}^k\Bigl(\sum_{j=1}^n
+      \tfrac{1}{\sqrt{2\mu}}g_j^{(l)}a_{ij}\Bigr)^2,
+    \qquad
+    h_{k,C}:=h_{(k/2,\ldots,k/2),\mu,Y}.
+  \end{equation}
+\end{definition}
+
+\begin{lemma}\label{lem:LaplhkC}
+  For $\lambda_i\geqslant 0$,
+  $\int e^{-\sum_i\lambda_ix_i}h_{k,C}\,\dd x
+  =|I_n+\Lambda C|^{-k/2}$.
+\end{lemma}
+
+\begin{proof}
+  \emph{Step 1: scalar Laplace transform.}  Substitute $u:=x/\mu$ and
+  expand the series in \Cref{def:ncgamma}:
+  \begin{align*}
+    \int_0^\infty\mu^{-1}e^{-\lambda x}g_\alpha(x/\mu,y)\,\dd x
+    &=\int_0^\infty e^{-\lambda\mu u-u-y}
+      \sum_{k\geqslant 0}\tfrac{u^{k+\alpha-1}}{\Gamma(k+\alpha)}
+      \tfrac{y^k}{k!}\,\dd u\\
+    &=e^{-y}\sum_{k\geqslant 0}\tfrac{y^k}{k!}(1+\mu\lambda)^{-(k+\alpha)}\\
+    &=(1+\mu\lambda)^{-\alpha}\exp\bigl(-\tfrac{\mu\lambda}{1+\mu\lambda}y\bigr),
+  \end{align*}
+  using $\int_0^\infty u^{k+\alpha-1}e^{-(1+\mu\lambda)u}\,\dd u
+  =\Gamma(k+\alpha)(1+\mu\lambda)^{-(k+\alpha)}$ (Fubini-term-by-term
+  justified by absolute convergence).  So
+  \begin{equation}\label{eq:1d_lt}
+    \int_0^\infty\mu^{-1}e^{-\lambda x}g_\alpha(x/\mu,y)\,\dd x
+    =(1+\mu\lambda)^{-\alpha}\exp\bigl(-\tfrac{\mu\lambda}{1+\mu\lambda}y\bigr).
+  \end{equation}
+
+  \emph{Step 2: product form.}  Applying \eqref{eq:1d_lt} coordinatewise
+  with $\alpha_i=k/2$ and Fubini (nonneg integrand),
+  \begin{equation}\label{eq:hkC_step1}
+    \int e^{-\sum_i\lambda_ix_i}h_{k,C}\,\dd x
+    =\prod_i(1+\mu\lambda_i)^{-k/2}\cdot
+    \EE\exp\Bigl(-\sum_i\tfrac{\mu\lambda_i}{1+\mu\lambda_i}Y_i\Bigr).
+  \end{equation}
+
+  \emph{Step 3: evaluate the expectation.}  From \eqref{eq:defhkC},
+  set $X^{(l)}:=\tfrac{1}{\sqrt{2\mu}}Ag^{(l)}$, so
+  $X^{(l)}\sim\caln(0,\tfrac{1}{2\mu}AA^\top)$ i.i.d.\ across $l$ and
+  $Y_i=\sum_{l=1}^k(X_i^{(l)})^2$.  By independence across $l$ and
+  \Cref{lem:Lap} applied to each $X^{(l)}$ with
+  $\tilde\Lambda:=\diag(\tfrac{\mu\lambda_i}{1+\mu\lambda_i})$,
+  \[
+    \EE\exp\Bigl(-\sum_i\tfrac{\mu\lambda_i}{1+\mu\lambda_i}Y_i\Bigr)
+    =\Bigl(\EE\exp(-\langle\tilde\Lambda X^{(1)},X^{(1)}\rangle)\Bigr)^k
+    =|I_n+\tfrac{1}{\mu}\tilde\Lambda AA^\top|^{-k/2}.
+  \]
+
+  \emph{Step 4: combine.}  Using $(I_n+\mu\Lambda)\tilde\Lambda
+  =\mu\Lambda$ (entrywise diagonal check), so
+  $\tilde\Lambda=(I_n+\mu\Lambda)^{-1}\mu\Lambda$:
+  \[
+    \prod_i(1+\mu\lambda_i)^{-k/2}=|I_n+\mu\Lambda|^{-k/2},
+  \]
+  and $|I_n+\mu\Lambda|\cdot|I_n+\tfrac{1}{\mu}\tilde\Lambda AA^\top|
+  =|I_n+\mu\Lambda+\Lambda AA^\top|=|I_n+\Lambda(\mu I_n+AA^\top)|
+  =|I_n+\Lambda C|$, giving the claim. \qedhere
+\end{proof}
+
+
+\subsection{Uniqueness of the Laplace transform}
+
+\begin{theorem}\label{thm:laplace_inj}
+  If $\varphi_1,\varphi_2\in L_1((0,\infty)^n)$ satisfy
+  $\int e^{-\sum_i\lambda_ix_i}\varphi_1\,\dd x
+  =\int e^{-\sum_i\lambda_ix_i}\varphi_2\,\dd x$ for all
+  $\lambda\in[0,\infty)^n$, then $\varphi_1=\varphi_2$ a.e.
+\end{theorem}
+
+\begin{proof}
+  Put $\varphi:=\varphi_1-\varphi_2$ and $y_i:=e^{-x_i}$, mapping
+  $(0,\infty)^n\to(0,1]^n$ with Jacobian $\prod_iy_i^{-1}$.  The
+  hypothesis becomes $\int_{(0,1]^n}y^\lambda\tilde\varphi(y)\,\dd y=0$
+  for all $\lambda\in[0,\infty)^n$, where
+  $\tilde\varphi(y)=\varphi(-\log y)\prod_iy_i^{-1}\in L_1((0,1]^n)$.
+  Polynomials (integer $\lambda$) are dense in $C([0,1]^n)$ by
+  Stone--Weierstrass, hence $\int\psi\tilde\varphi=0$ for all
+  continuous $\psi$, forcing $\tilde\varphi=0$ and $\varphi=0$ a.e.
+\end{proof}
+
+
+%% ====================================================================
+\section{Proof of \Cref{thm:gcc2}}\label{sec:proof}
+%% ====================================================================
+
+\subsection{Reduction to monotonicity}
+
+With $s_i:=\tfrac{1}{2}t_i^2$, $K:=[0,s_1]\times\cdots\times[0,s_n]$,
+and $Z(\tau)$ as above, \eqref{eq:gcc2} is equivalent to
+$\PP(Z(1)\in K)\geqslant\PP(Z(0)\in K)$.  At $\tau=0$,
+$C(0)=\diag(C_{11},C_{22})$ is block-diagonal, so the two blocks are
+independent and the RHS factorizes.  At $\tau=1$ we recover $C$.
+Hence \Cref{thm:gcc2} follows from:
+
+\begin{proposition}\label{prop:key}
+  $\tau\mapsto\int_K f(x,\tau)\,\dd x$ is non-decreasing on $[0,1]$.
+\end{proposition}
+
+\subsection{Laplace-transform computation of $\partial_\tau f$}
+
+\emph{Strategy.}  \Cref{prop:key} amounts to
+$\int_K\partial_\tau f(x,\tau)\,\dd x\geqslant 0$ for each
+$\tau\in(0,1)$ (\Cref{lem:diff}(ii) with $\lambda=0$ justifies
+$\partial_\tau\int_K f=\int_K\partial_\tau f$).  We obtain this by:
+(a) computing the Laplace transform of $\partial_\tau f$ and matching
+it with that of a sum of derivatives of $h_\tau$; (b) using Laplace
+injectivity (\Cref{thm:laplace_inj}) to get an a.e.\ pointwise
+identity; (c) integrating this identity over $K$.
+
+\emph{Step (a).}  Since $Z_i(\tau)=\tfrac12 X_i(\tau)^2$, applying
+\Cref{lem:Lap} to $X(\tau)\sim\caln(0,C(\tau))$ with $\lambda_i/2$ in
+place of $\lambda_i$,
+\[
+  \int_{[0,\infty)^n}e^{-\sum_i\lambda_ix_i}f(x,\tau)\,\dd x
+  =\EE e^{-\sum_i\lambda_iZ_i(\tau)}
+  =|I_n+\Lambda C(\tau)|^{-1/2}.
+\]
+Differentiating in $\tau$, with \Cref{lem:diff}(ii) (taking $K=[0,\infty)^n$)
+justifying the interchange:
+\begin{equation}\label{eq:lt_deriv}
+  \int_{[0,\infty)^n}e^{-\sum_i\lambda_ix_i}
+  \partial_\tau f(x,\tau)\,\dd x
+  =\partial_\tau|I_n+\Lambda C(\tau)|^{-1/2}.
+\end{equation}
+Expand via \Cref{lem:det}(i) applied to $A=\Lambda C(\tau)$:
+\begin{equation}\label{eq:det_expansion}
+  |I_n+\Lambda C(\tau)|
+  =1+\sum_{\varnothing\ne J\subseteq[n]}|(\Lambda C(\tau))_J|
+  =1+\sum_{\varnothing\ne J\subseteq[n]}|C(\tau)_J|\prod_{j\in J}\lambda_j,
+\end{equation}
+using $|(\Lambda C(\tau))_J|=|\Lambda_J||C(\tau)_J|=\prod_{j\in J}\lambda_j\cdot|C(\tau)_J|$
+since $\Lambda$ is diagonal.
+
+\emph{The block structure of $|C(\tau)_J|$.}  For $J\subseteq[n]$, set
+$J_1:=[n_1]\cap J$ and $J_2:=J\setminus[n_1]$.  If $J_1=\varnothing$
+or $J_2=\varnothing$, then $C(\tau)_J=C_J$ is $\tau$-independent,
+since the off-diagonal blocks of $C(\tau)$ (where the $\tau$ appears)
+are not sampled.  Otherwise, writing $C(\tau)_J$ in block form with
+blocks indexed by $J_1,J_2$,
+\[
+  C(\tau)_J
+  =\begin{pmatrix}C_{J_1}&\tau C_{J_1J_2}\\
+    \tau C_{J_2J_1}&C_{J_2}\end{pmatrix},
+\]
+and applying \Cref{lem:det}(ii),
+\begin{equation}\label{eq:CtauJ}
+  |C(\tau)_J|
+  =|C_{J_1}||C_{J_2}|\prod_{i=1}^{|J_1|}(1-\tau^2\mu_{J_1,J_2}(i)),
+\end{equation}
+where the $\mu_{J_1,J_2}(i)\in[0,1]$ are the eigenvalues of
+$C_{J_1}^{-1/2}C_{J_1J_2}C_{J_2}^{-1}C_{J_2J_1}C_{J_1}^{-1/2}$
+(bounded by \Cref{lem:det}(ii) since $C_J\succ 0$).
+Differentiating the product in $\tau$,
+\[
+  \partial_\tau|C(\tau)_J|
+  =-|C_{J_1}||C_{J_2}|\sum_{i=1}^{|J_1|}2\tau\mu_{J_1,J_2}(i)
+  \prod_{l\ne i}(1-\tau^2\mu_{J_1,J_2}(l))
+  \leqslant 0\quad\text{on }[0,1].
+\]
+Define
+\begin{equation}\label{eq:aJ}
+  a_J(\tau):=-\partial_\tau|C(\tau)_J|\geqslant 0
+  \quad(\tau\in[0,1]),
+\end{equation}
+with $a_J:=0$ if $J_1=\varnothing$ or $J_2=\varnothing$.  Then
+\begin{equation}\label{eq:partial_det}
+  \partial_\tau|I_n+\Lambda C(\tau)|
+  =-\sum_{\varnothing\ne J\subseteq[n]}a_J(\tau)\prod_{j\in J}\lambda_j.
+\end{equation}
+Combining the chain rule
+$\partial_\tau|\cdot|^{-1/2}=-\tfrac12|\cdot|^{-3/2}\partial_\tau|\cdot|$
+with \eqref{eq:lt_deriv} and \eqref{eq:partial_det}:
+\begin{equation}\label{eq:lt_of_ftau}
+  \int_{[0,\infty)^n}e^{-\sum_i\lambda_ix_i}
+  \partial_\tau f(x,\tau)\,\dd x
+  =\sum_{\varnothing\ne J\subseteq[n]}
+  \tfrac{1}{2}a_J(\tau)|I_n+\Lambda C(\tau)|^{-3/2}
+  \prod_{j\in J}\lambda_j.
+\end{equation}
+
+\subsection{Identification via $h_\tau:=h_{3,C(\tau)}$}
+
+By \Cref{lem:LaplhkC} with $k=3$ and \Cref{lem:proph}(iii) (valid
+since $\alpha_i=\tfrac{3}{2}>1$),
+\[
+  \int e^{-\sum_i\lambda_ix_i}
+    \tfrac{\partial^{|J|}}{\partial x_J}h_\tau\,\dd x
+  =\Bigl(\prod_{j\in J}\lambda_j\Bigr)|I_n+\Lambda C(\tau)|^{-3/2}.
+\]
+Comparing with \eqref{eq:lt_of_ftau}: $\partial_\tau f(\cdot,\tau)$
+and $\sum_J\tfrac12 a_J(\tau)\,\partial^{|J|}h_\tau/\partial x_J$ are
+$L_1$ with the same Laplace transform, so by \Cref{thm:laplace_inj},
+\begin{equation}\label{eq:key_identity}
+  \partial_\tau f(x,\tau)
+  =\sum_{\varnothing\ne J\subseteq[n]}
+    \tfrac{1}{2}a_J(\tau)
+    \tfrac{\partial^{|J|}}{\partial x_J}h_\tau(x)
+  \quad\text{a.e.\ on }(0,\infty)^n.
+\end{equation}
+
+\subsection{Integration over $K$}
+
+Integrate \eqref{eq:key_identity} over $K=\prod_j[0,s_j]$.
+For $J^c:=[n]\setminus J$ and $(s_J,x_{J^c})_i=s_i$ $(i\in J)$,
+$=x_i$ $(i\in J^c)$, the fundamental theorem of calculus in each
+$x_j$, $j\in J$, gives
+\begin{equation}\label{eq:boundary_eval}
+  \int_K\tfrac{\partial^{|J|}}{\partial x_J}h_\tau(x)\,\dd x
+  =\int_{\prod_{j\in J^c}[0,s_j]}h_\tau(s_J,x_{J^c})\,\dd x_{J^c}
+  \geqslant 0,
+\end{equation}
+since the lower-endpoint contributions vanish by
+\Cref{lem:proph}(ii) ($\alpha_j=\tfrac{3}{2}>1$), and
+$h_\tau\geqslant 0$.  Since also $a_J\geqslant 0$,
+\[
+  \int_K\partial_\tau f(x,\tau)\,\dd x
+  =\sum_{\varnothing\ne J\subseteq[n]}\tfrac{1}{2}a_J(\tau)
+  \int_{\prod_{j\in J^c}[0,s_j]}h_\tau(s_J,x_{J^c})\,\dd x_{J^c}
+  \geqslant 0,
+\]
+which proves \Cref{prop:key} and hence \Cref{thm:gcc2}.  \qed
+
+
+%% ====================================================================
+\section{Two corollaries}\label{sec:corollaries}
+%% ====================================================================
+
+\begin{corollary}[\v{S}id\'ak]\label{cor:sidak}
+  For $X\sim\caln(0,C)$ and $s_i\geqslant 0$,
+  \[
+    \PP(|X_i|\leqslant s_i,\;i=1,\ldots,n)
+    \geqslant\prod_{i=1}^n\PP(|X_i|\leqslant s_i).
+  \]
+\end{corollary}
+
+\begin{proof}
+  Induct on $n$.  Case $n=1$ is trivial.  For the step, take
+  $K_1:=\{|x_1|\leqslant s_1\}$ and
+  $L_1:=\{|x_i|\leqslant s_i,2\leqslant i\leqslant n\}$ (both closed symmetric
+  convex).  \Cref{thm:gcc2} (applied with $n_1=1$, $n_2=n-1$) gives
+  $\PP(X\in K_1\cap L_1)\geqslant\PP(X\in K_1)\PP(X\in L_1)$;
+  apply induction to $\PP(X\in L_1)$.
+\end{proof}
+
+\begin{corollary}[Decoupling]\label{cor:decouple}
+  For $X\sim\caln(0,C)$ and closed symmetric convex $K,L\subseteq\R^n$,
+  \[
+    \PP(X\in K\cap L)\geqslant\PP(X\in K)\,\PP(X\in L).
+  \]
+\end{corollary}
+
+\begin{proof}
+  Restatement of \Cref{thm:gcc_geom} for this $K,L$.
+\end{proof}
+
+
+%% ====================================================================
+\section{Notes}\label{sec:notes}
+%% ====================================================================
+
+\subsection{Historical remarks}\label{note:history}
+
+The conjecture originates in statistical work on joint coverage of
+rectangular confidence regions for multivariate normal means:
+Dunnett--Sobel (1955), Dunn (1958).  Das Gupta, Eaton, Olkin,
+Perlman, Savage, and Sobel (1972) stated it in geometric form.
+Partial results before Royen:
+\begin{itemize}[nosep]
+  \item Khatri (1967) and \v{S}id\'ak (1967), independently: one set
+    is a symmetric strip (= intersection of symmetric slabs).  This
+    is our \Cref{cor:sidak}.
+  \item Pitt (1977): $d=2$.
+  \item Schechtman--Schlumprecht--Zinn (1998): both sets are
+    centered ellipsoids.
+  \item Harg\'e (1999): one set is a centered ellipsoid.
+\end{itemize}
+Royen (2014) proved the full conjecture and, more generally, the
+analogous inequality for multivariate gamma vectors
+$\Gamma_n(\alpha,R)$ with $\alpha>0$ half-integer; the Gaussian case
+is $\alpha=\tfrac{1}{2}$.  Lata{\l}a--Matlak (2015) specialised and
+reorganised the argument for the Gaussian case, which is the version
+followed here.
+
+\subsection{Extension to singular covariance}\label{note:singular}
+
+Let $C\succeq 0$ with $\rank C=r\leqslant n$.  Spectrally,
+$C=B B^\top$ where $B\in M_{n\times r}$ has orthonormal columns scaled
+by $\sqrt{\text{eigenvalues}}$; $B$ has full column rank.  If
+$G\sim\caln(0,I_r)$, then $BG\sim\caln(0,BB^\top)=\caln(0,C)$.
+
+For closed symmetric convex $K\subseteq\R^n$:
+\begin{itemize}[nosep]
+  \item $B^{-1}(K)=\{g\in\R^r:Bg\in K\}$ is closed by continuity of
+    $g\mapsto Bg$;
+  \item convex, since $Bg_1,Bg_2\in K$ implies
+    $B(\alpha g_1+(1-\alpha)g_2)=\alpha Bg_1+(1-\alpha)Bg_2\in K$ by
+    convexity of $K$;
+  \item symmetric, since $g\in B^{-1}(K)\iff Bg\in K\iff -Bg\in K\iff
+    -g\in B^{-1}(K)$.
+\end{itemize}
+Hence, writing $\mu=\caln(0,C)$ and $\nu=\caln(0,I_r)$,
+\[
+  \mu(K\cap L)
+  =\PP(BG\in K\cap L)
+  =\nu(B^{-1}(K)\cap B^{-1}(L))
+  \geqslant\nu(B^{-1}(K))\nu(B^{-1}(L))
+  =\mu(K)\mu(L),
+\]
+where the inequality is \Cref{thm:gcc_geom} in dimension $r$
+(non-singular case, already established).
+
+\subsection{The choice $k=3$}\label{note:why_k3}
+
+Two constraints pin down the shape parameter.
+
+\emph{Laplace-side matching.}  Differentiating
+$|I+\Lambda C(\tau)|^{-1/2}$ in $\tau$ yields a linear combination of
+$|I+\Lambda C(\tau)|^{-3/2}\prod_{j\in J}\lambda_j$
+(\eqref{eq:lt_of_ftau}).  To rewrite this as the Laplace transform of
+a density, we need an auxiliary $h_\tau$ whose Laplace transform is
+$|I+\Lambda C(\tau)|^{-3/2}$, i.e., $h_\tau=h_{k,C(\tau)}$ with
+$k=3$ in \Cref{lem:LaplhkC}.
+
+\emph{Integration by parts.}  \Cref{lem:proph}(ii)--(iii) require
+$\alpha_i=k/2>1$ both for $h_\alpha(x)\to 0$ as $x_i\to 0+$ and for
+validity of the derivative identity $\partial_xg_\alpha=g_{\alpha-1}
+-g_\alpha$.  $k=3$ gives $\alpha_i=\tfrac{3}{2}>1$.
+
+The method applies whenever the Laplace transform of the
+underlying squared vector has the form $|I+\Lambda C|^{-\beta}$ with
+$\beta+1>1$, i.e., $\beta>0$; in the Gaussian case $\beta=\tfrac{1}{2}$.
+This is the range covered by Royen's multivariate gamma result.
+
+\subsection{Strict positivity of $a_J$}\label{note:phase}
+
+Under $C\succ 0$, the matrix
+$C_{J_1}^{-1/2}C_{J_1J_2}C_{J_2}^{-1}C_{J_2J_1}C_{J_1}^{-1/2}$ is
+the matrix of squared canonical correlations between the coordinate
+blocks $J_1$ and $J_2$.  Its eigenvalues $\mu_{J_1,J_2}(i)$ satisfy
+$\mu_{J_1,J_2}(i)\in[0,1)$ strictly, since $|C(\tau)_J|>0$ for all
+$\tau\in[0,1]$ when $C\succ 0$ (the endpoints $\tau=\pm 1$ would be
+needed to attain $\mu=1$).  Consequently, for any $J$ with
+$J_1,J_2\ne\varnothing$ and $C_{J_1J_2}\ne 0$, some $\mu_{J_1,J_2}(i)
+>0$, so $a_J(\tau)>0$ on $(0,1]$.  At $\tau=0$, every $a_J(0)=0$
+because each $|C(\tau)_J|$ is even in $\tau$ (see \eqref{eq:CtauJ}).
+
+\subsection{Equality in the GCI}\label{note:equality}
+
+\begin{proposition}\label{prop:equality}
+  Let $X\sim\caln(0,C)$, $C\succ 0$, and let $K,L\subseteq\R^n$ be as
+  in \Cref{thm:gcc2}.  Then equality
+  $\PP(X\in K\cap L)=\PP(X\in K)\PP(X\in L)$ holds iff $C_{12}=0$.
+\end{proposition}
+
+\begin{proof}
+  If $C_{12}=0$, then $C(\tau)=\diag(C_{11},C_{22})$ for all $\tau$,
+  so the two coordinate blocks of $X$ are independent and both sides
+  of \eqref{eq:gcc2} are equal.
+
+  Conversely, suppose equality.  From the fundamental theorem of
+  calculus and \eqref{eq:key_identity}:
+  \[
+    \PP(X\in K\cap L)-\PP(X\in K)\PP(X\in L)
+    =\int_0^1\!\!\sum_{J}\tfrac{1}{2}a_J(\tau)
+    \int_{\prod_{J^c}[0,s_j]}h_\tau(s_J,x_{J^c})\,\dd x_{J^c}\,\dd\tau.
+  \]
+  Each $a_J$ is polynomial in $\tau$ (since $|C(\tau)_J|$ is
+  polynomial in the entries, which are affine in $\tau$), hence
+  continuous on $[0,1]$ with $a_J\geqslant 0$.  The inner integral is $>0$
+  for every $\tau\in[0,1]$: $g_{3/2}(\cdot,y)>0$ on $(0,\infty)$ for
+  each $y\geqslant 0$, because every term in the series of
+  \Cref{def:ncgamma} is nonnegative and the $k=0$ term equals
+  $x^{1/2}e^{-x-y}/\Gamma(3/2)>0$; taking expectation over $Y$
+  preserves strict positivity, so $h_\tau>0$ on $(0,\infty)^n$ and the
+  integral over any product $\prod_{J^c}[0,s_j]$ of positive lengths
+  is $>0$.
+
+  Equality thus forces $a_J(\tau)\equiv 0$ on $[0,1]$ (by continuity)
+  for every $J$ with $J_1,J_2\ne\varnothing$.  By \Cref{note:phase},
+  this means $C_{J_1J_2}=0$ for every such $J$.  Taking $J=\{i,j\}$
+  with $i\leqslant n_1<j\leqslant n$ yields $C_{ij}=0$, so $C_{12}=0$.
+\end{proof}
+
+\subsection{Verification of \eqref{eq:boundary_eval} for $n=2$}
+  \label{note:boundary}
+
+For $J=\{1\}$:
+\[
+  \int_0^{s_1}\!\!\int_0^{s_2}\partial_{x_1}h_\tau\,\dd x_1\,\dd x_2
+  =\int_0^{s_2}\bigl(h_\tau(s_1,x_2)-h_\tau(0+,x_2)\bigr)\dd x_2
+  =\int_0^{s_2}h_\tau(s_1,x_2)\,\dd x_2.
+\]
+For $J=\{1,2\}$:
+$\int_0^{s_1}\!\int_0^{s_2}\partial^2_{x_1x_2}h_\tau=h_\tau(s_1,s_2)
+-h_\tau(s_1,0+)-h_\tau(0+,s_2)+h_\tau(0+,0+)=h_\tau(s_1,s_2)$.
+Both use $h_\tau(\cdot)\to 0$ at $0+$ from \Cref{lem:proph}(ii).
+
+\subsection{Necessity of symmetry}\label{note:symmetry}
+
+Without $K=-K$, $L=-L$ the inequality fails.  Under $\mu=\caln(0,I_2)$
+take
+\[
+  K:=\{x:x_1\geqslant 1\},
+  \qquad
+  L:=\{x:x_1\leqslant -1\}.
+\]
+Both are closed convex, neither is symmetric.  Then
+$\mu(K)=\mu(L)=1-\Phi(1)\approx 0.1587$, so
+$\mu(K)\mu(L)\approx 0.0252$, while $K\cap L=\varnothing$ gives
+$\mu(K\cap L)=0<\mu(K)\mu(L)$.
+
+\subsection{\v{S}id\'ak correction for multiple testing}\label{note:fwer}
+
+Let $Z_1,\ldots,Z_n$ be jointly Gaussian with $Z_i\sim\caln(0,1)$
+marginally.  By \Cref{cor:sidak},
+\[
+  \PP(|Z_i|>c\text{ for some }i)
+  \leqslant 1-(2\Phi(c)-1)^n,
+\]
+\emph{independently of the joint covariance}.  Setting the right side
+equal to $\alpha$ gives $c=\Phi^{-1}\bigl(\tfrac{1+(1-\alpha)^{1/n}}{2}
+\bigr)$, the \v{S}id\'ak threshold.
+
+\subsection{Related correlation inequalities}\label{note:correlations}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{llll}
+\hline
+ & \textbf{Measure} & \textbf{Events/functions} & \textbf{Conclusion} \\
+\hline
+GCI & Centered Gaussian on $\R^n$ & Symmetric convex $K,L$
+ & $\mu(K\cap L)\geqslant\mu(K)\mu(L)$ \\
+FKG (1971) & Log-concave on a lattice & Monotone $f,g$
+ & $\EE[fg]\geqslant\EE f\cdot\EE g$ \\
+Harris (1960) & Product on $\{0,1\}^n$ & Monotone events $A,B$
+ & $\PP(A\cap B)\geqslant\PP(A)\PP(B)$ \\
+\hline
+\end{tabular}
+\end{center}
+
+FKG contains Harris as a special case.  The GCI is formally
+unrelated to FKG: symmetric convex sets in $\R^n$ are not monotone
+for any coordinate order, and monotone events on a lattice are not
+symmetric.
+
+\subsection{Open questions}\label{note:open}
+
+\emph{Quantitative GCI.}  No explicit nontrivial lower bound on the
+excess $\mu(K\cap L)-\mu(K)\mu(L)$ is known in the generality of
+\Cref{thm:gcc_geom}.  Candidates depending on Gaussian widths,
+eccentricity, and the spectral gap of $C$ have been proposed but not
+established.
+
+\emph{Non-Gaussian extensions.}  Counterexamples rule out general
+log-concave measures.  The exact class of product-type inequalities
+valid for symmetric convex sets — beyond the Gaussian and
+multivariate-gamma families of Royen — is open.
+
+\emph{Functional forms.}  Whether
+$\EE[f(X)g(X)]\geqslant\EE f(X)\,\EE g(X)$ holds for centered Gaussian
+$X$ and even quasi-concave $f,g\geqslant 0$ is open; partial results are
+in Lata\l{}a--Matlak (2015, Remark~3).
+
+
+%% ====================================================================
+\section*{References}
+%% ====================================================================
+
+\begin{enumerate}[nosep,label={[\arabic*]}]
+  \item T.\ Royen, ``A simple proof of the Gaussian correlation
+    conjecture extended to multivariate gamma distributions,''
+    \textit{Far East J.\ Theor.\ Stat.}\ \textbf{48} (2014), 139--145.
+    \texttt{arXiv:1408.1028}.
+  \item R.\ Lata{\l}a and D.\ Matlak, ``Royen's proof of the Gaussian
+    correlation inequality,'' in \textit{Geometric Aspects of Functional
+    Analysis}, Lecture Notes in Math.\ \textbf{2169}, Springer, 2017,
+    pp.\ 265--275.  \texttt{arXiv:1512.08776}.
+  \item S.\ Das Gupta, M.\ L.\ Eaton, I.\ Olkin, M.\ Perlman,
+    L.\ J.\ Savage, and M.\ Sobel, ``Inequalities on the probability
+    content of convex regions for elliptically contoured
+    distributions,'' \textit{Proc.\ Sixth Berkeley Symp.}, 1972.
+  \item L.\ D.\ Pitt, ``A Gaussian correlation inequality for symmetric
+    convex sets,'' \textit{Ann.\ Probab.}\ \textbf{5} (1977), 470--474.
+  \item C.\ G.\ Khatri, ``On certain inequalities for normal
+    distributions,'' \textit{Ann.\ Math.\ Statist.}\ \textbf{38}
+    (1967), 1853--1867.
+  \item Z.\ \v{S}id\'ak, ``Rectangular confidence regions for the means
+    of multivariate normal distributions,'' \textit{J.\ Amer.\ Statist.\
+    Assoc.}\ \textbf{62} (1967), 626--633.
+  \item G.\ Schechtman, T.\ Schlumprecht, and J.\ Zinn, ``On the
+    Gaussian measure of the intersection,'' \textit{Ann.\ Probab.}\
+    \textbf{26} (1998), 346--357.
+  \item G.\ Harg\'e, ``A particular case of correlation inequality for
+    the Gaussian measure,'' \textit{Ann.\ Probab.}\ \textbf{27} (1999),
+    1939--1951.
+  \item C.\ Borell, ``A Gaussian correlation inequality for certain
+    bodies in $\R^n$,'' \textit{Math.\ Ann.}\ \textbf{256} (1981),
+    569--573.
+\end{enumerate}
+
+\end{document}

@@ -92,12 +92,20 @@
 \AtBeginEnvironment{remark}{\vspace{\parskip}}
 \AtBeginEnvironment{exercise}{\vspace{\parskip}}
 
-\title{\textbf{Notes on the Modern Theory of Linear Models}}
-\author{}
-\date{}
+% Compact section spacing
+\usepackage{titlesec}
+\titlespacing*{\section}{0pt}{6pt}{3pt}
+\titlespacing*{\subsection}{0pt}{4pt}{2pt}
+\titlespacing*{\subsubsection}{0pt}{3pt}{1pt}
 
 \begin{document}
-\maketitle
+
+% Compact title (no \maketitle top-padding)
+\begingroup
+\centering
+{\LARGE\bfseries Notes on the Modern Theory of Linear Models\par}
+\vspace{4pt}
+\endgroup
 
 %\tableofcontents
 %\newpage

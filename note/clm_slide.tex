@@ -1,30 +1,134 @@
-\documentclass[12pt,a4paper]{article}
-\usepackage[top=10mm,left=15mm,right=15mm,bottom=15mm]{geometry}
+\documentclass[14pt]{extarticle}
+
+% 16:9 page (presentation aspect ratio) - tightened margins
+\usepackage[
+  paperwidth=257mm,
+  paperheight=144.5mm,
+  top=9mm,
+  bottom=7mm,
+  left=5mm,
+  right=5mm,
+  headheight=7mm,
+  headsep=2mm,
+  footskip=4mm
+]{geometry}
+
 \usepackage{amsmath,amsthm,amssymb,amsfonts}
 \usepackage{booktabs,array}
 \usepackage{enumitem}
 \usepackage{xcolor}
-\usepackage{tocloft}
-% Compact TOC
-\setlength{\cftbeforesecskip}{2pt}
-\setlength{\cftbeforesubsecskip}{0pt}
-\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\usepackage{fancyhdr}
+\usepackage[most]{tcolorbox}
+\tcbuselibrary{theorems,skins,breakable}
 \usepackage{hyperref}
-\hypersetup{colorlinks=true,linkcolor=blue!70!black,urlcolor=blue!80!black,citecolor=blue!70!black}
+\hypersetup{colorlinks=true,linkcolor=blue!60!black,urlcolor=blue!70!black,citecolor=blue!60!black}
 
-% Theorem environments
+%%% COLOR PALETTE %%%
+\definecolor{hdrBG}{HTML}{1E3A8A}        % header blue
+\definecolor{accent}{HTML}{0EA5E9}       % subsection cyan
+\definecolor{defBG}{HTML}{EFF6FF}        % definition: soft blue
+\definecolor{defFR}{HTML}{2563EB}
+\definecolor{thmBG}{HTML}{FEF3C7}        % theorem: soft amber
+\definecolor{thmFR}{HTML}{B45309}
+\definecolor{lemBG}{HTML}{FEF9C3}        % lemma: lighter amber
+\definecolor{lemFR}{HTML}{A16207}
+\definecolor{corBG}{HTML}{FDF2F8}        % corollary: soft pink
+\definecolor{corFR}{HTML}{BE185D}
+\definecolor{propBG}{HTML}{F3E8FF}       % proposition: soft purple
+\definecolor{propFR}{HTML}{7C3AED}
+\definecolor{proofBG}{HTML}{F8FAFC}      % proof: very soft gray
+\definecolor{proofFR}{HTML}{64748B}
+\definecolor{remBG}{HTML}{ECFDF5}        % remark: soft green
+\definecolor{remFR}{HTML}{047857}
+\definecolor{exBG}{HTML}{FFF7ED}         % exercise: soft orange
+\definecolor{exFR}{HTML}{C2410C}
+
+%%% HEADER / FOOTER %%%
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\color{hdrBG!30}\hrule width\textwidth height0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyhead[L]{\small\color{hdrBG}\textbf{Classical Linear Models}}
+\fancyhead[R]{\small\color{hdrBG}\leftmark}
+\fancyfoot[R]{\small\color{gray}\thepage}
+\renewcommand{\sectionmark}[1]{\markboth{\S\thesection~#1}{}}
+
+%%% AMSTHM ENVIRONMENTS %%%
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}[section]
 \newtheorem{example}{Example}[section]
 \newtheorem{exercise}{Exercise}[section]
-\newtheorem{theorem}{Theorem}[section]
-\newtheorem{lemma}{Lemma}[section]
-\newtheorem{corollary}{Corollary}[section]
-\newtheorem{proposition}{Proposition}[section]
-\newtheorem{property}{Property}[section]
+\newtheorem{property}[theorem]{Property}
+\theoremstyle{remark}
 \newtheorem*{remark}{Remark}
 
-% Custom commands
+%%% WRAP ENVIRONMENTS IN COLORED BOXES %%%
+%%% Theorem-like statements: NOT breakable - must appear whole on a single page %%%
+%%% Proof: breakable - long proofs need to span pages %%%
+\tcolorboxenvironment{definition}{
+  enhanced,breakable=false,
+  colback=defBG,colframe=defFR,
+  boxrule=0.6pt,arc=2pt,
+  left=3mm,right=3mm,top=1.5mm,bottom=1.5mm,
+  before skip=5pt,after skip=5pt
+}
+\tcolorboxenvironment{theorem}{
+  enhanced,breakable=false,
+  colback=thmBG,colframe=thmFR,
+  boxrule=0.6pt,arc=2pt,
+  left=3mm,right=3mm,top=1.5mm,bottom=1.5mm,
+  before skip=5pt,after skip=5pt
+}
+\tcolorboxenvironment{lemma}{
+  enhanced,breakable=false,
+  colback=lemBG,colframe=lemFR,
+  boxrule=0.6pt,arc=2pt,
+  left=3mm,right=3mm,top=1.5mm,bottom=1.5mm,
+  before skip=5pt,after skip=5pt
+}
+\tcolorboxenvironment{corollary}{
+  enhanced,breakable=false,
+  colback=corBG,colframe=corFR,
+  boxrule=0.6pt,arc=2pt,
+  left=3mm,right=3mm,top=1.5mm,bottom=1.5mm,
+  before skip=5pt,after skip=5pt
+}
+\tcolorboxenvironment{proposition}{
+  enhanced,breakable=false,
+  colback=propBG,colframe=propFR,
+  boxrule=0.6pt,arc=2pt,
+  left=3mm,right=3mm,top=1.5mm,bottom=1.5mm,
+  before skip=5pt,after skip=5pt
+}
+\tcolorboxenvironment{remark}{
+  enhanced,breakable,
+  colback=remBG,colframe=remFR,
+  leftrule=3pt,rightrule=0pt,toprule=0pt,bottomrule=0pt,
+  arc=0pt,left=3mm,right=2mm,top=1mm,bottom=1mm,
+  before skip=4pt,after skip=4pt
+}
+\tcolorboxenvironment{proof}{
+  enhanced,breakable,
+  colback=proofBG,colframe=proofFR,
+  leftrule=2pt,rightrule=0pt,toprule=0pt,bottomrule=0pt,
+  arc=0pt,left=3mm,right=2mm,top=1mm,bottom=1mm,
+  before skip=4pt,after skip=4pt
+}
+\tcolorboxenvironment{exercise}{
+  enhanced,breakable,
+  colback=exBG,colframe=exFR,
+  leftrule=3pt,rightrule=0pt,toprule=0pt,bottomrule=0pt,
+  arc=0pt,left=3mm,right=2mm,top=1mm,bottom=1mm,
+  before skip=4pt,after skip=4pt
+}
+
+%%% CUSTOM COMMANDS (same as clm.tex) %%%
 \newcommand\expc{\mathsf{E}}
 \newcommand\prb{\mathsf{P}}
 \DeclareMathOperator\var{var}
@@ -34,7 +138,6 @@
 \DeclareMathOperator\tr{tr}
 \DeclareMathOperator\rank{rank}
 \DeclareMathOperator\diag{diag}
-\newcommand{\dd}{\mathrm{d}}
 \newcommand{\ds}{\displaystyle}
 \newcommand{\ie}{\;\Longrightarrow\;}
 \newcommand{\ifff}{\;\Longleftrightarrow\;}
@@ -67,36 +170,42 @@
 \newcommand{\ba}{\mathbf{a}}
 \newcommand{\bv}{\mathbf{v}}
 \newcommand{\Real}{\mathbb{R}}
+\newcommand{\dd}{\mathrm{d}}
 \newcommand{\calC}{\mathcal{C}}
 
+%%% SPACING %%%
 \usepackage{parskip}
-\usepackage{etoolbox}
-\AtBeginEnvironment{definition}{\vspace{\parskip}}
-\AtBeginEnvironment{example}{\vspace{\parskip}}
-\AtBeginEnvironment{lemma}{\vspace{\parskip}}
-\AtBeginEnvironment{theorem}{\vspace{\parskip}}
-\AtBeginEnvironment{corollary}{\vspace{\parskip}}
-\AtBeginEnvironment{proposition}{\vspace{\parskip}}
-\AtBeginEnvironment{remark}{\vspace{\parskip}}
-\AtBeginEnvironment{exercise}{\vspace{\parskip}}
+\setlength{\parskip}{3pt}
+\setlength{\jot}{4pt}
 
-% Compact section spacing
+%%% SECTION STYLING %%%
 \usepackage{titlesec}
-\titlespacing*{\section}{0pt}{6pt}{3pt}
-\titlespacing*{\subsection}{0pt}{4pt}{2pt}
-\titlespacing*{\subsubsection}{0pt}{3pt}{1pt}
+\titleformat{\section}
+  {\color{hdrBG}\normalfont\Large\bfseries}{\thesection}{0.7em}{}
+\titleformat{\subsection}
+  {\color{accent}\normalfont\large\bfseries}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{4pt}{2pt}
+\titlespacing*{\subsection}{0pt}{4pt}{1pt}
+
+\title{\color{hdrBG}\bfseries\Huge Classical Theory of Linear Models}
+\author{}
+\date{}
 
 \begin{document}
 
-% Compact title (no \maketitle top-padding)
-\begingroup
-\centering
-{\LARGE\bfseries Notes on the Classical Theory of Linear Models\par}
-\vspace{4pt}
-\endgroup
-
-%\tableofcontents
-%\newpage
+%%% TITLE PAGE %%%
+\begin{titlepage}
+\thispagestyle{empty}
+\vspace*{\fill}
+\begin{center}
+{\color{hdrBG}\bfseries\fontsize{36}{44}\selectfont Classical Theory of Linear Models}\\[1.2em]
+{\color{accent}\bfseries\Large Slide edition}\\[2em]
+\rule{60mm}{0.8pt}\\[1em]
+{\large A complete treatment of OLS, Gauss--Markov,\\[0.2em] and exact inference under normality}\\[2em]
+\rule{60mm}{0.8pt}
+\end{center}
+\vspace*{\fill}
+\end{titlepage}
 
 %=============================================================================
 \section{The Multiple Linear Regression Model}\label{sec:model}
@@ -199,11 +308,11 @@ Q(\bb) &= (\bY - \bX\bb)'(\bY - \bX\bb) \notag\\
 \end{align}
 In the last line, $\bY'\bX\bb$ is a scalar, hence equals its transpose $\bb'\bX'\bY$.
 
-\textbf{Step 2: First-order condition.} Apply Lemma~\ref{lem:matrix-diff} term by term, with $\ba = \bX'\bY$ and $\bA = \bX'\bX$ (symmetric):
+\textbf{Step 2: First-order condition.} By Lemma~\ref{lem:matrix-diff} with $\ba = \bX'\bY$ and $\bA = \bX'\bX$ (symmetric),
 \[
-DQ(\bb) = -2(\bX'\bY)' + 2\bb'\bX'\bX = -2\bY'\bX + 2\bb'\bX'\bX.
+\frac{\partial Q}{\partial \bb'} = -2\bY'\bX + 2\bb'\bX'\bX.
 \]
-Equivalently, by the differentials in the proof of Lemma~\ref{lem:matrix-diff}, $\dd Q = (-2\bY'\bX + 2\bb'\bX'\bX)\,\dd\bb$, and the first identification theorem reads off $DQ$. Setting $DQ = \bzero'$ and transposing gives the \textbf{normal equation}
+Setting this to $\bzero'$ and transposing gives the \textbf{normal equation}
 \begin{equation}\label{eq:normal-eq}
 \bX'\bX\hat{\bb} = \bX'\bY.
 \end{equation}
@@ -417,8 +526,8 @@ In particular, under assumptions~\ref{A1}--\ref{A3}, $\var(\bY) = \sigma^2\bI_n$
 \begin{proof}
 Let $\boldsymbol\mu = \expc[\bz]$. Since $\bA$ and $\mathbf{b}$ are constant, $\expc[\bA\bz + \mathbf{b}] = \bA\boldsymbol\mu + \mathbf{b}$. Therefore
 \begin{align*}
-\var(\bA\bz + \mathbf{b}) &= \expc\bigl[(\bA\bz + \mathbf{b} - \bA\boldsymbol\mu - \mathbf{b})(\bA\bz + \mathbf{b} - \bA\boldsymbol\mu - \mathbf{b})'\bigr]\\
-&= \expc\bigl[\bA(\bz - \boldsymbol\mu)(\bz - \boldsymbol\mu)'\bA'\bigr]\\
+\var(\bA\bz + \mathbf{b}) &= \expc\!\bigl[(\bA\bz + \mathbf{b} - \bA\boldsymbol\mu - \mathbf{b})(\bA\bz + \mathbf{b} - \bA\boldsymbol\mu - \mathbf{b})'\bigr]\\
+&= \expc\!\bigl[\bA(\bz - \boldsymbol\mu)(\bz - \boldsymbol\mu)'\bA'\bigr]\\
 &= \bA\,\expc[(\bz - \boldsymbol\mu)(\bz - \boldsymbol\mu)']\,\bA' = \bA\,\var(\bz)\,\bA',
 \end{align*}
 since constant matrices pull outside the expectation. Applying this to $\bY = \bX\bb + \be$ (with $\bA = \bI_n$, $\mathbf{b} = \bX\bb$ constant given the conditioning on $\bX$) gives $\var(\bY) = \var(\be) = \sigma^2\bI_n$ by~\ref{A3}.
@@ -550,7 +659,7 @@ where the last step uses $\bM'\bM = \bM\bM = \bM$ (symmetric idempotent).
 
 \textbf{Step 4: Conclude.}
 \[
-\expc[\MSE] = \expc\left[\frac{\SSE}{n-k-1}\right] = \frac{\sigma^2(n-k-1)}{n-k-1} = \sigma^2. \qedhere
+\expc[\MSE] = \expc\!\left[\frac{\SSE}{n-k-1}\right] = \frac{\sigma^2(n-k-1)}{n-k-1} = \sigma^2. \qedhere
 \]
 \end{proof}
 
@@ -592,8 +701,8 @@ If $\bz \sim N(\boldsymbol\mu, \boldsymbol\Sigma)$ is an $n \times 1$ normal ran
 The moment-generating function (MGF) of $\bz$ is $M_{\bz}(\mathbf{t}) = \exp(\mathbf{t}'\boldsymbol\mu + \frac{1}{2}\mathbf{t}'\boldsymbol\Sigma\mathbf{t})$. The MGF of $\bw = \bA\bz + \mathbf{b}$ is:
 \begin{align*}
 M_{\bw}(\mathbf{t}) &= \expc\!\left[e^{\mathbf{t}'(\bA\bz + \mathbf{b})}\right] = e^{\mathbf{t}'\mathbf{b}} \cdot \expc\!\left[e^{(\bA'\mathbf{t})' \bz}\right] = e^{\mathbf{t}'\mathbf{b}} \cdot M_{\bz}(\bA'\mathbf{t})\\
-&= e^{\mathbf{t}'\mathbf{b}} \cdot \exp\bigl((\bA'\mathbf{t})'\boldsymbol\mu + \tfrac{1}{2}(\bA'\mathbf{t})'\boldsymbol\Sigma(\bA'\mathbf{t})\bigr)\\
-&= \exp\bigl(\mathbf{t}'(\bA\boldsymbol\mu + \mathbf{b}) + \tfrac{1}{2}\mathbf{t}'\bA\boldsymbol\Sigma\bA'\mathbf{t}\bigr).
+&= e^{\mathbf{t}'\mathbf{b}} \cdot \exp\!\bigl((\bA'\mathbf{t})'\boldsymbol\mu + \tfrac{1}{2}(\bA'\mathbf{t})'\boldsymbol\Sigma(\bA'\mathbf{t})\bigr)\\
+&= \exp\!\bigl(\mathbf{t}'(\bA\boldsymbol\mu + \mathbf{b}) + \tfrac{1}{2}\mathbf{t}'\bA\boldsymbol\Sigma\bA'\mathbf{t}\bigr).
 \end{align*}
 This is the MGF of $N(\bA\boldsymbol\mu + \mathbf{b},\; \bA\boldsymbol\Sigma\bA')$. By uniqueness of the MGF, the result follows.
 \end{proof}
@@ -609,13 +718,13 @@ Then $\boldsymbol\Sigma_{UV} = \bzero$ if and only if $\mathbf{U}$ and $\mathbf{
 \begin{proof}
 $(\Leftarrow)$: Independence implies uncorrelatedness for any distribution.
 
-$(\Rightarrow)$: With $\boldsymbol\Sigma_{UV} = \bzero$, the covariance is block-diagonal. The joint MGF is $M_{(\mathbf{U},\mathbf{V})}(\mathbf{s}, \mathbf{t}) = \exp\bigl((\mathbf{s}', \mathbf{t}')\boldsymbol\mu + \tfrac{1}{2}(\mathbf{s}', \mathbf{t}')\boldsymbol\Sigma(\mathbf{s}', \mathbf{t}')'\bigr)$. Block expansion gives
+$(\Rightarrow)$: With $\boldsymbol\Sigma_{UV} = \bzero$, the covariance is block-diagonal. The joint MGF is $M_{(\mathbf{U},\mathbf{V})}(\mathbf{s}, \mathbf{t}) = \exp\!\bigl((\mathbf{s}', \mathbf{t}')\boldsymbol\mu + \tfrac{1}{2}(\mathbf{s}', \mathbf{t}')\boldsymbol\Sigma(\mathbf{s}', \mathbf{t}')'\bigr)$. Block expansion gives
 \[
 (\mathbf{s}', \mathbf{t}')\boldsymbol\mu = \mathbf{s}'\boldsymbol\mu_U + \mathbf{t}'\boldsymbol\mu_V, \qquad (\mathbf{s}', \mathbf{t}')\boldsymbol\Sigma\begin{pmatrix}\mathbf{s}\\\mathbf{t}\end{pmatrix} = \mathbf{s}'\boldsymbol\Sigma_{UU}\mathbf{s} + \mathbf{t}'\boldsymbol\Sigma_{VV}\mathbf{t},
 \]
 using $\boldsymbol\Sigma_{UV} = \boldsymbol\Sigma_{VU}' = \bzero$. The joint MGF factors:
 \[
-M_{(\mathbf{U},\mathbf{V})}(\mathbf{s}, \mathbf{t}) = \exp\bigl(\mathbf{s}'\boldsymbol\mu_U + \tfrac{1}{2}\mathbf{s}'\boldsymbol\Sigma_{UU}\mathbf{s}\bigr) \cdot \exp\bigl(\mathbf{t}'\boldsymbol\mu_V + \tfrac{1}{2}\mathbf{t}'\boldsymbol\Sigma_{VV}\mathbf{t}\bigr) = M_{\mathbf{U}}(\mathbf{s}) M_{\mathbf{V}}(\mathbf{t}),
+M_{(\mathbf{U},\mathbf{V})}(\mathbf{s}, \mathbf{t}) = \exp\!\bigl(\mathbf{s}'\boldsymbol\mu_U + \tfrac{1}{2}\mathbf{s}'\boldsymbol\Sigma_{UU}\mathbf{s}\bigr) \cdot \exp\!\bigl(\mathbf{t}'\boldsymbol\mu_V + \tfrac{1}{2}\mathbf{t}'\boldsymbol\Sigma_{VV}\mathbf{t}\bigr) = M_{\mathbf{U}}(\mathbf{s}) M_{\mathbf{V}}(\mathbf{t}),
 \]
 which implies independence.
 \end{proof}
@@ -1408,6 +1517,8 @@ Substituting back into~\eqref{eq:cls-step1} gives~\eqref{eq:cls}.
 \textbf{Step 3: $\SSE_R \geqslant \SSE_U$.} The constrained problem minimizes $\|\bY - \bX\bb\|^2$ over $\{\bb : \bR\bb = \br\} \subseteq \Real^{k+1}$. Since $\hat{\bb}$ minimizes the same objective over the full space, the minimum over a subset cannot be smaller: $\SSE_R \geqslant \SSE_U$. Equality holds iff $\hat{\bb}$ already satisfies the constraint, i.e., $\bR\hat{\bb} = \br$.
 \end{proof}
 
+\end{document}
+
 %=============================================================================
 \section{Exercises}\label{sec:exercises}
 %=============================================================================
@@ -1417,47 +1528,27 @@ Substituting back into~\eqref{eq:cls-step1} gives~\eqref{eq:cls}.
 \subsection*{Tier A: Reproduce the Derivation}
 
 \begin{exercise}\label{ex:A1}
-Establish the Magnus matrix differentiation formulas of Lemma~\ref{lem:matrix-diff}: for constant $\ba\in\Real^p$ and constant $\bA\in\Real^{p\times p}$, prove $D(\ba'\bb)=\ba'$ and $D(\bb'\bA\bb)=\bb'(\bA+\bA')$ via the differential rules and the first identification theorem $\dd f(\bb)=\bc(\bb)'\dd\bb \Leftrightarrow Df(\bb)=\bc(\bb)'$.
-\end{exercise}
-
-\begin{exercise}\label{ex:A2}
-Let $\bA\in\Real^{n\times n}$ be symmetric and idempotent ($\bA^2=\bA=\bA'$). (a)~Show every eigenvalue of $\bA$ lies in $\{0,1\}$. (b)~Conclude $\tr(\bA)=\rank(\bA)$. (c)~Verify the formula on $\bH$ and $\bM$: $\tr(\bH)=k+1$ and $\tr(\bM)=n-k-1$.
-\end{exercise}
-
-\begin{exercise}\label{ex:A3}
 Derive the OLS estimator $\hat{\bb} = (\bX'\bX)^{-1}\bX'\bY$ by minimizing $\|\bY - \bX\bb\|^2$. Verify the second-order condition.
 \end{exercise}
 
-\begin{exercise}\label{ex:A4}
-For $\bH = \bX(\bX'\bX)^{-1}\bX'$ and $\bM = \bI - \bH$: (a)~prove $\bH$ and $\bM$ are symmetric and idempotent; (b)~prove $\bH\bX = \bX$, $\bM\bX = \bzero$, and $\bH\bM = \bzero$; (c)~conclude $\tr(\bH) = k+1$ and $\tr(\bM) = n-k-1$.
-\end{exercise}
-
-\begin{exercise}\label{ex:A5}
+\begin{exercise}\label{ex:A2}
 Prove that $\expc[\hat{\bb}] = \bb$ under (A1)--(A2), and derive $\var(\hat{\bb}) = \sigma^2(\bX'\bX)^{-1}$ under (A1)--(A4).
 \end{exercise}
 
-\begin{exercise}\label{ex:A6}
+\begin{exercise}\label{ex:A3}
 State and prove the Gauss--Markov theorem.
 \end{exercise}
 
-\begin{exercise}\label{ex:A7}
-Prove that $\MSE = \SSE/(n-k-1)$ is an unbiased estimator of $\sigma^2$ under (A1)--(A4).
+\begin{exercise}\label{ex:A4}
+Prove that $\MSE = \SSE/(n-k-1)$ is an unbiased estimator of $\sigma^2$.
 \end{exercise}
 
-\begin{exercise}\label{ex:A8}
-Let $\bz \sim N_n(\boldsymbol\mu, \boldsymbol\Sigma)$. (a)~For any constant matrix $\bA$ and vector $\mathbf{b}$, prove $\bA\bz + \mathbf{b} \sim N(\bA\boldsymbol\mu + \mathbf{b},\;\bA\boldsymbol\Sigma\bA')$ via the moment generating function. (b)~Specialise to $\bz \sim N(\bzero, \bI_n)$ and let $\bA$ be symmetric idempotent of rank $r$; prove $\bz'\bA\bz \sim \chi^2_r$ via the spectral decomposition.
-\end{exercise}
-
-\begin{exercise}\label{ex:A9}
-\textbf{(Cochran's theorem.)} Let $\bz \sim N(\bzero, \bI_n)$ and let $\bA_1, \bA_2$ be symmetric idempotent with $\bA_1\bA_2 = \bzero$. Prove that $\bz'\bA_1\bz$ and $\bz'\bA_2\bz$ are independent. \emph{Hint:} use joint normality of $(\bA_1\bz, \bA_2\bz)$ and the equivalence ``uncorrelated $\Leftrightarrow$ independent'' under joint normality.
-\end{exercise}
-
-\begin{exercise}\label{ex:A10}
+\begin{exercise}\label{ex:A5}
 Under (A1)--(A5), prove $\SSE/\sigma^2 \sim \chi^2_{n-k-1}$ and that $\SSE$ is independent of $\hat{\bb}$.
 \end{exercise}
 
-\begin{exercise}\label{ex:A11}
-Prove the variance decomposition $\SST = \SSR + \SSE$, and derive the overall $F$ statistic including the proof that $\SSR/\sigma^2 \sim \chi^2_k$ under $H_0\colon \beta_1 = \cdots = \beta_k = 0$.
+\begin{exercise}\label{ex:A6}
+Prove the variance decomposition $\SST = \SSR + \SSE$, and derive the overall $F$ statistic including the proof that $\SSR/\sigma^2 \sim \chi^2_k$ under $H_0$.
 \end{exercise}
 
 \subsection*{Tier B: Apply the Theory}
@@ -1475,19 +1566,15 @@ Consider two nested models: the full model with $k$ regressors and a reduced mod
 \end{exercise}
 
 \begin{exercise}\label{ex:B4}
-\textbf{(General linear hypothesis.)} For $H_0\colon \bR\bb = \br$ with $\bR$ a $q\times(k+1)$ matrix of rank $q$, derive the test statistic
-\[
-F = \frac{(\bR\hat{\bb} - \br)'[\bR(\bX'\bX)^{-1}\bR']^{-1}(\bR\hat{\bb} - \br)/q}{\SSE/(n-k-1)}
-\]
-and prove $F \sim F_{q, n-k-1}$ under $H_0$.
-\end{exercise}
-
-\begin{exercise}\label{ex:B5}
 Suppose $\var(\be) = \sigma^2\boldsymbol\Omega$ where $\boldsymbol\Omega$ is known, symmetric, and positive definite (but $\neq \bI$). (a)~Show that OLS is unbiased but derive its actual (incorrect) variance. (b)~Define $\hat{\bb}_{\mathrm{GLS}} = (\bX'\boldsymbol\Omega^{-1}\bX)^{-1}\bX'\boldsymbol\Omega^{-1}\bY$ and prove it is BLUE.
 \end{exercise}
 
-\begin{exercise}\label{ex:B6}
+\begin{exercise}\label{ex:B5}
 Let $\hat{Y}_0 = \bx_0'\hat{\bb}$ be the predicted value at a new point $\bx_0$. (a)~Derive $\var(\hat{Y}_0 - \expc[Y_0])$. (b)~Derive $\var(\hat{Y}_0 - Y_0)$. (c)~Explain why (b) always exceeds (a).
+\end{exercise}
+
+\begin{exercise}\label{ex:B6}
+Show that under (A1)--(A5), the OLS estimator coincides with the MLE. Is $\hat{\sigma}^2_{\mathrm{MLE}} = \SSE/n$ unbiased?
 \end{exercise}
 
 \subsection*{Tier C: Extend and Connect}
@@ -1516,29 +1603,19 @@ Let $\hat{Y}_0 = \bx_0'\hat{\bb}$ be the predicted value at a new point $\bx_0$.
 \section{Solutions to Exercises}\label{sec:solutions}
 %=============================================================================
 
-\subsection*{Solutions to Tier A}
-
-\textbf{Solution to Exercise~\ref{ex:A1}.} See the proof of Lemma~\ref{lem:matrix-diff}.
-
-\textbf{Solution to Exercise~\ref{ex:A2}.} See the proof of Lemma~\ref{lem:idempotent}, and Theorem~\ref{thm:HM}\ref{HM:iv} for part (c).
-
-\textbf{Solution to Exercise~\ref{ex:A3}.} See the proof of Theorem~\ref{thm:ols}.
-
-\textbf{Solution to Exercise~\ref{ex:A4}.} See the proof of Theorem~\ref{thm:HM}.
-
-\textbf{Solution to Exercise~\ref{ex:A5}.} See the proofs of Theorems~\ref{thm:unbiased} and~\ref{thm:var-beta}.
-
-\textbf{Solution to Exercise~\ref{ex:A6}.} See the proof of Theorem~\ref{thm:gm}.
-
-\textbf{Solution to Exercise~\ref{ex:A7}.} See the proof of Theorem~\ref{thm:mse-unbiased}.
-
-\textbf{Solution to Exercise~\ref{ex:A8}.} See the proofs of Theorems~\ref{thm:mvn-linear} and~\ref{thm:quadratic-chisq}.
-
-\textbf{Solution to Exercise~\ref{ex:A9}.} See the proof of Theorem~\ref{thm:cochran}.
-
-\textbf{Solution to Exercise~\ref{ex:A10}.} See the proof of Theorem~\ref{thm:sse-dist}.
-
-\textbf{Solution to Exercise~\ref{ex:A11}.} See the proofs of Theorems~\ref{thm:anova}, \ref{thm:f-test}, and Lemma~\ref{lem:SSR-chisq}.
+%\subsection*{Solutions to Tier A}
+%
+%\textbf{Solution to Exercise~\ref{ex:A1}.} See the proof of Theorem~\ref{thm:ols}.
+%
+%\textbf{Solution to Exercise~\ref{ex:A2}.} See the proofs of Theorems~\ref{thm:unbiased} and~\ref{thm:var-beta}.
+%
+%\textbf{Solution to Exercise~\ref{ex:A3}.} See the proof of Theorem~\ref{thm:gm}.
+%
+%\textbf{Solution to Exercise~\ref{ex:A4}.} See the proof of Theorem~\ref{thm:mse-unbiased}.
+%
+%\textbf{Solution to Exercise~\ref{ex:A5}.} See the proof of Theorem~\ref{thm:sse-dist}.
+%
+%\textbf{Solution to Exercise~\ref{ex:A6}.} See the proofs of Theorems~\ref{thm:anova}, \ref{thm:f-test}, and Lemma~\ref{lem:SSR-chisq}.
 
 \subsection*{Solutions to Tier B}
 
@@ -1548,9 +1625,7 @@ Let $\hat{Y}_0 = \bx_0'\hat{\bb}$ be the predicted value at a new point $\bx_0$.
 
 \textbf{Solution to Exercise~\ref{ex:B3}.} (a)~The reduced model minimizes SSE over a subspace $\{\bb : \beta_{k_0+1} = \cdots = \beta_k = 0\}$. Since the unconstrained minimum is taken over the full space, $\SSE_R \geqslant \SSE_U$. (b)~This is a special case of the general $F$ test (Theorem~\ref{thm:general-F}) with $\bR = [\bzero \mid \bI_{k-k_0}]$ and $\br = \bzero$, or equivalently, by Cochran's theorem: define $\bM_R$ and $\bM_U$ as the residual makers for the reduced and full models. Then $\SSE_R - \SSE_U = \be'(\bM_R - \bM_U)\be/\sigma^2 \cdot \sigma^2$, where $\bM_R - \bM_U$ is symmetric idempotent of rank $k - k_0$ and $(\bM_R - \bM_U)\bM_U = \bzero$. By Theorems~\ref{thm:quadratic-chisq} and~\ref{thm:cochran}, $(\SSE_R - \SSE_U)/\sigma^2 \sim \chi^2_{k-k_0}$, independent of $\SSE_U/\sigma^2 \sim \chi^2_{n-k-1}$. Hence $F = \frac{(\SSE_R - \SSE_U)/(k-k_0)}{\SSE_U/(n-k-1)} \sim F_{k-k_0, n-k-1}$.
 
-\textbf{Solution to Exercise~\ref{ex:B4}.} See the proof of Theorem~\ref{thm:general-F}.
-
-\textbf{Solution to Exercise~\ref{ex:B5}.} (a)~Unbiasedness: $\expc[\hat{\bb}] = \bb + (\bX'\bX)^{-1}\bX'\expc[\be] = \bb$ (unchanged; unbiasedness does not use~\ref{A3}). Actual variance:
+\textbf{Solution to Exercise~\ref{ex:B4}.} (a)~Unbiasedness: $\expc[\hat{\bb}] = \bb + (\bX'\bX)^{-1}\bX'\expc[\be] = \bb$ (unchanged; unbiasedness does not use~\ref{A3}). Actual variance:
 \[
 \var(\hat{\bb}) = (\bX'\bX)^{-1}\bX'(\sigma^2\boldsymbol\Omega)\bX(\bX'\bX)^{-1} = \sigma^2(\bX'\bX)^{-1}\bX'\boldsymbol\Omega\bX(\bX'\bX)^{-1} \neq \sigma^2(\bX'\bX)^{-1}.
 \]
@@ -1561,7 +1636,9 @@ Let $\hat{Y}_0 = \bx_0'\hat{\bb}$ be the predicted value at a new point $\bx_0$.
 \]
 Since the transformed model satisfies (A1)--(A4), Gauss--Markov (Theorem~\ref{thm:gm}) guarantees $\hat{\bb}_{\mathrm{GLS}}$ is BLUE in the transformed model. By a change-of-variables argument, it is also BLUE in the original model.
 
-\textbf{Solution to Exercise~\ref{ex:B6}.} See the proof of Theorem~\ref{thm:pred}. (a)~$\var(\hat{Y}_0 - \expc[Y_0]) = \sigma^2\bx_0'(\bX'\bX)^{-1}\bx_0$. (b)~$\var(\hat{Y}_0 - Y_0) = \sigma^2(1 + \bx_0'(\bX'\bX)^{-1}\bx_0)$. (c)~the prediction variance exceeds the estimation variance by exactly $\sigma^2$, the irreducible noise variance of $\varepsilon_0$.
+\textbf{Solution to Exercise~\ref{ex:B5}.} See the proof of Theorem~\ref{thm:pred}. (a)~$\var(\hat{Y}_0 - \expc[Y_0]) = \sigma^2\bx_0'(\bX'\bX)^{-1}\bx_0$. (b)~$\var(\hat{Y}_0 - Y_0) = \sigma^2(1 + \bx_0'(\bX'\bX)^{-1}\bx_0)$. (c)~the prediction variance exceeds the estimation variance by exactly $\sigma^2$, the irreducible noise variance of $\varepsilon_0$.
+
+\textbf{Solution to Exercise~\ref{ex:B6}.} See the proof of Theorem~\ref{thm:mle}. $\hat{\sigma}^2_{\mathrm{MLE}} = \SSE/n$ is biased: $\expc[\SSE/n] = (n-k-1)\sigma^2/n \neq \sigma^2$.
 
 \subsection*{Solutions to Tier C}
 
@@ -1574,3 +1651,4 @@ Since the transformed model satisfies (A1)--(A4), Gauss--Markov (Theorem~\ref{th
 \textbf{Solution to Exercise~\ref{ex:C4}.} See the proof of Theorem~\ref{thm:cls}.
 
 \end{document}
+

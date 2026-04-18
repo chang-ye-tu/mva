@@ -37,12 +37,12 @@
 
 | 上課時間 |   課程進度              |
 |----------|-------------------------|
-| 03/06    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/clm.pdf">Classical Linear Models</a> |
-| 03/13    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/clm.pdf">Classical Linear Models</a> |
-| 03/20    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/clm.pdf">Classical Linear Models</a> |
-| 03/27    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mc.pdf">Matrix Calculus</a>          |
-| 04/10    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mc.pdf">Matrix Calculus</a>          |
-| 04/17    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mc.pdf">Matrix Calculus</a>          |
+| 03/06    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/clm_slide.pdf">Classical Linear Models</a> |
+| 03/13    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/clm_slide.pdf">Classical Linear Models</a> |
+| 03/20    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/clm_slide.pdf">Classical Linear Models</a> |
+| 03/27    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mc_slide.pdf">Matrix Calculus</a>          |
+| 04/10    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mc_slide.pdf">Matrix Calculus</a>          |
+| 04/17    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mc_slide.pdf">Matrix Calculus</a>          |
 | 04/24    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/qa_mid.pdf">**期中考**</a>           |
 | 05/01    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mlm.pdf">Modern Linear Models</a>    |
 | 05/08    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mlm.pdf">Modern Linear Models</a>    |
