@@ -24,6 +24,18 @@
 \newtheorem{property}{Property}[section]
 \newtheorem*{remark}{Remark}
 
+% Non-italic proof label
+\makeatletter
+\renewenvironment{proof}[1][\proofname]{\par
+  \pushQED{\qed}%
+  \normalfont \topsep6\p@\@plus6\p@\relax
+  \trivlist
+  \item[\hskip\labelsep\bfseries #1\@addpunct{.}]\ignorespaces
+}{%
+  \popQED\endtrivlist\@endpefalse
+}
+\makeatother
+
 % Custom commands
 \newcommand\expc{\mathsf{E}}
 \newcommand\prb{\mathsf{P}}
@@ -368,6 +380,7 @@ The \textbf{leverage} of the $i$-th observation is $h_{ii}$, the $i$-th diagonal
 \end{definition}
 
 \begin{theorem}[Properties of Leverages]\label{thm:leverage}
+\leavevmode
 \begin{enumerate}[label=\textup{(\roman*)}]
 \item\label{lev:i} $0 \leqslant h_{ii} \leqslant 1$ for all $i$.
 \item\label{lev:ii} $\sum_{i=1}^{n} h_{ii} = k + 1$.

@@ -1,5 +1,5 @@
 \documentclass[12pt,a4paper]{article}
-\usepackage[margin=15mm]{geometry}
+\usepackage[top=10mm,left=15mm,right=15mm,bottom=15mm]{geometry}
 \usepackage{amsmath,amsthm,amssymb,amsfonts}
 \usepackage{booktabs,array}
 \usepackage{enumitem}
@@ -23,6 +23,18 @@
 \newtheorem{proposition}{Proposition}[section]
 \newtheorem{property}{Property}[section]
 \newtheorem*{remark}{Remark}
+
+% Non-italic proof label
+\makeatletter
+\renewenvironment{proof}[1][\proofname]{\par
+  \pushQED{\qed}%
+  \normalfont \topsep6\p@\@plus6\p@\relax
+  \trivlist
+  \item[\hskip\labelsep\bfseries #1\@addpunct{.}]\ignorespaces
+}{%
+  \popQED\endtrivlist\@endpefalse
+}
+\makeatother
 
 % Custom commands (matching clm.tex)
 \newcommand\expc{\mathsf{E}}
@@ -59,6 +71,7 @@
 \newcommand{\bzero}{\mathbf{0}}
 \newcommand{\bz}{\mathbf{z}}
 \newcommand{\bw}{\mathbf{w}}
+\newcommand{\bZ}{\mathbf{Z}}
 \newcommand{\bA}{\mathbf{A}}
 \newcommand{\bC}{\mathbf{C}}
 \newcommand{\bD}{\mathbf{D}}
@@ -236,6 +249,7 @@ Combining Steps 3--4: $\expc[e^{tX}] \leqslant e^{C''K^2t^2/2}$ for all $t \in \
 \end{proof}
 
 \begin{example}[Sub-Gaussian Random Variables]\label{ex:subgaussian}
+\leavevmode
 \begin{enumerate}[label=\textup{(\arabic*)}]
 \item \textbf{Gaussian.} If $X \sim N(0, \sigma^2)$, then $\expc[e^{tX}] = e^{\sigma^2 t^2/2}$, so $X$ is sub-Gaussian with $K_1 = \sigma$. Moreover, $\|X\|_{\psi_2} = C\sigma$ for a universal $C$.
 
@@ -250,6 +264,7 @@ Combining Steps 3--4: $\expc[e^{tX}] \leqslant e^{C''K^2t^2/2}$ for all $t \in \
 \subsection{Properties of Sub-Gaussian Random Variables}
 
 \begin{proposition}[Closure Properties]\label{prop:sg-closure}
+\leavevmode
 \begin{enumerate}[label=\textup{(\roman*)}]
 \item If $X$ is sub-Gaussian and $a \in \Real$, then $aX$ is sub-Gaussian with $\|aX\|_{\psi_2} = |a|\,\|X\|_{\psi_2}$.
 \item If $X_1, \ldots, X_n$ are independent sub-Gaussian random variables with $\expc[X_i] = 0$, then $S = \sum_{i=1}^n X_i$ is sub-Gaussian with $\|S\|_{\psi_2}^2 \leqslant C\sum_{i=1}^n \|X_i\|_{\psi_2}^2$.
@@ -389,6 +404,7 @@ The smallest such $K$ is the \textbf{sub-Gaussian norm} of $\bx$, denoted $\|\bx
 \end{definition}
 
 \begin{example}\label{ex:sg-vector}
+\leavevmode
 \begin{enumerate}[label=\textup{(\arabic*)}]
 \item If $\bx \sim N(\bzero, \bSigma)$, then $\ip{\bx}{\bv} \sim N(0, \bv'\bSigma\bv)$ has $\|\ip{\bx}{\bv}\|_{\psi_2} = C(\bv'\bSigma\bv)^{1/2} \leqslant C\|\bSigma\|_{\mathrm{op}}^{1/2}\|\bv\|$. So $\bx$ is sub-Gaussian with $\|\bx\|_{\psi_2} \leqslant C\opnorm{\bSigma}^{1/2}$.
 \item If $\bx = (\varepsilon_1, \ldots, \varepsilon_p)'$ where $\varepsilon_i$ are independent Rademacher, then $\ip{\bx}{\bv} = \sum v_i\varepsilon_i$ has $\|\ip{\bx}{\bv}\|_{\psi_2} \leqslant C\|\bv\|$ by Proposition~\ref{prop:sg-closure}(ii).
@@ -528,6 +544,7 @@ We have $\expc[e^{X^2/t}] = \expc[e^{|X|^2/t}]$. By the definition of $\|X\|_{\p
 \end{proof}
 
 \begin{example}\label{ex:subexp}
+\leavevmode
 \begin{enumerate}[label=\textup{(\arabic*)}]
 \item $\chi^2_1$: if $Z \sim N(0,1)$, then $Z^2$ is sub-exponential by Proposition~\ref{prop:sg-square}. More generally, $\chi^2_n = \sum_{i=1}^n Z_i^2$ is sub-exponential.
 \item $\mathrm{Exp}(\lambda)$: if $X \sim \mathrm{Exp}(\lambda)$, then $\|X\|_{\psi_1} = 1/\lambda$.
@@ -825,6 +842,7 @@ where $p$ replaces $k+1$ for the total number of regressors. The following assum
 \end{definition}
 
 \begin{remark}[Comparison with the classical assumptions]
+\leavevmode
 \begin{enumerate}[label=\textup{(\arabic*)}]
 \item \ref{M1} replaces the fixed-design assumption. The design is now stochastic.
 \item \ref{M2} replaces (A4): it is the sub-Gaussian analogue of the full-rank condition. By Theorem~\ref{thm:eigenvalue-bounds}, \ref{M2} and~\ref{M4} together imply $\bX'\bX$ is invertible with high probability.

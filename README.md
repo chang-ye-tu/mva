@@ -35,22 +35,22 @@
 
 ## 授課時程
 
-| 上課時間 |   課程進度              |
-|----------|-------------------------|
-| 03/06    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/clm_slide.pdf">Classical Linear Models</a> |
-| 03/13    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/clm_slide.pdf">Classical Linear Models</a> |
-| 03/20    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/clm_slide.pdf">Classical Linear Models</a> |
-| 03/27    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mc_slide.pdf">Matrix Calculus</a>          |
-| 04/10    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mc_slide.pdf">Matrix Calculus</a>          |
-| 04/17    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mc_slide.pdf">Matrix Calculus</a>          |
-| 04/24    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/qa_mid.pdf">**期中考**</a>           |
-| 05/01    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mlm.pdf">Modern Linear Models</a>    |
-| 05/08    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mlm.pdf">Modern Linear Models</a>    |
-| 05/15    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mlm.pdf">Modern Linear Models</a>    |
-| 05/22    |                         |
-| 05/29    |                         |
-| 06/05    |                         |
-| 06/12    | **期末考**              |
+| 上課時間 |   課程進度                                                                                                             |
+|----------|------------------------------------------------------------------------------------------------------------------------|
+| 03/06    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/clm_slide.pdf">Classical Linear Models</a>                |
+| 03/13    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/clm_slide.pdf">Classical Linear Models</a>                |
+| 03/20    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/clm_slide.pdf">Classical Linear Models</a>                |
+| 03/27    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mc_slide.pdf">Matrix Calculus</a>                         |
+| 04/10    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mc_slide.pdf">Matrix Calculus</a>                         |
+| 04/17    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mc_slide.pdf">Matrix Calculus</a>                         |
+| 04/24    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/qa_mid.pdf">**期中考**</a>                                |
+| 05/01    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/clm_r.pdf">Classical Linear Models: R Implementations</a> |
+| 05/08    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/gci_slide.pdf">The Gaussian Correlation Inequality</a>    |
+| 05/15    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mlm_slide.pdf">Modern Linear Models</a>                   |
+| 05/22    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mlm_slide.pdf">Modern Linear Models</a>                   |
+| 05/29    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/drm_slide.pdf">Dimensionality Reduction Methods</a>       |
+| 06/05    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/drm_slide.pdf">Dimensionality Reduction Methods</a>       |
+| 06/12    | **期末考**                                                                                                             |
 
 ## 授課教師
 

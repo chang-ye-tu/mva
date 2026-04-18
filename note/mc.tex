@@ -4,35 +4,27 @@
 %   by Jan R. Magnus
 %   Journal of Econometrics 244 (2024) 105862
 %
-% Pre-conversion analysis:
-%   - Numbering format: Pure counter N for all objects
-%     (Proposition 1, Exercise 1, Eq. (1), etc.) % [cite: 1]
-%   - Counter sharing: Propositions and Exercises independent
-%   - Reset level: Continuous throughout (no reset per section)
-%   - Document class: article (no chapters)
-%
-% Preamble changes from default template:
-%   1. \documentclass{article} instead of {report}
-%   2. All \newtheorem without [section] (continuous numbering)
-%   3. Removed \numberwithin{equation}{section} % [cite: 2]
-%   4. Removed \counterwithin{figure}{section}
-%   5. Added \newenvironment{solution} with \| end symbol % [cite: 3]
-%   6. Exercise uses standard \newtheorem (not exstyle)
+% Numbering: continuous (no [section] reset) to match original PDF.
 % ============================================================
-\documentclass[14pt]{extarticle}
-\usepackage{amsmath,amssymb,amsthm}
-\usepackage{graphicx}
-\usepackage{hyperref}
+\documentclass[12pt,a4paper]{article}
+\usepackage[top=10mm,left=15mm,right=15mm,bottom=15mm]{geometry}
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+\usepackage{booktabs,array}
 \usepackage[shortlabels]{enumitem}
+\usepackage{xcolor}
+\usepackage{cancel}
+\usepackage{graphicx}
 \usepackage{mathtools}
-\usepackage[margin=15mm]{geometry}
-\DeclareMathOperator\prb{\mathsf{P}}
-\DeclareMathOperator\expc{\mathsf{E}}
-\DeclareMathOperator\var{var}
-\DeclareMathOperator\cor{cor}
+\usepackage{tocloft}
+% Compact TOC
+\setlength{\cftbeforesecskip}{2pt}
+\setlength{\cftbeforesubsecskip}{0pt}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!70!black,urlcolor=blue!80!black,citecolor=blue!70!black}
 
+% Theorem environments (continuous numbering to match original PDF)
 \theoremstyle{definition}
-% Continuous numbering (no [section] reset) to match original PDF
 \newtheorem{theorem}{Theorem}
 \newtheorem{lemma}{Lemma}
 \newtheorem{proposition}{Proposition}
@@ -43,15 +35,35 @@
 \newtheorem{remark}{Remark}
 \newtheorem{exercise}{Exercise}
 
-% Solution environment: ends with \| instead of \qedsymbol % [cite: 4]
+% Non-italic proof label
+\makeatletter
+\renewenvironment{proof}[1][\proofname]{\par
+  \pushQED{\qed}%
+  \normalfont \topsep6\p@\@plus6\p@\relax
+  \trivlist
+  \item[\hskip\labelsep\bfseries #1\@addpunct{.}]\ignorespaces
+}{%
+  \popQED\endtrivlist\@endpefalse
+}
+\makeatother
+
+% Solution environment: "Solution" label (non-italic via redefined proof)
 \newenvironment{solution}{%
-  \begin{proof}[Solution]%\renewcommand{\qedsymbol}{$\|$}%
+  \begin{proof}[Solution]%
 }{%
   \end{proof}%
 }
 
-% equation numbering: continuous (no section prefix)
-% (intentionally omitting \numberwithin{equation}{section})
+% Custom commands
+\DeclareMathOperator\prb{\mathsf{P}}
+\DeclareMathOperator\expc{\mathsf{E}}
+\DeclareMathOperator\var{var}
+\DeclareMathOperator\cor{cor}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\vech}{vech}
+\DeclareMathOperator{\avec}{vec}
+\DeclareMathOperator{\rank}{r}
+\newcommand{\dd}{\mathrm{d}}
 
 \usepackage{parskip}
 \usepackage{etoolbox}
@@ -64,34 +76,22 @@
 \AtBeginEnvironment{remark}{\vspace{\parskip}}
 \AtBeginEnvironment{exercise}{\vspace{\parskip}}
 
-\usepackage{xcolor}
-\usepackage{cancel}
-
-% Convenient macros for this paper
-\DeclareMathOperator{\tr}{tr}
-\DeclareMathOperator{\vech}{vech}
-\DeclareMathOperator{\avec}{vec}
-\DeclareMathOperator{\rank}{r}
-\newcommand{\dd}{\mathrm{d}}
-
-\usepackage{titling}
-\newcommand{\subtitle}[1]{%
-	\posttitle{%
-		\par\end{center}
-	\begin{center}\large#1\end{center}
-	\vskip0.1em}}%
+% Compact section spacing
+\usepackage{titlesec}
+\titlespacing*{\section}{0pt}{6pt}{3pt}
+\titlespacing*{\subsection}{0pt}{4pt}{2pt}
+\titlespacing*{\subsubsection}{0pt}{3pt}{1pt}
 
 \begin{document}
 
-\title{Introduction to Matrix Calculus}
-\subtitle{Expanded ``A Gentle Introduction to Matrix Calculus'' by Jan R. Magnus}
-\author{}
-%\title{A gentle introduction to matrix calculus}
-%\author{Jan R.\ Magnus\\[6pt]
-%\small Department of Econometrics \& Data Science,\\
-%\small Vrije Universiteit Amsterdam, and Tinbergen Institute, Amsterdam, The Netherlands}
-\date{}
-\maketitle
+% Compact title (no \maketitle top-padding)
+\begingroup
+\centering
+{\LARGE\bfseries Introduction to Matrix Calculus\par}
+\vspace{2pt}
+{\large Expanded ``A Gentle Introduction to Matrix Calculus'' by Jan R.\ Magnus\par}
+\vspace{4pt}
+\endgroup
 
 %\begin{abstract}
 %Matrix calculus is an important tool when we wish to optimize functions involving matrices or perform sensitivity analyses. This tutorial is designed to make matrix calculus more accessible to graduate students and young researchers. % [cite: 5]

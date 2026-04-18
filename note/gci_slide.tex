@@ -1,20 +1,62 @@
-\documentclass[12pt,a4paper]{article}
-\usepackage[top=10mm,left=15mm,right=15mm,bottom=15mm]{geometry}
+\documentclass[14pt]{extarticle}
+
+% 16:9 page (presentation aspect ratio) - tightened margins
+\usepackage[
+  paperwidth=257mm,
+  paperheight=144.5mm,
+  top=9mm,
+  bottom=7mm,
+  left=5mm,
+  right=5mm,
+  headheight=7mm,
+  headsep=2mm,
+  footskip=4mm
+]{geometry}
+
 \usepackage{amsmath,amsthm,amssymb,amsfonts}
 \usepackage{mathtools}
 \usepackage{booktabs,array}
-\usepackage{enumitem}
+\usepackage[shortlabels]{enumitem}
 \usepackage{xcolor}
-\usepackage{tocloft}
-% Compact TOC
-\setlength{\cftbeforesecskip}{2pt}
-\setlength{\cftbeforesubsecskip}{0pt}
-\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\usepackage{fancyhdr}
+\usepackage[most]{tcolorbox}
+\tcbuselibrary{theorems,skins,breakable}
 \usepackage{hyperref}
-\hypersetup{colorlinks=true,linkcolor=blue!70!black,urlcolor=blue!80!black,citecolor=blue!70!black}
+\hypersetup{colorlinks=true,linkcolor=blue!60!black,urlcolor=blue!70!black,citecolor=blue!60!black}
 \usepackage{cleveref}
 
-% Theorem environments
+%%% COLOR PALETTE %%%
+\definecolor{hdrBG}{HTML}{1E3A8A}        % header blue
+\definecolor{accent}{HTML}{0EA5E9}       % subsection cyan
+\definecolor{defBG}{HTML}{EFF6FF}        % definition: soft blue
+\definecolor{defFR}{HTML}{2563EB}
+\definecolor{thmBG}{HTML}{FEF3C7}        % theorem: soft amber
+\definecolor{thmFR}{HTML}{B45309}
+\definecolor{lemBG}{HTML}{FEF9C3}        % lemma: lighter amber
+\definecolor{lemFR}{HTML}{A16207}
+\definecolor{corBG}{HTML}{FDF2F8}        % corollary: soft pink
+\definecolor{corFR}{HTML}{BE185D}
+\definecolor{propBG}{HTML}{F3E8FF}       % proposition: soft purple
+\definecolor{propFR}{HTML}{7C3AED}
+\definecolor{proofBG}{HTML}{F8FAFC}      % proof: very soft gray
+\definecolor{proofFR}{HTML}{64748B}
+\definecolor{remBG}{HTML}{ECFDF5}        % remark: soft green
+\definecolor{remFR}{HTML}{047857}
+\definecolor{notBG}{HTML}{F1F5F9}        % notation: slate
+\definecolor{notFR}{HTML}{475569}
+
+%%% HEADER / FOOTER %%%
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\color{hdrBG!30}\hrule width\textwidth height0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyhead[L]{\small\color{hdrBG}\textbf{Gaussian Correlation Inequality}}
+\fancyhead[R]{\small\color{hdrBG}\leftmark}
+\fancyfoot[R]{\small\color{gray}\thepage}
+\renewcommand{\sectionmark}[1]{\markboth{\S\thesection~#1}{}}
+
+%%% AMSTHM ENVIRONMENTS %%%
 \theoremstyle{definition}
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{lemma}[theorem]{Lemma}
@@ -38,7 +80,67 @@
 }
 \makeatother
 
-% Custom commands
+%%% WRAP ENVIRONMENTS IN COLORED BOXES %%%
+%%% Theorem-like statements: NOT breakable - must appear whole on a single page %%%
+%%% Proof / Remark / Notation: breakable %%%
+\tcolorboxenvironment{definition}{
+  enhanced,breakable=false,
+  colback=defBG,colframe=defFR,
+  boxrule=0.6pt,arc=2pt,
+  left=3mm,right=3mm,top=1.5mm,bottom=1.5mm,
+  before skip=5pt,after skip=5pt
+}
+\tcolorboxenvironment{theorem}{
+  enhanced,breakable=false,
+  colback=thmBG,colframe=thmFR,
+  boxrule=0.6pt,arc=2pt,
+  left=3mm,right=3mm,top=1.5mm,bottom=1.5mm,
+  before skip=5pt,after skip=5pt
+}
+\tcolorboxenvironment{lemma}{
+  enhanced,breakable=false,
+  colback=lemBG,colframe=lemFR,
+  boxrule=0.6pt,arc=2pt,
+  left=3mm,right=3mm,top=1.5mm,bottom=1.5mm,
+  before skip=5pt,after skip=5pt
+}
+\tcolorboxenvironment{corollary}{
+  enhanced,breakable=false,
+  colback=corBG,colframe=corFR,
+  boxrule=0.6pt,arc=2pt,
+  left=3mm,right=3mm,top=1.5mm,bottom=1.5mm,
+  before skip=5pt,after skip=5pt
+}
+\tcolorboxenvironment{proposition}{
+  enhanced,breakable=false,
+  colback=propBG,colframe=propFR,
+  boxrule=0.6pt,arc=2pt,
+  left=3mm,right=3mm,top=1.5mm,bottom=1.5mm,
+  before skip=5pt,after skip=5pt
+}
+\tcolorboxenvironment{remark}{
+  enhanced,breakable,
+  colback=remBG,colframe=remFR,
+  leftrule=3pt,rightrule=0pt,toprule=0pt,bottomrule=0pt,
+  arc=0pt,left=3mm,right=2mm,top=1mm,bottom=1mm,
+  before skip=4pt,after skip=4pt
+}
+\tcolorboxenvironment{notation}{
+  enhanced,breakable,
+  colback=notBG,colframe=notFR,
+  leftrule=3pt,rightrule=0pt,toprule=0pt,bottomrule=0pt,
+  arc=0pt,left=3mm,right=2mm,top=1mm,bottom=1mm,
+  before skip=4pt,after skip=4pt
+}
+\tcolorboxenvironment{proof}{
+  enhanced,breakable,
+  colback=proofBG,colframe=proofFR,
+  leftrule=2pt,rightrule=0pt,toprule=0pt,bottomrule=0pt,
+  arc=0pt,left=3mm,right=2mm,top=1mm,bottom=1mm,
+  before skip=4pt,after skip=4pt
+}
+
+%%% CUSTOM COMMANDS (from gci.tex) %%%
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\PP}{\mathsf{P}}
@@ -53,35 +155,47 @@
 \newcommand{\caln}{\mathcal{N}}
 \newcommand{\Mn}{M_{n\times m}}
 
+%%% SPACING %%%
 \usepackage{parskip}
-\usepackage{etoolbox}
+\setlength{\parskip}{3pt}
+\setlength{\jot}{4pt}
 \AtBeginEnvironment{definition}{\vspace{\parskip}}
-\AtBeginEnvironment{example}{\vspace{\parskip}}
 \AtBeginEnvironment{lemma}{\vspace{\parskip}}
 \AtBeginEnvironment{theorem}{\vspace{\parskip}}
 \AtBeginEnvironment{corollary}{\vspace{\parskip}}
-\AtBeginEnvironment{conjecture}{\vspace{\parskip}}
 \AtBeginEnvironment{proposition}{\vspace{\parskip}}
 \AtBeginEnvironment{notation}{\vspace{\parskip}}
 \AtBeginEnvironment{remark}{\vspace{\parskip}}
-\AtBeginEnvironment{exercise}{\vspace{\parskip}}
 
-% Compact section spacing
+%%% SECTION STYLING %%%
 \usepackage{titlesec}
-\titlespacing*{\section}{0pt}{6pt}{3pt}
-\titlespacing*{\subsection}{0pt}{4pt}{2pt}
-\titlespacing*{\subsubsection}{0pt}{3pt}{1pt}
+\titleformat{\section}
+  {\color{hdrBG}\normalfont\Large\bfseries}{\thesection}{0.7em}{}
+\titleformat{\subsection}
+  {\color{accent}\normalfont\large\bfseries}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{4pt}{2pt}
+\titlespacing*{\subsection}{0pt}{4pt}{1pt}
+
+\title{\color{hdrBG}\bfseries\Huge The Gaussian Correlation Inequality after Royen}
+\author{}
+\date{}
 
 \begin{document}
 
-% Compact title (no \maketitle top-padding)
-\begingroup
-\centering
-{\LARGE\bfseries The Gaussian Correlation Inequality\par}
-\vspace{2pt}
-{\normalsize After T.\ Royen (2014) and R.\ Lata{\l}a \& D.\ Matlak (2015)\par}
-\vspace{4pt}
-\endgroup
+%%% TITLE PAGE %%%
+\begin{titlepage}
+\thispagestyle{empty}
+\vspace*{\fill}
+\begin{center}
+{\color{hdrBG}\bfseries\fontsize{36}{44}\selectfont The Gaussian Correlation Inequality}\\[0.6em]
+%{\color{hdrBG}\bfseries\fontsize{28}{34}\selectfont after Royen}\\[1.2em]
+{\color{accent}\bfseries\Large Slide edition}\\[2em]
+\rule{60mm}{0.8pt}\\[.5em]
+{\large After T.\ Royen (2014) and R.\ Lata{\l}a \& D.\ Matlak (2015)}\\[.5em]
+\rule{60mm}{0.8pt}
+\end{center}
+\vspace*{\fill}
+\end{titlepage}
 
 
 %% ====================================================================
@@ -96,12 +210,10 @@
   \end{equation}
 \end{theorem}
 
-These notes prove \Cref{thm:gcc_geom} by Royen's analytic argument,
+These slides prove \Cref{thm:gcc_geom} by Royen's analytic argument,
 following Lata{\l}a--Matlak's Gaussian-only exposition.  The inputs
 are the Laplace transform of a squared Gaussian, a determinant
 expansion, dominated convergence, and integration by parts.
-Historical background and further remarks are collected in
-\Cref{sec:notes}.
 
 \begin{notation}\label{not:conventions}
   \leavevmode
@@ -121,7 +233,7 @@ Historical background and further remarks are collected in
   \end{itemize}
 \end{notation}
 
-We will use three standard facts without further comment:
+We will use three standard facts without further comment.
 
 \begin{lemma}[Square root]\label{lem:sqrt}
   For any $A\succcurlyeq 0$ there exists a unique $A^{1/2}\succcurlyeq 0$ with
@@ -173,8 +285,7 @@ Rockafellar, \emph{Convex Analysis}, Cor.\ 11.4.2.)
   \]
 \end{definition}
 
-We assume $C\succ 0$ throughout the proof; the extension to singular
-$C\succcurlyeq 0$ is deferred to \Cref{note:singular}.
+We assume $C\succ 0$ throughout the proof.
 
 \begin{definition}\label{def:symconvex}
   $K\subseteq\R^n$ is \emph{symmetric} if $K=-K$.  A \emph{symmetric
@@ -209,9 +320,8 @@ $C\succcurlyeq 0$ is deferred to \Cref{note:singular}.
       $\sup_{x\in K}\langle w,x\rangle\leqslant a$ and
       $\langle w,y\rangle\geqslant a+\varepsilon|w|$.
       Since $K$ is symmetric and convex, $0=\tfrac12 x+\tfrac12(-x)\in K$
-      for any $x\in K$ (taking any $x\in K$, e.g.\ because $K\ne\varnothing$),
-      hence $a\geqslant\langle w,0\rangle=0$; and $K=-K$ gives
-      $\sup_{x\in K}|\langle w,x\rangle|\leqslant a$.
+      for any $x\in K$, hence $a\geqslant\langle w,0\rangle=0$; and
+      $K=-K$ gives $\sup_{x\in K}|\langle w,x\rangle|\leqslant a$.
       Pick $(w',a')\in\mathbb{Q}^d\times\mathbb{Q}_{>0}$ with
       $|w'-w|<\delta$, $|a'-a|<\delta$.  Then
       \[
@@ -327,14 +437,14 @@ the GCI reduces to:
       summand corresponds to a choice of $J\subseteq[n]$ (positions where
       $a_{i\sigma(i)}$ is selected); non-zero contributions require
       $\sigma(i)=i$ for $i\notin J$.  The $\sigma$'s fixing $[n]\setminus J$
-      correspond to permutations of $J$, giving $\sum_J|A_J|$; the $J=\varnothing$
-      term is $1$.
+      correspond to permutations of $J$, giving $\sum_J|A_J|$; the
+      $J=\varnothing$ term is $1$.
 
-    \item Let $A_{11}^{1/2},A_{22}^{1/2}$ be the positive
-      symmetric square roots (\Cref{lem:sqrt}), invertible by assumption.
+    \item Let $A_{11}^{1/2},A_{22}^{1/2}$ be the positive symmetric
+      square roots (\Cref{lem:sqrt}), invertible by assumption.
       Setting $P:=A_{11}^{-1/2}A_{12}A_{22}^{-1/2}$ and
-      $Q:=A_{22}^{-1/2}A_{21}A_{11}^{-1/2}$, a direct block multiplication
-      gives
+      $Q:=A_{22}^{-1/2}A_{21}A_{11}^{-1/2}$, a direct block
+      multiplication gives
       \[
         A=\diag(A_{11}^{1/2},A_{22}^{1/2})\,
         \bigl(\begin{smallmatrix}I&P\\Q&I\end{smallmatrix}\bigr)\,
@@ -365,7 +475,8 @@ the GCI reduces to:
       Setting $x:=A_{11}^{-1/2}u$, $y:=A_{22}^{-1/2}v$:
       $\langle Qu,v\rangle^2\leqslant|u|^2|v|^2$, i.e.,
       $\|Q\|_{\mathrm{op}}\leqslant 1$, equivalently
-      $0\preccurlyeq Q^\top Q\preccurlyeq I_{n_1}$.  For $A$ symmetric, $Q=P^\top$, so
+      $0\preccurlyeq Q^\top Q\preccurlyeq I_{n_1}$.  For $A$ symmetric,
+      $Q=P^\top$, so
       $A_{11}^{-1/2}A_{12}A_{22}^{-1}A_{21}A_{11}^{-1/2}=PP^\top=Q^\top Q$.
   \end{enumerate}
 \end{proof}
@@ -435,7 +546,8 @@ $Z_i(\tau):=\tfrac{1}{2}X_i(\tau)^2$.
           \sum_\varepsilon e^{-\langle C(\tau)^{-1}\sqrt{x}_\varepsilon,
           \sqrt{x}_\varepsilon\rangle},
       \end{align*}
-      which is \eqref{eq:fxtau} after combining $(2\pi)^{-n/2}2^{-n/2}=(4\pi)^{-n/2}$.
+      which is \eqref{eq:fxtau} after combining
+      $(2\pi)^{-n/2}2^{-n/2}=(4\pi)^{-n/2}$.
 
     \item We build a $\tau$-uniform integrable dominating function for
       $\partial_\tau f$ via four steps.
@@ -794,13 +906,13 @@ Hence \Cref{thm:gcc2} follows from:
 
 \Cref{prop:key} amounts to $\int_K\partial_\tau f(x,\tau)\,\dd x\geqslant 0$
 for each $\tau\in(0,1)$ (\Cref{lem:diff}(ii) with $\lambda=0$ justifies
-$\partial_\tau\int_K f=\int_K\partial_\tau f$).  We obtain this by:
+$\partial_\tau\int_K f=\int_K\partial_\tau f$).  Strategy:
 \begin{enumerate}[label=(\alph*)]
-  \item computing the Laplace transform of $\partial_\tau f$ and
-    matching it with that of a sum of derivatives of $h_\tau$;
-  \item using Laplace injectivity (\Cref{thm:laplace_inj}) to get an
+  \item compute the Laplace transform of $\partial_\tau f$ and match
+    it with that of a sum of derivatives of $h_\tau$;
+  \item use Laplace injectivity (\Cref{thm:laplace_inj}) to get an
     a.e.\ pointwise identity;
-  \item integrating this identity over $K$.
+  \item integrate this identity over $K$.
 \end{enumerate}
 
 \paragraph{Step (a).}  Since $Z_i(\tau)=\tfrac12 X_i(\tau)^2$, applying
@@ -955,255 +1067,5 @@ which proves \Cref{prop:key} and hence \Cref{thm:gcc2}.  \qed
 \begin{proof}
   Restatement of \Cref{thm:gcc_geom} for this $K,L$.
 \end{proof}
-
-
-%% ====================================================================
-\section{Notes}\label{sec:notes}
-%% ====================================================================
-
-\subsection{Historical remarks}\label{note:history}
-
-The conjecture originates in statistical work on joint coverage of
-rectangular confidence regions for multivariate normal means:
-Dunnett--Sobel (1955), Dunn (1958).  Das Gupta, Eaton, Olkin,
-Perlman, Savage, and Sobel (1972) stated it in geometric form.
-Partial results before Royen:
-\begin{itemize}[nosep]
-  \item Khatri (1967) and \v{S}id\'ak (1967), independently: one set
-    is a symmetric strip (= intersection of symmetric slabs).  This
-    is our \Cref{cor:sidak}.
-  \item Pitt (1977): $d=2$.
-  \item Schechtman--Schlumprecht--Zinn (1998): both sets are
-    centered ellipsoids.
-  \item Harg\'e (1999): one set is a centered ellipsoid.
-\end{itemize}
-Royen (2014) proved the full conjecture and, more generally, the
-analogous inequality for multivariate gamma vectors
-$\Gamma_n(\alpha,R)$ with $\alpha>0$ half-integer; the Gaussian case
-is $\alpha=\tfrac{1}{2}$.  Lata{\l}a--Matlak (2015) specialised and
-reorganised the argument for the Gaussian case, which is the version
-followed here.
-
-\subsection{Extension to singular covariance}\label{note:singular}
-
-Let $C\succcurlyeq 0$ with $\rank C=r\leqslant n$.  By the spectral theorem,
-$C=O\diag(\lambda_1,\ldots,\lambda_r,0,\ldots,0)O^\top$ with $O$
-orthogonal and $\lambda_i>0$.  Set $B\in M_{n\times r}$ to have the
-$i$-th column equal to $\sqrt{\lambda_i}\,O_{\bullet i}$; then
-$BB^\top=C$ and $B$ has full column rank.  If $G\sim\caln(0,I_r)$,
-then $BG\sim\caln(0,BB^\top)=\caln(0,C)$.
-
-For closed symmetric convex $K\subseteq\R^n$:
-\begin{itemize}[nosep]
-  \item $B^{-1}(K)=\{g\in\R^r:Bg\in K\}$ is closed by continuity of
-    $g\mapsto Bg$;
-  \item convex, since $Bg_1,Bg_2\in K$ implies
-    $B(\alpha g_1+(1-\alpha)g_2)=\alpha Bg_1+(1-\alpha)Bg_2\in K$ by
-    convexity of $K$;
-  \item symmetric, since $g\in B^{-1}(K)\iff Bg\in K\iff -Bg\in K\iff
-    -g\in B^{-1}(K)$.
-\end{itemize}
-Hence, writing $\mu=\caln(0,C)$ and $\nu=\caln(0,I_r)$,
-\[
-  \mu(K\cap L)
-  =\PP(BG\in K\cap L)
-  =\nu(B^{-1}(K)\cap B^{-1}(L))
-  \geqslant\nu(B^{-1}(K))\nu(B^{-1}(L))
-  =\mu(K)\mu(L),
-\]
-where the inequality is \Cref{thm:gcc_geom} in dimension $r$
-(non-singular case, already established).
-
-\subsection{The choice $k=3$}\label{note:why_k3}
-
-Two constraints pin down the shape parameter.
-\begin{enumerate}
-  \item Laplace-side matching.  Differentiating
-    $|I+\Lambda C(\tau)|^{-1/2}$ in $\tau$ yields a linear combination
-    of $|I+\Lambda C(\tau)|^{-3/2}\prod_{j\in J}\lambda_j$
-    (\eqref{eq:lt_of_ftau}).  To rewrite this as the Laplace transform
-    of a density, we need an auxiliary $h_\tau$ whose Laplace
-    transform is $|I+\Lambda C(\tau)|^{-3/2}$, i.e.,
-    $h_\tau=h_{k,C(\tau)}$ with $k=3$ in \Cref{lem:LaplhkC}.
-
-  \item Integration by parts.  \Cref{lem:proph}(ii)--(iii) require
-    $\alpha_i=k/2>1$ both for $h_\alpha(x)\to 0$ as $x_i\to 0+$ and for
-    validity of the derivative identity
-    $\partial_xg_\alpha=g_{\alpha-1}-g_\alpha$.  $k=3$ gives
-    $\alpha_i=\tfrac{3}{2}>1$.
-\end{enumerate}
-
-The method applies whenever the Laplace transform of the
-underlying squared vector has the form $|I+\Lambda C|^{-\beta}$ with
-$\beta+1>1$, i.e., $\beta>0$; in the Gaussian case $\beta=\tfrac{1}{2}$.
-This is the range covered by Royen's multivariate gamma result.
-
-\subsection{Strict positivity of $a_J$}\label{note:phase}
-
-Under $C\succ 0$, the matrix
-$C_{J_1}^{-1/2}C_{J_1J_2}C_{J_2}^{-1}C_{J_2J_1}C_{J_1}^{-1/2}$ is
-the matrix of squared canonical correlations between the coordinate
-blocks $J_1$ and $J_2$.  Its eigenvalues $\mu_{J_1,J_2}(i)$ satisfy
-$\mu_{J_1,J_2}(i)\in[0,1)$ strictly, since $|C(\tau)_J|>0$ for all
-$\tau\in[0,1]$ when $C\succ 0$ (the endpoints $\tau=\pm 1$ would be
-needed to attain $\mu=1$).  Consequently, for any $J$ with
-$J_1,J_2\ne\varnothing$ and $C_{J_1J_2}\ne 0$, some $\mu_{J_1,J_2}(i)
->0$, so $a_J(\tau)>0$ on $(0,1]$.  At $\tau=0$, every $a_J(0)=0$
-because each $|C(\tau)_J|$ is even in $\tau$ (see \eqref{eq:CtauJ}).
-
-\subsection{Equality in the GCI}\label{note:equality}
-
-\begin{proposition}\label{prop:equality}
-  Let $X\sim\caln(0,C)$, $C\succ 0$, and let $K,L\subseteq\R^n$ be as
-  in \Cref{thm:gcc2}.  Then equality
-  $\PP(X\in K\cap L)=\PP(X\in K)\PP(X\in L)$ holds iff $C_{12}=0$.
-\end{proposition}
-
-\begin{proof}
-  If $C_{12}=0$, then $C(\tau)=\diag(C_{11},C_{22})$ for all $\tau$,
-  so the two coordinate blocks of $X$ are independent and both sides
-  of \eqref{eq:gcc2} are equal.
-
-  Conversely, suppose equality.  From the fundamental theorem of
-  calculus and \eqref{eq:key_identity}:
-  \[
-    \PP(X\in K\cap L)-\PP(X\in K)\PP(X\in L)
-    =\int_0^1\!\!\sum_{J}\tfrac{1}{2}a_J(\tau)
-    \int_{\prod_{J^c}[0,s_j]}h_\tau(s_J,x_{J^c})\,\dd x_{J^c}\,\dd\tau.
-  \]
-  Each $a_J$ is polynomial in $\tau$ (since $|C(\tau)_J|$ is
-  polynomial in the entries, which are affine in $\tau$), hence
-  continuous on $[0,1]$ with $a_J\geqslant 0$.  The inner integral is $>0$
-  for every $\tau\in[0,1]$: $g_{3/2}(\cdot,y)>0$ on $(0,\infty)$ for
-  each $y\geqslant 0$, because every term in the series of
-  \Cref{def:ncgamma} is nonnegative and the $k=0$ term equals
-  $x^{1/2}e^{-x-y}/\Gamma(3/2)>0$; taking expectation over $Y$
-  preserves strict positivity, so $h_\tau>0$ on $(0,\infty)^n$ and the
-  integral over any product $\prod_{J^c}[0,s_j]$ of positive lengths
-  is $>0$.
-
-  Equality thus forces $a_J(\tau)\equiv 0$ on $[0,1]$ (by continuity)
-  for every $J$ with $J_1,J_2\ne\varnothing$.  By \Cref{note:phase},
-  this means $C_{J_1J_2}=0$ for every such $J$.  Taking $J=\{i,j\}$
-  with $i\leqslant n_1<j\leqslant n$ yields $C_{ij}=0$, so $C_{12}=0$.
-\end{proof}
-
-\subsection{Verification of \eqref{eq:boundary_eval} for $n=2$}
-  \label{note:boundary}
-
-For $J=\{1\}$:
-\[
-  \int_0^{s_1}\!\!\int_0^{s_2}\partial_{x_1}h_\tau\,\dd x_1\,\dd x_2
-  =\int_0^{s_2}\bigl(h_\tau(s_1,x_2)-h_\tau(0+,x_2)\bigr)\dd x_2
-  =\int_0^{s_2}h_\tau(s_1,x_2)\,\dd x_2.
-\]
-For $J=\{1,2\}$:
-$\int_0^{s_1}\!\int_0^{s_2}\partial^2_{x_1x_2}h_\tau=h_\tau(s_1,s_2)
--h_\tau(s_1,0+)-h_\tau(0+,s_2)+h_\tau(0+,0+)=h_\tau(s_1,s_2)$.
-Both use $h_\tau(\cdot)\to 0$ at $0+$ from \Cref{lem:proph}(ii).
-
-\subsection{Necessity of symmetry}\label{note:symmetry}
-
-Without $K=-K$, $L=-L$ the inequality fails.  Under $\mu=\caln(0,I_2)$
-take
-\[
-  K:=\{x:x_1\geqslant 1\},
-  \qquad
-  L:=\{x:x_1\leqslant -1\}.
-\]
-Both are closed convex, neither is symmetric.  Then
-$\mu(K)=\mu(L)=1-\Phi(1)\approx 0.1587$, so
-$\mu(K)\mu(L)\approx 0.0252$, while $K\cap L=\varnothing$ gives
-$\mu(K\cap L)=0<\mu(K)\mu(L)$.
-
-\subsection{\v{S}id\'ak correction for multiple testing}\label{note:fwer}
-
-Let $Z_1,\ldots,Z_n$ be jointly Gaussian with $Z_i\sim\caln(0,1)$
-marginally.  By \Cref{cor:sidak},
-\[
-  \PP(|Z_i|>c\text{ for some }i)
-  \leqslant 1-(2\Phi(c)-1)^n,
-\]
-\emph{independently of the joint covariance}.  Setting the right side
-equal to $\alpha$ gives $c=\Phi^{-1}\bigl(\tfrac{1+(1-\alpha)^{1/n}}{2}
-\bigr)$, the \v{S}id\'ak threshold.
-
-\subsection{Related correlation inequalities}\label{note:correlations}
-
-\begin{center}
-\renewcommand{\arraystretch}{1.3}
-\begin{tabular}{llll}
-\hline
- & \textbf{Measure} & \textbf{Events/functions} & \textbf{Conclusion} \\
-\hline
-GCI & Centered Gaussian on $\R^n$ & Symmetric convex $K,L$
- & $\mu(K\cap L)\geqslant\mu(K)\mu(L)$ \\
-FKG (1971) & Log-concave on a lattice & Monotone $f,g$
- & $\EE[fg]\geqslant\EE f\cdot\EE g$ \\
-Harris (1960) & Product on $\{0,1\}^n$ & Monotone events $A,B$
- & $\PP(A\cap B)\geqslant\PP(A)\PP(B)$ \\
-\hline
-\end{tabular}
-\end{center}
-
-FKG contains Harris as a special case.  The GCI is formally
-unrelated to FKG: symmetric convex sets in $\R^n$ are not monotone
-for any coordinate order, and monotone events on a lattice are not
-symmetric.
-
-\subsection{Open questions}\label{note:open}
-
-\begin{enumerate}
-  \item Quantitative GCI.  No explicit nontrivial lower bound on the
-    excess $\mu(K\cap L)-\mu(K)\mu(L)$ is known in the generality of
-    \Cref{thm:gcc_geom}.  Candidates depending on Gaussian widths,
-    eccentricity, and the spectral gap of $C$ have been proposed but
-    not established.
-  \item Non-Gaussian extensions.  Counterexamples rule out general
-    log-concave measures.  The exact class of product-type
-    inequalities valid for symmetric convex sets — beyond the Gaussian
-    and multivariate-gamma families of Royen — is open.
-  \item Functional forms.  Whether
-    $\EE[f(X)g(X)]\geqslant\EE f(X)\,\EE g(X)$ holds for centered
-    Gaussian $X$ and even quasi-concave $f,g\geqslant 0$ is open;
-    partial results are in Lata\l{}a--Matlak (2015, Remark~3).
-\end{enumerate}
-
-
-%% ====================================================================
-\section*{References}
-%% ====================================================================
-
-\begin{enumerate}[nosep,label={[\arabic*]}]
-  \item T.\ Royen, ``A simple proof of the Gaussian correlation
-    conjecture extended to multivariate gamma distributions,''
-    \textit{Far East J.\ Theor.\ Stat.}\ \textbf{48} (2014), 139--145.
-    \texttt{arXiv:1408.1028}.
-  \item R.\ Lata{\l}a and D.\ Matlak, ``Royen's proof of the Gaussian
-    correlation inequality,'' in \textit{Geometric Aspects of Functional
-    Analysis}, Lecture Notes in Math.\ \textbf{2169}, Springer, 2017,
-    pp.\ 265--275.  \texttt{arXiv:1512.08776}.
-  \item S.\ Das Gupta, M.\ L.\ Eaton, I.\ Olkin, M.\ Perlman,
-    L.\ J.\ Savage, and M.\ Sobel, ``Inequalities on the probability
-    content of convex regions for elliptically contoured
-    distributions,'' \textit{Proc.\ Sixth Berkeley Symp.}, 1972.
-  \item L.\ D.\ Pitt, ``A Gaussian correlation inequality for symmetric
-    convex sets,'' \textit{Ann.\ Probab.}\ \textbf{5} (1977), 470--474.
-  \item C.\ G.\ Khatri, ``On certain inequalities for normal
-    distributions,'' \textit{Ann.\ Math.\ Statist.}\ \textbf{38}
-    (1967), 1853--1867.
-  \item Z.\ \v{S}id\'ak, ``Rectangular confidence regions for the means
-    of multivariate normal distributions,'' \textit{J.\ Amer.\ Statist.\
-    Assoc.}\ \textbf{62} (1967), 626--633.
-  \item G.\ Schechtman, T.\ Schlumprecht, and J.\ Zinn, ``On the
-    Gaussian measure of the intersection,'' \textit{Ann.\ Probab.}\
-    \textbf{26} (1998), 346--357.
-  \item G.\ Harg\'e, ``A particular case of correlation inequality for
-    the Gaussian measure,'' \textit{Ann.\ Probab.}\ \textbf{27} (1999),
-    1939--1951.
-  \item C.\ Borell, ``A Gaussian correlation inequality for certain
-    bodies in $\R^n$,'' \textit{Math.\ Ann.}\ \textbf{256} (1981),
-    569--573.
-\end{enumerate}
 
 \end{document}
