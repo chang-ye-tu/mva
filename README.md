@@ -44,7 +44,6 @@
 | 04/10    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mc_slide.pdf">Matrix Calculus</a>                         |
 | 04/17    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mc_slide.pdf">Matrix Calculus</a>                         |
 | 04/24    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/qa_mid.pdf">**期中考**</a>                                |
-| 05/01    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/clm_r.pdf">Classical Linear Models: R Implementations</a> |
 | 05/08    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/gci_slide.pdf">The Gaussian Correlation Inequality</a>    |
 | 05/15    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mlm_slide.pdf">Modern Linear Models</a>                   |
 | 05/22    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mlm_slide.pdf">Modern Linear Models</a>                   |
