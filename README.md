@@ -47,7 +47,7 @@
 | 05/08    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/gci_slide.pdf">The Gaussian Correlation Inequality</a>    |
 | 05/15    | <a href="https://www.math.uci.edu/~rvershyn/teaching/hdp/hdp.html">線上上課：Vershynin's "High-Dimensional Probability and Applications in Data Science"</a> |
 | 05/22    | 學術演講：梁賡義院士                  |
-| 05/29    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/drm_slide.pdf">Dimensionality Reduction Methods</a>       |
+| 05/29    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mlm_slide.pdf">Modern Linear Models</a>       |
 | 06/05    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/drm_slide.pdf">Dimensionality Reduction Methods</a>       |
 | 06/12    | **期末考**                                                                                                             |
 
