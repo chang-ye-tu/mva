@@ -1,0 +1,466 @@
+\documentclass[14pt]{extarticle}
+
+% 16:9 page (presentation aspect ratio)
+\usepackage[
+  paperwidth=257mm, paperheight=144.5mm,
+  top=9mm, bottom=7mm, left=8mm, right=8mm,
+  headheight=7mm, headsep=2mm, footskip=4mm
+]{geometry}
+
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+\usepackage{booktabs,array}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage[most]{tcolorbox}
+\tcbuselibrary{theorems,skins,breakable}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!60!black,urlcolor=blue!70!black}
+
+%%% COLOR PALETTE %%%
+\definecolor{hdrBG}{HTML}{1E3A8A}
+\definecolor{exBG}{HTML}{FFF7ED}   \definecolor{exFR}{HTML}{C2410C}   % problem: soft orange
+\definecolor{solBG}{HTML}{F8FAFC}  \definecolor{solFR}{HTML}{64748B}  % solution: soft gray
+\definecolor{remBG}{HTML}{ECFDF5}  \definecolor{remFR}{HTML}{047857}  % remark: soft green
+
+%%% HEADER / FOOTER %%%
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\color{hdrBG!30}\hrule width\textwidth height0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyhead[L]{\small\color{hdrBG}\textbf{Final Test Bank: Concentration \& Correlation Inequalities}}
+\fancyfoot[R]{\small\color{gray}\thepage}
+
+%%% THEOREM-LIKE ENVIRONMENTS %%%
+\theoremstyle{definition}
+\newtheorem{exercise}{Problem}
+\newtheorem*{solution}{Solution}
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+%%% COLORED BOXES %%%
+\tcolorboxenvironment{exercise}{
+  enhanced,breakable,
+  colback=exBG,colframe=exFR,
+  leftrule=3pt,rightrule=0pt,toprule=0pt,bottomrule=0pt,
+  arc=0pt,left=3mm,right=2mm,top=1mm,bottom=1mm,
+  before skip=5pt,after skip=3pt
+}
+\tcolorboxenvironment{solution}{
+  enhanced,breakable,
+  colback=solBG,colframe=solFR,
+  leftrule=2pt,rightrule=0pt,toprule=0pt,bottomrule=0pt,
+  arc=0pt,left=3mm,right=2mm,top=1mm,bottom=1mm,
+  before skip=3pt,after skip=3pt
+}
+\tcolorboxenvironment{remark}{
+  enhanced,breakable,
+  colback=remBG,colframe=remFR,
+  leftrule=3pt,rightrule=0pt,toprule=0pt,bottomrule=0pt,
+  arc=0pt,left=3mm,right=2mm,top=1mm,bottom=1mm,
+  before skip=3pt,after skip=6pt
+}
+
+%%% CUSTOM COMMANDS %%%
+\newcommand\expc{\mathsf{E}}
+\newcommand\prb{\mathsf{P}}
+\DeclareMathOperator\var{var}
+\DeclareMathOperator\cov{cov}
+\DeclareMathOperator\tr{tr}
+\DeclareMathOperator\rank{rank}
+\DeclareMathOperator\diag{diag}
+\DeclareMathOperator\erf{erf}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\bA}{\mathbf{A}}
+\newcommand{\bC}{\mathbf{C}}
+\newcommand{\bI}{\mathbf{I}}
+\newcommand{\bP}{\mathbf{P}}
+\newcommand{\bU}{\mathbf{U}}
+\newcommand{\bLambda}{\boldsymbol{\Lambda}}
+\newcommand{\bv}{\mathbf{v}}
+\newcommand{\bu}{\mathbf{u}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\bz}{\mathbf{z}}
+\newcommand{\bg}{\mathbf{g}}
+\newcommand{\bone}{\mathbf{1}}
+\newcommand{\bzero}{\mathbf{0}}
+\newcommand{\ip}[2]{\langle #1,\, #2 \rangle}
+\newcommand{\norm}[1]{\lVert #1 \rVert}
+
+\usepackage{parskip}
+\usepackage{etoolbox}
+\AtBeginEnvironment{exercise}{\vspace{\parskip}}
+\AtBeginEnvironment{solution}{\vspace{\parskip}}
+\AtBeginEnvironment{remark}{\vspace{\parskip}}
+
+\begin{document}
+
+\begingroup\centering
+{\LARGE\bfseries Multivariate Analysis: Final Test Bank\par}\vspace{2pt}
+{\large Elementary Concentration and Correlation Inequalities\par}
+\endgroup
+\vspace{2mm}
+
+\noindent\textbf{Conventions.}\; $Z\sim N(0,1)$ has CDF $\Phi$; $\bg\sim N(\bzero,\bI_n)$. For a square matrix, $|\bA|$ is the determinant and $\bA\succ0$ means symmetric positive definite. $\var,\cov$ are variance and covariance. The error function is $\erf(z)=\tfrac{2}{\sqrt\pi}\int_0^z e^{-u^2}\dd u$. A \emph{Rademacher} variable takes the values $+1$ and $-1$ with probability $\tfrac12$ each (mean $0$, variance $1$); the symbol $\varepsilon_i$ always denotes independent such variables.
+
+\noindent\textbf{Facts you may cite without proof.}
+\begin{enumerate}[label=(F\arabic*),leftmargin=1.3cm,nosep]
+\item\label{F:elem} $1+x\le e^x$ for all $x\in\Real$; Cauchy--Schwarz $\expc[UV]^2\le\expc U^2\,\expc V^2$; Jensen's inequality.
+\item\label{F:gauss} For $X\sim N(0,\sigma^2)$, $\expc e^{\lambda X}=e^{\sigma^2\lambda^2/2}$; $\int_\Real e^{\mu u^2-u^2/2}\tfrac{\dd u}{\sqrt{2\pi}}=(1-2\mu)^{-1/2}$ for $\mu<\tfrac12$; and $\prb(|Z|\le a)=2\Phi(a)-1=\erf(a/\sqrt2)$.
+\item\label{F:fourier} A density equals the inverse Fourier transform of its characteristic function, and for Gaussian-type integrands one may differentiate under the integral sign.
+\item\label{F:la} Symmetric matrices are orthogonally diagonalizable.
+\item\label{F:phi} $\varphi(y)=(e^y-1-y)/y^2$ is nondecreasing on $\Real$ (with $\varphi(0)=\tfrac12$).
+\item\label{F:union} Union bound: $\prb(\bigcup_iA_i)\le\sum_i\prb(A_i)$.
+\end{enumerate}
+
+\noindent\textbf{Orientation.}\; A \emph{concentration inequality} bounds the probability that a random quantity strays from its mean. Problems~\ref{prob:markov}--\ref{prob:chernoff} give the two ways to turn information about moments into a tail bound: Markov/Chebyshev (one or two moments, \emph{polynomial} decay) and the Chernoff method (the whole moment generating function, \emph{exponential} decay). Problems~\ref{prob:hlem}--\ref{prob:lowertail} develop the Chernoff method into the standard tools for sums of independent variables --- Hoeffding, the multiplicative Chernoff bound, Bennett--Bernstein --- and adjoin a bound for maxima, a second-moment \emph{lower} bound, and the $\chi^2$ case. Problem~\ref{prob:jl} is the flagship application, the Johnson--Lindenstrauss lemma. Problems~\ref{prob:disk}--\ref{prob:smalla} change subject to the \emph{positive correlation} of symmetric Gaussian events, ending with the bivariate Gaussian correlation inequality and a measurement of its slack.
+
+%================================================================
+\begin{exercise}[Markov, Chebyshev, and Cantelli]\label{prob:markov}
+These three bounds are the bedrock of the subject: they assume almost nothing --- no independence, no special distribution, only a moment or two --- and everything later refines them. Let $X$ have mean $\mu$ and variance $\sigma^2<\infty$.
+\begin{enumerate}[label=(\alph*)]
+\item (Markov) For $Y\ge0$ and $t>0$, prove $\prb(Y\ge t)\le\expc Y/t$.
+\item (Chebyshev) Prove $\prb(|X-\mu|\ge t)\le\sigma^2/t^2$.
+\item (Cantelli) Prove the one-sided refinement $\prb(X-\mu\ge t)\le\dfrac{\sigma^2}{\sigma^2+t^2}$ for $t>0$.
+\end{enumerate}
+\end{exercise}
+\begin{solution}
+\emph{Idea.} Everything follows from one picture: a nonnegative variable that is sometimes $\ge t$ must, on average, be at least $t$ times the chance of that. Chebyshev and Cantelli are Markov applied to well-chosen nonnegative functions of $X$.
+
+\textbf{(a)} Since $Y\ge0$, the pointwise inequality $t\,\mathbf 1_{\{Y\ge t\}}\le Y$ holds (on $\{Y\ge t\}$ it reads $t\le Y$, elsewhere $0\le Y$). Taking expectations, $t\,\prb(Y\ge t)\le\expc Y$.
+
+\textbf{(b)} The event $\{|X-\mu|\ge t\}$ equals $\{(X-\mu)^2\ge t^2\}$. Apply (a) to $Y=(X-\mu)^2$ at level $t^2$:
+\[
+\prb(|X-\mu|\ge t)=\prb\bigl((X-\mu)^2\ge t^2\bigr)\le\frac{\expc(X-\mu)^2}{t^2}=\frac{\sigma^2}{t^2}.
+\]
+So Chebyshev is just ``Markov for the squared deviation.''
+
+\textbf{(c)} For a one-sided bound we may \emph{shift} before squaring, which is what gains the improvement. For any $u\ge0$,
+\[
+\{X-\mu\ge t\}\subseteq\{X-\mu+u\ge t+u\}\subseteq\{(X-\mu+u)^2\ge(t+u)^2\},
+\]
+so by (a), and using $\expc(X-\mu+u)^2=\sigma^2+u^2$,
+\[
+\prb(X-\mu\ge t)\le\frac{\sigma^2+u^2}{(t+u)^2}.
+\]
+This holds for every $u\ge0$, so minimize the right side; the derivative vanishes at $u=\sigma^2/t$, giving the value $\sigma^2/(\sigma^2+t^2)$. \qed
+\end{solution}
+\begin{remark}
+The shift $u$ is the whole trick: plain Chebyshev gives $\sigma^2/t^2$, Cantelli the smaller $\sigma^2/(\sigma^2+t^2)\le1$. All three decay only \emph{polynomially} in $t$. Chebyshev already proves the weak law: for an average of $n$ i.i.d.\ terms the variance is $\sigma^2/n$, so $\prb(|\bar X-\mu|\ge t)\le\sigma^2/(nt^2)\to0$. The next problem does exponentially better when more moments are available.
+\end{remark}
+
+\begin{exercise}[The Chernoff method]\label{prob:chernoff}
+The single most important idea here. Chebyshev squares the deviation; the Chernoff method \emph{exponentiates} it, punishing large values far more and turning polynomial tails into exponential ones --- at the cost of needing the moment generating function $\expc e^{\lambda X}$.
+\begin{enumerate}[label=(\alph*)]
+\item Show that for any $X$ and any $t$, $\prb(X\ge t)\le\inf_{\lambda>0}e^{-\lambda t}\expc e^{\lambda X}$.
+\item For $X\sim N(0,\sigma^2)$, deduce the Gaussian tail $\prb(X\ge t)\le e^{-t^2/(2\sigma^2)}$.
+\item For $S_n=\sum_{i=1}^n\varepsilon_i$ a sum of $n$ independent signs, prove $\cosh\lambda\le e^{\lambda^2/2}$ and conclude $\prb(S_n\ge t)\le e^{-t^2/(2n)}$.
+\end{enumerate}
+\end{exercise}
+\begin{solution}
+\emph{Idea.} For $\lambda>0$, $x\mapsto e^{\lambda x}$ is increasing, so $\{X\ge t\}$ becomes $\{e^{\lambda X}\ge e^{\lambda t}\}$; Markov turns this into a bound through $\expc e^{\lambda X}$, and we \emph{optimize over $\lambda$}.
+
+\textbf{(a)} For $\lambda>0$, $\{X\ge t\}=\{e^{\lambda X}\ge e^{\lambda t}\}$, so Markov (Problem~\ref{prob:markov}a) on $Y=e^{\lambda X}\ge0$ gives $\prb(X\ge t)\le e^{-\lambda t}\expc e^{\lambda X}$; take the infimum over $\lambda>0$.
+
+\textbf{(b)} By \ref{F:gauss}, $\expc e^{\lambda X}=e^{\sigma^2\lambda^2/2}$, so we minimize $e^{-\lambda t+\sigma^2\lambda^2/2}$. The parabolic exponent is least at $\lambda^*=t/\sigma^2$, where it equals $-t^2/(2\sigma^2)$. Hence $\prb(X\ge t)\le e^{-t^2/(2\sigma^2)}$ --- the prototype every later bound is compared to.
+
+\textbf{(c)} Using $(2k)!\ge2^k\,k!$,
+\[
+\cosh\lambda=\sum_{k\ge0}\frac{\lambda^{2k}}{(2k)!}\le\sum_{k\ge0}\frac{\lambda^{2k}}{2^k\,k!}=\sum_{k\ge0}\frac{(\lambda^2/2)^k}{k!}=e^{\lambda^2/2}:
+\]
+a single sign has an MGF no larger than that of an $N(0,1)$. By independence $\expc e^{\lambda S_n}=(\cosh\lambda)^n\le e^{n\lambda^2/2}$, and part (a) with $\lambda^*=t/n$ gives $\prb(S_n\ge t)\le e^{-t^2/(2n)}$. \qed
+\end{solution}
+\begin{remark}
+The optimization in (a) is a Legendre transform of $\ln\expc e^{\lambda X}$: the better you know the MGF, the sharper the tail. Part (c) is the precise sense in which a sum of bounded variables ``behaves like a Gaussian of the same variance'': $S_n$ has variance $n$ and tail $e^{-t^2/(2n)}$, matching $N(0,n)$. By the central limit theorem $S_n/\sqrt n\Rightarrow N(0,1)$; the comparison $\cosh\lambda\le e^{\lambda^2/2}$ makes this non-asymptotic.
+\end{remark}
+
+\begin{exercise}[Hoeffding's lemma]\label{prob:hlem}
+To run the Chernoff method on a sum of bounded variables we need the MGF of \emph{one} bounded mean-zero variable. Hoeffding's lemma supplies it: such a variable has MGF no larger than that of a Gaussian with standard deviation $(b-a)/2$. Prove that if $\expc X=0$ and $a\le X\le b$ a.s., then $\expc e^{\lambda X}\le e^{\lambda^2(b-a)^2/8}$ for all $\lambda$.
+\end{exercise}
+\begin{solution}
+\emph{Idea.} The exponential is convex, so on $[a,b]$ it lies below the chord through its endpoints; taking expectations (with $\expc X=0$) replaces the random $X$ by one deterministic function of $\lambda$, which a short Taylor estimate controls.
+
+If $a=b$ then $X\equiv0$ and both sides are $1$; assume $a<b$. By convexity, for $x\in[a,b]$,
+\[
+e^{\lambda x}\le\frac{b-x}{b-a}\,e^{\lambda a}+\frac{x-a}{b-a}\,e^{\lambda b}.
+\]
+Taking expectations and using $\expc X=0$ (the $x$-terms drop),
+\[
+\expc e^{\lambda X}\le\frac{b\,e^{\lambda a}-a\,e^{\lambda b}}{b-a}=:e^{\varphi(h)},\qquad h:=\lambda(b-a),\ \theta:=\frac{-a}{b-a}\in[0,1],
+\]
+where (using $\tfrac{b}{b-a}=1-\theta$, $e^{\lambda a}=e^{-\theta h}$, $e^{\lambda b}=e^{(1-\theta)h}$) $\varphi(h)=-\theta h+\ln(1-\theta+\theta e^{h})$. Here $\theta\in[0,1]$ because $\expc X=0$ forces $a\le0\le b$. Now $\varphi(0)=0$, $\varphi'(h)=-\theta+\tfrac{\theta e^h}{1-\theta+\theta e^h}$ gives $\varphi'(0)=0$, and with $u(h)=\tfrac{\theta e^h}{1-\theta+\theta e^h}\in(0,1)$,
+\[
+\varphi''(h)=u(h)\bigl(1-u(h)\bigr)\le\tfrac14.
+\]
+By Taylor's theorem, $\varphi(h)=\tfrac{h^2}2\varphi''(\xi)\le h^2/8$, so $\expc e^{\lambda X}\le e^{h^2/8}=e^{\lambda^2(b-a)^2/8}$. \qed
+\end{solution}
+\begin{remark}
+The ``variance proxy'' $(b-a)^2/4$ is the worst-case variance of a variable in $[a,b]$, attained by the symmetric two-point law on $\{a,b\}$ --- a scaled Rademacher. So Hoeffding's lemma says: any bounded mean-zero variable is, MGF-wise, at most as spread out as the extreme sign variable.
+\end{remark}
+
+\begin{exercise}[Hoeffding's inequality]\label{prob:hoeff}
+Chernoff $+$ Hoeffding's lemma over independent terms gives the workhorse tail for sums of bounded variables --- behind countless confidence intervals and generalization bounds. Let $X_1,\ldots,X_n$ be independent with $\expc X_i=0$, $a_i\le X_i\le b_i$.
+\begin{enumerate}[label=(\alph*)]
+\item Prove $\prb\bigl(\bigl|\sum_iX_i\bigr|\ge t\bigr)\le2\exp\bigl(-2t^2/\sum_i(b_i-a_i)^2\bigr)$.
+\item If the $X_i$ are i.i.d.\ with mean $\mu$ and $a\le X_i\le b$, deduce $\prb(|\bar X-\mu|\ge t)\le2e^{-2nt^2/(b-a)^2}$.
+\end{enumerate}
+\end{exercise}
+\begin{solution}
+\emph{Idea.} Chernoff turns the tail of a sum into a product of MGFs (independence); Hoeffding's lemma bounds each by a Gaussian MGF; then optimize $\lambda$ as in the Gaussian case.
+
+\textbf{(a)} For $\lambda>0$, by Problem~\ref{prob:chernoff}(a), independence, and Problem~\ref{prob:hlem},
+\[
+\prb\Bigl(\sum_iX_i\ge t\Bigr)\le e^{-\lambda t}\prod_{i=1}^n\expc e^{\lambda X_i}\le\exp\Bigl(-\lambda t+\frac{\lambda^2}8\sum_i(b_i-a_i)^2\Bigr).
+\]
+The exponent is least at $\lambda^*=4t/\sum_i(b_i-a_i)^2$, giving $-2t^2/\sum_i(b_i-a_i)^2$. Applying this to $-X_1,\ldots,-X_n$ as well and adding (union bound) gives the factor $2$.
+
+\textbf{(b)} Apply (a) to $Y_i=X_i-\mu\in[a-\mu,b-\mu]$, each of range $b-a$. Then $\sum_iY_i=n(\bar X-\mu)$ and
+\[
+\prb\bigl(|n(\bar X-\mu)|\ge nt\bigr)\le2\exp\Bigl(-\frac{2(nt)^2}{n(b-a)^2}\Bigr)=2e^{-2nt^2/(b-a)^2}.\qedhere
+\]
+\end{solution}
+\begin{remark}
+Compare with Chebyshev: for the i.i.d.\ mean it gave $\sigma^2/(nt^2)$ (decay $1/n$), whereas Hoeffding gives $e^{-2nt^2/(b-a)^2}$ (decay $e^{-cn}$). The price is boundedness; the reward is exponential confidence. Read backwards: $n\ge\tfrac{(b-a)^2}{2t^2}\ln\tfrac2\alpha$ samples give $|\bar X-\mu|\le t$ with confidence $1-\alpha$, for \emph{any} distribution on $[a,b]$.
+\end{remark}
+
+\begin{exercise}[Multiplicative Chernoff bound]\label{prob:multcher}
+For sums of indicators (counts), the yardstick is the \emph{mean} $\mu$, not the range, and one wants relative deviations $S\ge(1+\delta)\mu$. The multiplicative Chernoff bound is sharp here --- ubiquitous in randomized algorithms and balls-in-bins. Let $X_1,\ldots,X_n$ be independent, $X_i\in\{0,1\}$, $\prb(X_i=1)=p_i$, $S=\sum_iX_i$, $\mu=\expc S$. Prove for $\delta>0$,
+\[
+\prb\bigl(S\ge(1+\delta)\mu\bigr)\le\Bigl(\frac{e^\delta}{(1+\delta)^{1+\delta}}\Bigr)^{\!\mu}\le e^{-\mu\delta^2/3}\quad(0<\delta\le1).
+\]
+\end{exercise}
+\begin{solution}
+\emph{Idea.} A single $0/1$ variable has MGF $1+p(e^\lambda-1)$, which $1+x\le e^x$ folds into $e^{p(e^\lambda-1)}$; the product over $i$ sees the $p_i$ only through $\mu$, and the optimal $\lambda$ is explicit.
+
+For $\lambda>0$, $\expc e^{\lambda X_i}=1+p_i(e^\lambda-1)\le\exp(p_i(e^\lambda-1))$ by \ref{F:elem}. By independence $\expc e^{\lambda S}\le\exp(\mu(e^\lambda-1))$, so
+\[
+\prb(S\ge(1+\delta)\mu)\le e^{-\lambda(1+\delta)\mu}\exp(\mu(e^\lambda-1)).
+\]
+At $\lambda=\ln(1+\delta)$ the exponent is $\mu[\delta-(1+\delta)\ln(1+\delta)]$, giving the first bound. For $0<\delta\le1$, the elementary $(1+\delta)\ln(1+\delta)\ge\delta+\delta^2/3$ yields $\le e^{-\mu\delta^2/3}$. \qed
+\end{solution}
+\begin{remark}
+Two regimes: for small $\delta$ the bound is Gaussian-looking, $e^{-\mu\delta^2/3}$ (relative fluctuations $\sim1/\sqrt\mu$); for large $\delta$ the factor $(1+\delta)^{-(1+\delta)}$ decays \emph{super}-exponentially --- this is why, with $n$ balls in $n$ bins, the fullest bin holds only $O(\log n/\log\log n)$ balls w.h.p.
+\end{remark}
+
+\begin{exercise}[Bennett's and Bernstein's inequalities]\label{prob:bern}
+Hoeffding ignores variance and is wasteful when variances are small. Bennett/Bernstein use the variance, giving a Gaussian tail at the variance scale for moderate $t$ and an exponential tail for large $t$. Let $X_1,\ldots,X_n$ be independent, $\expc X_i=0$, $X_i\le b$ a.s., $\sigma^2=\sum_i\var(X_i)$.
+\begin{enumerate}[label=(\alph*)]
+\item (Bennett) Prove $\prb\bigl(\sum_iX_i\ge t\bigr)\le\exp\bigl(-\tfrac{\sigma^2}{b^2}h(\tfrac{bt}{\sigma^2})\bigr)$, $h(u)=(1+u)\ln(1+u)-u$.
+\item (Bernstein) Using $h(u)\ge\tfrac{u^2}{2(1+u/3)}$, deduce $\prb\bigl(\sum_iX_i\ge t\bigr)\le\exp\bigl(-\tfrac{t^2}{2(\sigma^2+bt/3)}\bigr)$.
+\end{enumerate}
+\end{exercise}
+\begin{solution}
+\emph{Idea.} The one new ingredient is a variance-aware MGF bound: write $e^{\lambda x}-1-\lambda x=(\lambda x)^2\varphi(\lambda x)$ and use that $\varphi$ increases (\ref{F:phi}) to replace $\varphi(\lambda x)$ by $\varphi(\lambda b)$; the leftover $x^2$ becomes the variance.
+
+\textbf{(a)} Fix $\lambda>0$. For $x\le b$, since $\varphi$ is nondecreasing,
+\[
+e^{\lambda x}-1-\lambda x=(\lambda x)^2\varphi(\lambda x)\le(\lambda x)^2\varphi(\lambda b)=\frac{x^2}{b^2}\big(e^{\lambda b}-1-\lambda b\big).
+\]
+Take expectations (the linear term drops as $\expc X_i=0$) and use $1+y\le e^y$ (\ref{F:elem}):
+\[
+\expc e^{\lambda X_i}\le1+\frac{\var(X_i)}{b^2}\big(e^{\lambda b}-1-\lambda b\big)\le\exp\Big(\frac{\var(X_i)}{b^2}\big(e^{\lambda b}-1-\lambda b\big)\Big).
+\]
+Multiplying over $i$ and running Chernoff, $\prb(\sum_iX_i\ge t)\le\exp(-\lambda t+\tfrac{\sigma^2}{b^2}(e^{\lambda b}-1-\lambda b))$; minimizing at $\lambda=\tfrac1b\ln(1+\tfrac{bt}{\sigma^2})$ gives $-\tfrac{\sigma^2}{b^2}h(\tfrac{bt}{\sigma^2})$.
+
+\textbf{(b)} Substitute $h(u)\ge\tfrac{u^2}{2(1+u/3)}$ with $u=bt/\sigma^2$: the exponent is at most $-\tfrac{\sigma^2}{b^2}\cdot\tfrac{(bt/\sigma^2)^2}{2(1+bt/(3\sigma^2))}=-\tfrac{t^2}{2(\sigma^2+bt/3)}$. \qed
+\end{solution}
+\begin{remark}
+Read Bernstein in its two regimes. For $t\lesssim\sigma^2/b$ the denominator is $\approx2\sigma^2$, giving the Gaussian tail $e^{-t^2/(2\sigma^2)}$ set by the variance; for $t\gtrsim\sigma^2/b$ the $bt/3$ term dominates, giving the exponential tail $e^{-3t/(2b)}$ set by the bound $b$. Whenever the variance is far below the range, Bernstein beats Hoeffding (which only sees $\sum(b_i-a_i)^2$).
+\end{remark}
+
+\noindent\emph{From sums to maxima.}\; The bounds so far control one sum; often we must control many quantities at once --- the largest of $N$ statistics. The next problem shows the cost is only logarithmic.
+
+\begin{exercise}[Maximal inequality for Gaussian-type variables]\label{prob:maximal}
+Let $X_1,\ldots,X_N$ (\emph{not} necessarily independent) each satisfy $\expc e^{\lambda X_i}\le e^{\sigma^2\lambda^2/2}$ for all $\lambda$ --- e.g.\ each $N(0,\sigma^2)$, or (by Problem~\ref{prob:hlem}) bounded mean-zero.
+\begin{enumerate}[label=(\alph*)]
+\item Show $\prb(\max_{i\le N}X_i\ge t)\le N\,e^{-t^2/(2\sigma^2)}$.
+\item Show $\expc\bigl[\max_{i\le N}X_i\bigr]\le\sigma\sqrt{2\ln N}$.
+\end{enumerate}
+\end{exercise}
+\begin{solution}
+\emph{Idea.} For the tail, a max exceeds $t$ only if some term does (union bound $+$ Chernoff, no independence needed). For the expectation, exponentiate the max, push expectation onto the sum, and optimize.
+
+\textbf{(a)} $\{\max_iX_i\ge t\}=\bigcup_i\{X_i\ge t\}$, and by Problem~\ref{prob:chernoff}(a) with the hypothesis, $\prb(X_i\ge t)\le\inf_{\lambda>0}e^{-\lambda t+\sigma^2\lambda^2/2}=e^{-t^2/(2\sigma^2)}$. The union bound (\ref{F:union}) gives $\prb(\max_iX_i\ge t)\le N e^{-t^2/(2\sigma^2)}$.
+
+\textbf{(b)} For $\lambda>0$, Jensen (\ref{F:elem}) and then bounding the max by the sum give
+\[
+e^{\lambda\expc[\max_iX_i]}\le\expc e^{\lambda\max_iX_i}=\expc\max_ie^{\lambda X_i}\le\sum_i\expc e^{\lambda X_i}\le N e^{\sigma^2\lambda^2/2}.
+\]
+Hence $\expc[\max_iX_i]\le\tfrac{\ln N}\lambda+\tfrac{\sigma^2\lambda}2$; optimizing at $\lambda=\sqrt{2\ln N}/\sigma$ gives $\sigma\sqrt{2\ln N}$. \qed
+\end{solution}
+\begin{remark}
+The maximum of $N$ Gaussian-type variables sits only $\sqrt{2\ln N}$ standard deviations out --- logarithmic growth, sharp for independent Gaussians. This $\sqrt{\log N}$ is why union-bound arguments over finite classes work so well, and the seed of chaining bounds for suprema.
+\end{remark}
+
+\begin{exercise}[The Paley--Zygmund (second-moment) inequality]\label{prob:pz}
+Every bound so far is an \emph{upper} bound on a tail. Sometimes we need the opposite: a guarantee that $X$ \emph{is} large with non-negligible probability (anti-concentration). The second-moment method delivers this from two moments. Let $X\ge0$ with $0<\expc X^2<\infty$; prove for $\theta\in[0,1]$,
+\[
+\prb\bigl(X>\theta\,\expc X\bigr)\ge(1-\theta)^2\,\frac{(\expc X)^2}{\expc X^2}.
+\]
+\end{exercise}
+\begin{solution}
+\emph{Idea.} The mean cannot all come from the event $\{X\le\theta\expc X\}$ (that contributes $\le\theta\expc X$), so a definite amount comes from $\{X>\theta\expc X\}$; Cauchy--Schwarz turns that contribution into a probability.
+
+Split $\expc X=\expc[X\mathbf 1_{\{X\le\theta\expc X\}}]+\expc[X\mathbf 1_{\{X>\theta\expc X\}}]$; the first term is $\le\theta\expc X$. For the second, Cauchy--Schwarz (\ref{F:elem}) with the indicator gives
+\[
+\expc[X\mathbf 1_{\{X>\theta\expc X\}}]\le(\expc X^2)^{1/2}\,\prb(X>\theta\expc X)^{1/2}.
+\]
+Hence $(1-\theta)\expc X\le(\expc X^2)^{1/2}\prb(X>\theta\expc X)^{1/2}$; squaring and rearranging gives the claim. \qed
+\end{solution}
+\begin{remark}
+The ratio $(\expc X)^2/\expc X^2\in(0,1]$ measures how concentrated $X$ is. This is the \emph{second-moment method}: to show a nonnegative count (e.g.\ the number of triangles in a random graph) is positive w.h.p., show its mean is large and its second moment is comparable to the mean squared.
+\end{remark}
+
+\begin{exercise}[Sharpness for Rademacher sums]\label{prob:sharp}
+Is Hoeffding's exponent tight? For Rademacher sums we can compute the MGF exactly and see that the Gaussian comparison of Problem~\ref{prob:chernoff}(c) is the best possible, so the exponent $t^2/(2n)$ cannot be improved by this method. Let $S_n=\sum_{i=1}^n\varepsilon_i$.
+\begin{enumerate}[label=(\alph*)]
+\item Compute the exact MGF $\expc e^{\lambda S_n}$.
+\item Show $\cosh\lambda\le e^{\lambda^2/2}$ is tight to second order at $\lambda=0$, so the exponent $t^2/(2n)$ cannot be replaced by $c\,t^2/n$ with $c<\tfrac12$.
+\end{enumerate}
+\end{exercise}
+\begin{solution}
+\textbf{(a)} By independence and $\expc e^{\lambda\varepsilon_i}=\tfrac12(e^\lambda+e^{-\lambda})=\cosh\lambda$, we get $\expc e^{\lambda S_n}=(\cosh\lambda)^n$ --- no inequality.
+
+\textbf{(b)} Compare series: $\cosh\lambda=1+\tfrac{\lambda^2}2+\tfrac{\lambda^4}{24}+\cdots$ and $e^{\lambda^2/2}=1+\tfrac{\lambda^2}2+\tfrac{\lambda^4}8+\cdots$ agree through $\lambda^2$, so $\ln\cosh\lambda=\tfrac{\lambda^2}2(1+o(1))$ as $\lambda\to0$. The Chernoff exponent is $\sup_\lambda\{\lambda t-n\ln\cosh\lambda\}$; a bound $\ln\cosh\lambda\le c\lambda^2$ with $c<\tfrac12$ fails for small $\lambda$, so no exponent beats the value at $c=\tfrac12$, namely $e^{-t^2/(2n)}$. Hoeffding is optimal at this level. \qed
+\end{solution}
+\begin{remark}
+This matches the central limit theorem: $S_n/\sqrt n\Rightarrow N(0,1)$, tail $e^{-t^2/2}$, i.e.\ $\prb(S_n\ge t)\approx e^{-t^2/(2n)}$ for $t=O(\sqrt n)$. The MGF comparison turns this asymptotic truth into a bound valid for every $n,t$.
+\end{remark}
+
+\noindent\emph{Squared Gaussians.}\; We leave sums of bounded variables for sums of \emph{squares} of Gaussians --- the $\chi^2$ distribution --- whose MGF is again explicit, so the Chernoff method applies verbatim.
+
+\begin{exercise}[$\chi^2$ concentration]\label{prob:chisq}
+The $\chi^2_n=\sum_iZ_i^2$ law governs squared lengths of Gaussian vectors, hence variance estimates, goodness-of-fit, and random projections. Let $Z_1,\ldots,Z_n$ be i.i.d.\ $N(0,1)$.
+\begin{enumerate}[label=(\alph*)]
+\item Show $\expc e^{\mu\chi^2_n}=(1-2\mu)^{-n/2}$ for $\mu<\tfrac12$.
+\item Prove $\prb\bigl(\chi^2_n\ge n(1+\delta)\bigr)\le e^{-n\delta^2/8}$ for $\delta\in(0,1]$.
+\end{enumerate}
+\end{exercise}
+\begin{solution}
+\emph{Idea.} A single $Z^2$ has explicit MGF $(1-2\mu)^{-1/2}$; raising to the $n$th power and running Chernoff reduces everything to choosing $\mu$ well.
+
+\textbf{(a)} By \ref{F:gauss}, $\expc e^{\mu Z_i^2}=(1-2\mu)^{-1/2}$ for $\mu<\tfrac12$; independence gives $\expc e^{\mu\chi^2_n}=(1-2\mu)^{-n/2}$.
+
+\textbf{(b)} Chernoff gives $\prb(\chi^2_n\ge n(1+\delta))\le e^{-\mu n(1+\delta)}(1-2\mu)^{-n/2}$ for $0<\mu<\tfrac12$. The neat choice $\mu=\tfrac{\delta}{2(1+\delta)}$ makes $1-2\mu=\tfrac1{1+\delta}$ and collapses the exponent:
+\[
+-\frac{n\delta}{2(1+\delta)}(1+\delta)+\frac n2\ln(1+\delta)=-\frac n2\big(\delta-\ln(1+\delta)\big)\le-\frac n2\cdot\frac{\delta^2}4=-\frac{n\delta^2}8,
+\]
+using $\delta-\ln(1+\delta)\ge\delta^2/4$ on $[0,1]$. \qed
+\end{solution}
+\begin{remark}
+So $\chi^2_n/n\to1$ with fluctuations of order $1/\sqrt n$: a length-$n$ Gaussian vector has squared norm very close to $n$. By diagonalization (\ref{F:la}), the general quadratic form $\bg'\bA\bg$ has MGF $\prod_k(1-2\mu\lambda_k)^{-1/2}$, so the same method handles weighted sums of squares. With the lower tail (next problem) this powers Johnson--Lindenstrauss.
+\end{remark}
+
+\begin{exercise}[Lower-tail Chernoff bounds]\label{prob:lowertail}
+Our tails have all been upper tails; the lower tails complete the picture and come from the same method with a negative parameter ($e^{-\lambda X}$).
+\begin{enumerate}[label=(\alph*)]
+\item For $S$ as in Problem~\ref{prob:multcher} and $0<\delta<1$, prove $\prb(S\le(1-\delta)\mu)\le e^{-\mu\delta^2/2}$, where $\mu=\expc S$.
+\item For $\chi^2_n=\sum_iZ_i^2$ and $\delta\in(0,1)$, prove $\prb(\chi^2_n\le n(1-\delta))\le e^{-n\delta^2/4}$, hence $\prb(|\chi^2_n-n|\ge n\delta)\le2e^{-n\delta^2/8}$.
+\end{enumerate}
+\end{exercise}
+\begin{solution}
+\emph{Idea.} A lower tail $\{S\le s\}$ is $\{e^{-\lambda S}\ge e^{-\lambda s}\}$ for $\lambda>0$; apply Markov to $e^{-\lambda S}$ and optimize.
+
+\textbf{(a)} For $\lambda>0$, $\prb(S\le(1-\delta)\mu)\le e^{\lambda(1-\delta)\mu}\expc e^{-\lambda S}$, and (as in Problem~\ref{prob:multcher}, now with $-\lambda$) $\expc e^{-\lambda S}\le\exp(\mu(e^{-\lambda}-1))$. So the bound is $\exp(\mu[\lambda(1-\delta)+e^{-\lambda}-1])$; at $\lambda=-\ln(1-\delta)$ the exponent is $\mu[-\delta-(1-\delta)\ln(1-\delta)]\le-\mu\delta^2/2$ (using $(1-\delta)\ln(1-\delta)\ge-\delta+\delta^2/2$).
+
+\textbf{(b)} For $s>0$, $\prb(\chi^2_n\le n(1-\delta))\le e^{sn(1-\delta)}(1+2s)^{-n/2}$ by Problem~\ref{prob:chisq}(a) with $\mu=-s$. At $1+2s=(1-\delta)^{-1}$ the exponent is $\tfrac n2(\delta+\ln(1-\delta))\le-\tfrac{n\delta^2}4$, since $\ln(1-\delta)\le-\delta-\delta^2/2$. Adding the upper tail of Problem~\ref{prob:chisq}(b), $\prb(|\chi^2_n-n|\ge n\delta)\le e^{-n\delta^2/8}+e^{-n\delta^2/4}\le2e^{-n\delta^2/8}$. \qed
+\end{solution}
+\begin{remark}
+Lower tails are often slightly stronger (here $e^{-n\delta^2/4}$ vs $e^{-n\delta^2/8}$): a sum of nonnegative pieces finds it harder to fall far below its mean than to rise far above. The two-sided $\chi^2$ bound is exactly what the next problem needs.
+\end{remark}
+
+\begin{exercise}[The Johnson--Lindenstrauss lemma]\label{prob:jl}
+The payoff. Any $N$ points in a high-dimensional space can be linearly mapped into dimension $m\approx\varepsilon^{-2}\ln N$ --- independent of the original dimension --- while distorting all pairwise distances by at most $1\pm\varepsilon$, via pure $\chi^2$ concentration and a union bound. Let $x_1,\ldots,x_N\in\Real^D$, $\varepsilon\in(0,1)$; let $\bA$ be $m\times D$ with i.i.d.\ $N(0,1)$ entries and $f(x)=\bA x/\sqrt m$. Show that if $m\ge24\,\varepsilon^{-2}\ln N$ then, with positive probability,
+\[
+(1-\varepsilon)\norm{x_i-x_j}^2\le\norm{f(x_i)-f(x_j)}^2\le(1+\varepsilon)\norm{x_i-x_j}^2\quad\text{for all }i,j.
+\]
+\end{exercise}
+\begin{solution}
+\emph{Idea.} A Gaussian projection of a \emph{fixed} vector has squared length exactly $\tfrac1m\chi^2_m$ times the true squared length; concentration keeps this within $1\pm\varepsilon$, and a union bound covers all pairs.
+
+Fix $i\neq j$ and set $u=x_i-x_j\neq0$. The rows $r_1,\ldots,r_m$ of $\bA$ are i.i.d.\ $N(\bzero,\bI_D)$, so $\ip{r_k}{u}/\norm u$ are i.i.d.\ $N(0,1)$ and
+\[
+\frac{\norm{f(x_i)-f(x_j)}^2}{\norm u^2}=\frac1m\sum_{k=1}^m\Big(\frac{\ip{r_k}{u}}{\norm u}\Big)^2=\frac{\chi^2_m}{m}.
+\]
+By the two-sided bound of Problem~\ref{prob:lowertail}(b), this single pair is distorted by more than $1\pm\varepsilon$ with probability $\le2e^{-m\varepsilon^2/8}$. There are fewer than $N^2$ pairs, so by the union bound (\ref{F:union}) the chance that \emph{some} pair fails is $\le N^2\cdot2e^{-m\varepsilon^2/8}$. When $m\ge24\,\varepsilon^{-2}\ln N$ we have $m\varepsilon^2/8\ge3\ln N$, so this is $\le2N^2e^{-3\ln N}=2/N<1$ for $N\ge3$. A failure probability below $1$ means some $\bA$ works for all pairs at once. \qed
+\end{solution}
+\begin{remark}
+The target dimension $m\approx\varepsilon^{-2}\ln N$ depends only on the number of points and the accuracy, never on the ambient dimension $D$ --- the striking content of the lemma. The projection is also \emph{oblivious} (drawn without seeing the data), which is why random projections are routine in nearest-neighbor search, clustering, and sketching.
+\end{remark}
+
+\noindent\emph{A different kind of inequality.}\; The remaining problems concern not concentration but \emph{positive correlation}: for a centered Gaussian, two symmetric events help rather than hinder one another, $\mu(K\cap L)\ge\mu(K)\mu(L)$.
+
+\begin{exercise}[Gaussian measure of a disk; two easy instances of the GCI]\label{prob:disk}
+Two warm-ups where ``$\mu(K\cap L)\ge\mu(K)\mu(L)$'' is transparent --- to fix what the inequality claims and see its two extremes. Let $\mu$ be a standard Gaussian measure.
+\begin{enumerate}[label=(\alph*)]
+\item For $G\sim N(\bzero,\bI_2)$, show $\mu(\norm{x}\le R)=1-e^{-R^2/2}$.
+\item (Nested) For $K=\{\norm{x}\le R_1\}\subseteq L=\{\norm{x}\le R_2\}$, show $\mu(K\cap L)\ge\mu(K)\mu(L)$ directly; evaluate at $R_1^2=2\ln2$, $R_2^2=2\ln4$.
+\item (Independent blocks) For $N(\bzero,\bI_3)$, $K=\{|x_1|\le a\}$, $L=\{x_2^2+x_3^2\le R^2\}$, show $\mu(K\cap L)=\mu(K)\mu(L)$.
+\end{enumerate}
+\end{exercise}
+\begin{solution}
+\textbf{(a)} In polar coordinates ($N(\bzero,\bI_2)$ density $\tfrac1{2\pi}e^{-r^2/2}$, area element $r\,\dd r\,\dd\theta$),
+\[
+\mu(\norm{x}\le R)=\int_0^{2\pi}\!\!\int_0^R\frac1{2\pi}e^{-r^2/2}\,r\,\dd r\,\dd\theta=\int_0^R re^{-r^2/2}\dd r=1-e^{-R^2/2}.
+\]
+
+\textbf{(b)} Here $K\subseteq L$, so $K\cap L=K$ and $\mu(K\cap L)=\mu(K)\ge\mu(K)\mu(L)$ because $\mu(L)\le1$. By (a), $\mu(K)=1-e^{-\ln2}=\tfrac12$, $\mu(L)=1-e^{-2\ln2}=\tfrac34$, and $\tfrac12\ge\tfrac12\cdot\tfrac34=\tfrac38$.
+
+\textbf{(c)} The density factors across $\{1\}$ and $\{2,3\}$ as $\tfrac{e^{-x_1^2/2}}{\sqrt{2\pi}}\cdot\tfrac{e^{-(x_2^2+x_3^2)/2}}{2\pi}$, and $K\cap L$ is the product of the slab and the disk on those blocks. By Fubini, $\mu(K\cap L)=\mu(K)\mu(L)$, an exact equality ($\mu(K)=\erf(a/\sqrt2)$, $\mu(L)=1-e^{-R^2/2}$). \qed
+\end{solution}
+\begin{remark}
+These are the two endpoints of the GCI: very slack when one set sits inside the other (b), and an exact equality when the sets constrain \emph{independent} coordinates (c). The content lies between --- sets constraining overlapping, correlated directions, the subject of the next problem.
+\end{remark}
+
+\begin{exercise}[The bivariate Gaussian correlation inequality, via Plackett]\label{prob:box}
+The Gaussian correlation inequality (conjectured in the 1950s, proved in general by Royen in 2014) is hard in high dimensions, but its first nontrivial case --- two correlated symmetric slabs in the plane --- is completely elementary via Plackett's formula for how a bivariate normal probability changes with $\rho$. Let $X\sim N(\bzero,\bC_\rho)$, $\bC_\rho=\bigl(\begin{smallmatrix}1&\rho\\\rho&1\end{smallmatrix}\bigr)$, $|\rho|<1$, $K=\{|x_1|\le a\}$, $L=\{|x_2|\le a\}$; $\Phi_2,\phi_2$ the bivariate normal CDF/density.
+\begin{enumerate}[label=(\alph*)]
+\item (Plackett) Prove $\partial_\rho\Phi_2(h,k;\rho)=\phi_2(h,k;\rho)$.
+\item With $P(\rho)=\mu(K\cap L)$, prove $P'(\rho)=\dfrac1{\pi\sqrt{1-\rho^2}}\bigl(e^{-a^2/(1+\rho)}-e^{-a^2/(1-\rho)}\bigr)$.
+\item Conclude $\mu(K\cap L)>\mu(K)\mu(L)$ for every $\rho\neq0$, with equality iff $\rho=0$.
+\end{enumerate}
+\end{exercise}
+\begin{solution}
+\emph{Idea.} Differentiating the box probability in $\rho$ reduces, via Plackett, to the density at the four corners; their exponents are explicit, so the derivative has a fixed sign, and integrating from the independent case $\rho=0$ gives strict inequality.
+
+\textbf{(a)} Write the density as the inverse Fourier transform of the characteristic function (\ref{F:fourier}),
+\[
+\phi_2(h,k;\rho)=\frac1{(2\pi)^2}\iint e^{-\mathrm i(sh+tk)}\,e^{-\frac12(s^2+2\rho st+t^2)}\,\dd s\,\dd t.
+\]
+Differentiating under the integral, $\partial_\rho$ brings down $-st$ and $\partial_h\partial_k$ brings down $(-\mathrm is)(-\mathrm it)=-st$, so $\partial_\rho\phi_2=\partial^2\phi_2/\partial h\,\partial k$. Integrating over $(-\infty,h]\times(-\infty,k]$ (with $\phi_2$ and its first partials vanishing at $-\infty$), two uses of the fundamental theorem of calculus give $\partial_\rho\Phi_2=\phi_2$.
+
+\textbf{(b)} By inclusion--exclusion, $P(\rho)=\Phi_2(a,a)-\Phi_2(-a,a)-\Phi_2(a,-a)+\Phi_2(-a,-a)$; differentiate and apply (a). The exponent $Q(h,k)=\tfrac{h^2-2\rho hk+k^2}{2(1-\rho^2)}$ gives $Q(\pm a,\pm a)=\tfrac{a^2}{1+\rho}$ and $Q(\pm a,\mp a)=\tfrac{a^2}{1-\rho}$ (each twice). With prefactor $\tfrac1{2\pi\sqrt{1-\rho^2}}$, the like-sign corners contribute $e^{-a^2/(1+\rho)}$ and the opposite-sign corners $e^{-a^2/(1-\rho)}$, so $P'(\rho)=\tfrac1{\pi\sqrt{1-\rho^2}}(e^{-a^2/(1+\rho)}-e^{-a^2/(1-\rho)})$.
+
+\textbf{(c)} For $\rho\in(0,1)$, $0<1-\rho<1+\rho$ gives $\tfrac{a^2}{1+\rho}<\tfrac{a^2}{1-\rho}$, hence $P'(\rho)>0$. The reflection $(x_1,x_2)\mapsto(x_1,-x_2)$ sends $\bC_\rho\to\bC_{-\rho}$ and fixes the box, so $P$ is even; thus $P$ increases on $[0,1)$ from $P(0)=(2\Phi(a)-1)^2=\mu(K)\mu(L)$. Hence $\mu(K\cap L)>\mu(K)\mu(L)$ for every $\rho\neq0$. \qed
+\end{solution}
+\begin{remark}
+The inequality says positively (or negatively) correlated symmetric slabs make each other \emph{more} likely than independence predicts. In statistics this is the basis of the \v{S}id\'ak correction: simultaneous confidence intervals for correlated Gaussian estimates have at least the coverage one would get pretending they were independent.
+\end{remark}
+
+\begin{exercise}[How slack is the inequality? Small boxes]\label{prob:smalla}
+The inequality is strict, but by how much? For small boxes the answer is a clean closed form measuring the ``correlation gain.'' In the setting of Problem~\ref{prob:box}, show that for fixed $\rho\neq0$,
+\[
+\frac{\mu(K\cap L)}{\mu(K)\,\mu(L)}\;\xrightarrow[a\to0]{}\;\frac{1}{\sqrt{1-\rho^2}}\;>\;1.
+\]
+\end{exercise}
+\begin{solution}
+\emph{Idea.} Both the gap $\mu(K\cap L)-\mu(K)\mu(L)$ and the product $\mu(K)\mu(L)$ are of order $a^2$; computing each leading coefficient leaves a constant.
+
+By Problem~\ref{prob:box}, $\mu(K\cap L)-\mu(K)\mu(L)=\int_0^{|\rho|}P'(s)\,\dd s$. Expanding $e^{-a^2/(1\pm s)}=1-\tfrac{a^2}{1\pm s}+O(a^4)$,
+\[
+e^{-a^2/(1+s)}-e^{-a^2/(1-s)}=a^2\Big(\frac1{1-s}-\frac1{1+s}\Big)+O(a^4)=\frac{2a^2 s}{1-s^2}+O(a^4),
+\]
+so $\int_0^{|\rho|}\tfrac{2a^2 s}{\pi(1-s^2)^{3/2}}\dd s=\tfrac{2a^2}{\pi}\bigl((1-\rho^2)^{-1/2}-1\bigr)+O(a^4)$. Since $\erf(a/\sqrt2)=\sqrt{2/\pi}\,a+O(a^3)$ gives $\mu(K)\mu(L)=(2\Phi(a)-1)^2=\tfrac{2a^2}{\pi}+O(a^4)$, adding it back and dividing,
+\[
+\frac{\mu(K\cap L)}{\mu(K)\mu(L)}=\frac{\tfrac{2a^2}{\pi}(1-\rho^2)^{-1/2}+O(a^4)}{\tfrac{2a^2}{\pi}+O(a^4)}\xrightarrow[a\to0]{}(1-\rho^2)^{-1/2}>1.\qedhere
+\]
+\end{solution}
+\begin{remark}
+The gain $(1-\rho^2)^{-1/2}$ is $1$ at $\rho=0$ (independence, no gain) and blows up as $\rho\to\pm1$ (near-perfect dependence, where the two events nearly coincide). It quantifies how conservative it is to treat correlated tests as independent --- the more correlated, the more the true joint coverage exceeds the independence value.
+\end{remark}
+
+\end{document}

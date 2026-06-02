@@ -1,0 +1,263 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=15mm]{geometry}
+\usepackage{amsmath,amsthm,amssymb,amsfonts}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue!70!black,urlcolor=blue!80!black}
+
+\theoremstyle{definition}
+\newtheorem{exercise}{Problem}
+\newtheorem*{solution*}{Solution}
+
+\usepackage{parskip}
+\usepackage{etoolbox}
+\AtBeginEnvironment{exercise}{\vspace{\parskip}}
+\AtBeginEnvironment{solution*}{\vspace{\parskip}}
+
+\newcommand\expc{\mathsf{E}}
+\newcommand\prb{\mathsf{P}}
+\DeclareMathOperator\var{var}
+\DeclareMathOperator\cov{cov}
+\DeclareMathOperator\tr{tr}
+\DeclareMathOperator\rank{rank}
+\DeclareMathOperator\diag{diag}
+\DeclareMathOperator\erf{erf}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\bA}{\mathbf{A}}
+\newcommand{\bC}{\mathbf{C}}
+\newcommand{\bI}{\mathbf{I}}
+\newcommand{\bP}{\mathbf{P}}
+\newcommand{\bU}{\mathbf{U}}
+\newcommand{\bLambda}{\boldsymbol{\Lambda}}
+\newcommand{\bv}{\mathbf{v}}
+\newcommand{\bu}{\mathbf{u}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\by}{\mathbf{y}}
+\newcommand{\bz}{\mathbf{z}}
+\newcommand{\bg}{\mathbf{g}}
+\newcommand{\bone}{\mathbf{1}}
+\newcommand{\bzero}{\mathbf{0}}
+\newcommand{\ip}[2]{\langle #1,\, #2 \rangle}
+\newcommand{\norm}[1]{\lVert #1 \rVert}
+
+\begin{document}
+\vspace*{-8mm}
+\begin{center}
+  {\Large\bfseries Multivariate Analysis: Final Test Bank}\\[2pt]
+  {\large Elementary Concentration and Correlation Inequalities}
+\end{center}
+\vspace{-1mm}
+
+\noindent\textbf{Conventions.}\; $Z\sim N(0,1)$ has CDF $\Phi$; $\bg\sim N(\bzero,\bI_n)$. For a square matrix, $|\bA|$ is the determinant and $\bA\succ0$ means symmetric positive definite. $\var,\cov$ are variance and covariance. The error function is $\erf(z)=\tfrac{2}{\sqrt\pi}\int_0^z e^{-u^2}\dd u$. A \emph{Rademacher} variable takes the values $+1$ and $-1$ with probability $\tfrac12$ each (mean $0$, variance $1$); the symbol $\varepsilon_i$ always denotes independent such variables.
+
+\noindent\textbf{Facts you may cite without proof.}
+\begin{enumerate}[label=(F\arabic*),leftmargin=1.3cm,nosep]
+\item\label{F:elem} $1+x\le e^x$ for all $x\in\Real$; Cauchy--Schwarz $\expc[UV]^2\le\expc U^2\,\expc V^2$; Jensen's inequality.
+\item\label{F:gauss} For $X\sim N(0,\sigma^2)$, $\expc e^{\lambda X}=e^{\sigma^2\lambda^2/2}$; $\int_\Real e^{\mu u^2-u^2/2}\tfrac{\dd u}{\sqrt{2\pi}}=(1-2\mu)^{-1/2}$ for $\mu<\tfrac12$; and $\prb(|Z|\le a)=2\Phi(a)-1=\erf(a/\sqrt2)$.
+\item\label{F:fourier} A density equals the inverse Fourier transform of its characteristic function, and for Gaussian-type integrands one may differentiate under the integral sign.
+\item\label{F:la} Symmetric matrices are orthogonally diagonalizable.
+\item\label{F:phi} $\varphi(y)=(e^y-1-y)/y^2$ is nondecreasing on $\Real$ (with $\varphi(0)=\tfrac12$).
+\item\label{F:union} Union bound: $\prb(\bigcup_iA_i)\le\sum_i\prb(A_i)$.
+\end{enumerate}
+
+%--- 1 ---
+\begin{exercise}[Markov, Chebyshev, and Cantelli]\label{prob:markov}
+Let $X$ have mean $\mu$ and variance $\sigma^2<\infty$.
+\begin{enumerate}[label=(\alph*)]
+\item (Markov) For $Y\ge0$ and $t>0$, prove $\prb(Y\ge t)\le\expc Y/t$.
+\item (Chebyshev) Prove $\prb(|X-\mu|\ge t)\le\sigma^2/t^2$.
+\item (Cantelli) Prove $\prb(X-\mu\ge t)\le\sigma^2/(\sigma^2+t^2)$ for $t>0$.
+\end{enumerate}
+\end{exercise}
+\begin{solution*}
+\textbf{(a)} $t\,\mathbf 1_{\{Y\ge t\}}\le Y$ pointwise; take expectations: $t\,\prb(Y\ge t)\le\expc Y$.
+
+\textbf{(b)} Apply (a) to $(X-\mu)^2$ at level $t^2$: $\prb(|X-\mu|\ge t)=\prb((X-\mu)^2\ge t^2)\le\sigma^2/t^2$.
+
+\textbf{(c)} For $u\ge0$, $\{X-\mu\ge t\}\subseteq\{(X-\mu+u)^2\ge(t+u)^2\}$, so by (a) $\prb(X-\mu\ge t)\le\tfrac{\sigma^2+u^2}{(t+u)^2}$; minimizing over $u$ (at $u=\sigma^2/t$) gives $\sigma^2/(\sigma^2+t^2)$. \qed
+\end{solution*}
+
+%--- 2 ---
+\begin{exercise}[The Chernoff method]\label{prob:chernoff}
+\begin{enumerate}[label=(\alph*)]
+\item Show $\prb(X\ge t)\le\inf_{\lambda>0}e^{-\lambda t}\expc e^{\lambda X}$.
+\item For $X\sim N(0,\sigma^2)$, deduce $\prb(X\ge t)\le e^{-t^2/(2\sigma^2)}$.
+\item For $S_n=\sum_{i=1}^n\varepsilon_i$, prove $\cosh\lambda\le e^{\lambda^2/2}$ and conclude $\prb(S_n\ge t)\le e^{-t^2/(2n)}$.
+\end{enumerate}
+\end{exercise}
+\begin{solution*}
+\textbf{(a)} For $\lambda>0$, $\{X\ge t\}=\{e^{\lambda X}\ge e^{\lambda t}\}$; Markov (Problem~\ref{prob:markov}a) gives $\prb(X\ge t)\le e^{-\lambda t}\expc e^{\lambda X}$; take the infimum.
+
+\textbf{(b)} With $\expc e^{\lambda X}=e^{\sigma^2\lambda^2/2}$ (\ref{F:gauss}), minimize $e^{-\lambda t+\sigma^2\lambda^2/2}$ at $\lambda^*=t/\sigma^2$ to get $e^{-t^2/(2\sigma^2)}$.
+
+\textbf{(c)} $\cosh\lambda=\sum_k\tfrac{\lambda^{2k}}{(2k)!}\le\sum_k\tfrac{(\lambda^2/2)^k}{k!}=e^{\lambda^2/2}$ (as $(2k)!\ge2^kk!$). Then $\expc e^{\lambda S_n}=(\cosh\lambda)^n\le e^{n\lambda^2/2}$; minimize at $\lambda^*=t/n$ for $e^{-t^2/(2n)}$. \qed
+\end{solution*}
+
+%--- 3 ---
+\begin{exercise}[Hoeffding's lemma]\label{prob:hlem}
+Let $\expc X=0$ and $a\le X\le b$ a.s. Prove $\expc e^{\lambda X}\le e^{\lambda^2(b-a)^2/8}$ for all $\lambda$.
+\end{exercise}
+\begin{solution*}
+If $a=b$, $X\equiv0$ and both sides are $1$; assume $a<b$. Convexity gives, for $x\in[a,b]$, $e^{\lambda x}\le\tfrac{b-x}{b-a}e^{\lambda a}+\tfrac{x-a}{b-a}e^{\lambda b}$; taking expectations with $\expc X=0$,
+\[
+\expc e^{\lambda X}\le\tfrac{b\,e^{\lambda a}-a\,e^{\lambda b}}{b-a}=e^{\varphi(h)},\quad h=\lambda(b-a),\ \theta=\tfrac{-a}{b-a}\in[0,1],
+\]
+with $\varphi(h)=-\theta h+\ln(1-\theta+\theta e^h)$. Then $\varphi(0)=\varphi'(0)=0$ and $\varphi''(h)=u(1-u)\le\tfrac14$ for $u=\tfrac{\theta e^h}{1-\theta+\theta e^h}$, so by Taylor $\varphi(h)\le h^2/8$, i.e.\ $\expc e^{\lambda X}\le e^{\lambda^2(b-a)^2/8}$. \qed
+\end{solution*}
+
+%--- 4 ---
+\begin{exercise}[Hoeffding's inequality]\label{prob:hoeff}
+Let $X_1,\ldots,X_n$ be independent with $\expc X_i=0$, $a_i\le X_i\le b_i$.
+\begin{enumerate}[label=(\alph*)]
+\item Prove $\prb\bigl(\bigl|\sum_iX_i\bigr|\ge t\bigr)\le2\exp\bigl(-2t^2/\sum_i(b_i-a_i)^2\bigr)$.
+\item If the $X_i$ are i.i.d.\ with mean $\mu$ and $a\le X_i\le b$, deduce $\prb(|\bar X-\mu|\ge t)\le2e^{-2nt^2/(b-a)^2}$.
+\end{enumerate}
+\end{exercise}
+\begin{solution*}
+\textbf{(a)} By the Chernoff method (Problem~\ref{prob:chernoff}a), independence, and Hoeffding's lemma (Problem~\ref{prob:hlem}), $\prb(\sum_iX_i\ge t)\le\exp(-\lambda t+\tfrac{\lambda^2}8\sum_i(b_i-a_i)^2)$; minimizing at $\lambda^*=4t/\sum_i(b_i-a_i)^2$ gives $\exp(-2t^2/\sum_i(b_i-a_i)^2)$. The two-sided bound follows by applying this to $-X_i$ and adding.
+
+\textbf{(b)} Apply (a) to $Y_i=X_i-\mu$ (range $b-a$): $\sum_iY_i=n(\bar X-\mu)$, so $\prb(|n(\bar X-\mu)|\ge nt)\le2e^{-2(nt)^2/(n(b-a)^2)}=2e^{-2nt^2/(b-a)^2}$. \qed
+\end{solution*}
+
+%--- 5 ---
+\begin{exercise}[Multiplicative Chernoff bound]\label{prob:multcher}
+Let $X_1,\ldots,X_n$ be independent, $X_i\in\{0,1\}$, $\prb(X_i=1)=p_i$, $S=\sum_iX_i$, $\mu=\expc S$. Prove for $\delta>0$,
+\[
+\prb(S\ge(1+\delta)\mu)\le\Bigl(\tfrac{e^\delta}{(1+\delta)^{1+\delta}}\Bigr)^\mu\le e^{-\mu\delta^2/3}\ (0<\delta\le1).
+\]
+\end{exercise}
+\begin{solution*}
+For $\lambda>0$, $\expc e^{\lambda X_i}=1+p_i(e^\lambda-1)\le e^{p_i(e^\lambda-1)}$ (\ref{F:elem}), so $\expc e^{\lambda S}\le e^{\mu(e^\lambda-1)}$ and $\prb(S\ge(1+\delta)\mu)\le e^{-\lambda(1+\delta)\mu+\mu(e^\lambda-1)}$. At $\lambda=\ln(1+\delta)$ the exponent is $\mu[\delta-(1+\delta)\ln(1+\delta)]$, the first bound. For $0<\delta\le1$, $(1+\delta)\ln(1+\delta)\ge\delta+\delta^2/3$ gives $\le e^{-\mu\delta^2/3}$. \qed
+\end{solution*}
+
+%--- 6 ---
+\begin{exercise}[Bennett's and Bernstein's inequalities]\label{prob:bern}
+Let $X_1,\ldots,X_n$ be independent, $\expc X_i=0$, $X_i\le b$ a.s., $\sigma^2=\sum_i\var(X_i)$.
+\begin{enumerate}[label=(\alph*)]
+\item (Bennett) Prove $\prb(\sum_iX_i\ge t)\le\exp(-\tfrac{\sigma^2}{b^2}h(\tfrac{bt}{\sigma^2}))$, $h(u)=(1+u)\ln(1+u)-u$.
+\item (Bernstein) Using $h(u)\ge\tfrac{u^2}{2(1+u/3)}$, deduce $\prb(\sum_iX_i\ge t)\le\exp(-\tfrac{t^2}{2(\sigma^2+bt/3)})$.
+\end{enumerate}
+\end{exercise}
+\begin{solution*}
+\textbf{(a)} For $x\le b$, $e^{\lambda x}-1-\lambda x=(\lambda x)^2\varphi(\lambda x)\le\tfrac{x^2}{b^2}(e^{\lambda b}-1-\lambda b)$ since $\varphi$ is nondecreasing (\ref{F:phi}). Taking expectations ($\expc X_i=0$) and using $1+y\le e^y$, $\expc e^{\lambda X_i}\le\exp(\tfrac{\var(X_i)}{b^2}(e^{\lambda b}-1-\lambda b))$; multiplying and applying Chernoff, $\prb(\sum_iX_i\ge t)\le\exp(-\lambda t+\tfrac{\sigma^2}{b^2}(e^{\lambda b}-1-\lambda b))$. Minimizing (at $\lambda=\tfrac1b\ln(1+\tfrac{bt}{\sigma^2})$) gives the exponent $-\tfrac{\sigma^2}{b^2}h(\tfrac{bt}{\sigma^2})$.
+
+\textbf{(b)} Substitute $h(u)\ge\tfrac{u^2}{2(1+u/3)}$ with $u=bt/\sigma^2$ to get $-\tfrac{t^2}{2(\sigma^2+bt/3)}$. \qed
+\end{solution*}
+
+%--- 7 ---
+\begin{exercise}[Maximal inequality for Gaussian-type variables]\label{prob:maximal}
+Let $X_1,\ldots,X_N$ (not necessarily independent) each satisfy $\expc e^{\lambda X_i}\le e^{\sigma^2\lambda^2/2}$ for all $\lambda$.
+\begin{enumerate}[label=(\alph*)]
+\item Show $\prb(\max_{i\le N}X_i\ge t)\le N e^{-t^2/(2\sigma^2)}$.
+\item Show $\expc[\max_{i\le N}X_i]\le\sigma\sqrt{2\ln N}$.
+\end{enumerate}
+\end{exercise}
+\begin{solution*}
+\textbf{(a)} By Chernoff (Problem~\ref{prob:chernoff}a) and the hypothesis, $\prb(X_i\ge t)\le e^{-t^2/(2\sigma^2)}$; the union bound (\ref{F:union}) gives $\prb(\max_iX_i\ge t)\le N e^{-t^2/(2\sigma^2)}$.
+
+\textbf{(b)} For $\lambda>0$, by Jensen (\ref{F:elem}), $e^{\lambda\expc\max_iX_i}\le\expc\max_ie^{\lambda X_i}\le\sum_i\expc e^{\lambda X_i}\le N e^{\sigma^2\lambda^2/2}$, so $\expc\max_iX_i\le\tfrac{\ln N}\lambda+\tfrac{\sigma^2\lambda}2$; optimize at $\lambda=\sqrt{2\ln N}/\sigma$. \qed
+\end{solution*}
+
+%--- 8 ---
+\begin{exercise}[The Paley--Zygmund (second-moment) inequality]\label{prob:pz}
+Let $X\ge0$ with $0<\expc X^2<\infty$. Prove for $\theta\in[0,1]$, $\prb(X>\theta\expc X)\ge(1-\theta)^2(\expc X)^2/\expc X^2$.
+\end{exercise}
+\begin{solution*}
+Split $\expc X=\expc[X\mathbf 1_{\{X\le\theta\expc X\}}]+\expc[X\mathbf 1_{\{X>\theta\expc X\}}]$; the first term is $\le\theta\expc X$. By Cauchy--Schwarz (\ref{F:elem}), $\expc[X\mathbf 1_{\{X>\theta\expc X\}}]\le(\expc X^2)^{1/2}\prb(X>\theta\expc X)^{1/2}$. Thus $(1-\theta)\expc X\le(\expc X^2)^{1/2}\prb(X>\theta\expc X)^{1/2}$; square and rearrange. \qed
+\end{solution*}
+
+%--- 9 ---
+\begin{exercise}[Sharpness for Rademacher sums]\label{prob:sharp}
+Let $S_n=\sum_{i=1}^n\varepsilon_i$.
+\begin{enumerate}[label=(\alph*)]
+\item Compute $\expc e^{\lambda S_n}$ exactly.
+\item Show $\cosh\lambda\le e^{\lambda^2/2}$ is tight to second order at $\lambda=0$, so the exponent $t^2/(2n)$ cannot be improved to $ct^2/n$ with $c<\tfrac12$ by the Chernoff method.
+\end{enumerate}
+\end{exercise}
+\begin{solution*}
+\textbf{(a)} $\expc e^{\lambda S_n}=(\expc e^{\lambda\varepsilon_1})^n=(\cosh\lambda)^n$.
+
+\textbf{(b)} $\cosh\lambda=1+\tfrac{\lambda^2}2+\tfrac{\lambda^4}{24}+\cdots$ and $e^{\lambda^2/2}=1+\tfrac{\lambda^2}2+\tfrac{\lambda^4}8+\cdots$ agree through $\lambda^2$, so $\ln\cosh\lambda=\tfrac{\lambda^2}2(1+o(1))$. A bound $\ln\cosh\lambda\le c\lambda^2$ with $c<\tfrac12$ fails for small $\lambda$, so the Chernoff exponent cannot beat the value at $c=\tfrac12$, namely $e^{-t^2/(2n)}$. \qed
+\end{solution*}
+
+%--- 10 ---
+\begin{exercise}[$\chi^2$ concentration]\label{prob:chisq}
+Let $Z_1,\ldots,Z_n$ be i.i.d.\ $N(0,1)$, $\chi^2_n=\sum_iZ_i^2$.
+\begin{enumerate}[label=(\alph*)]
+\item Show $\expc e^{\mu\chi^2_n}=(1-2\mu)^{-n/2}$ for $\mu<\tfrac12$.
+\item Prove $\prb(\chi^2_n\ge n(1+\delta))\le e^{-n\delta^2/8}$ for $\delta\in(0,1]$.
+\end{enumerate}
+\end{exercise}
+\begin{solution*}
+\textbf{(a)} $\expc e^{\mu Z_i^2}=(1-2\mu)^{-1/2}$ (\ref{F:gauss}); by independence $\expc e^{\mu\chi^2_n}=(1-2\mu)^{-n/2}$.
+
+\textbf{(b)} Chernoff: $\prb(\chi^2_n\ge n(1+\delta))\le e^{-\mu n(1+\delta)}(1-2\mu)^{-n/2}$. At $\mu=\tfrac{\delta}{2(1+\delta)}$ (so $1-2\mu=\tfrac1{1+\delta}$) the exponent is $-\tfrac n2(\delta-\ln(1+\delta))\le-\tfrac{n\delta^2}8$, using $\delta-\ln(1+\delta)\ge\delta^2/4$ on $[0,1]$. \qed
+\end{solution*}
+
+%--- 11 ---
+\begin{exercise}[Lower-tail Chernoff bounds]\label{prob:lowertail}
+\begin{enumerate}[label=(\alph*)]
+\item For $S$ as in Problem~\ref{prob:multcher} and $0<\delta<1$, prove $\prb(S\le(1-\delta)\mu)\le e^{-\mu\delta^2/2}$.
+\item For $\chi^2_n=\sum_iZ_i^2$ and $\delta\in(0,1)$, prove $\prb(\chi^2_n\le n(1-\delta))\le e^{-n\delta^2/4}$, hence $\prb(|\chi^2_n-n|\ge n\delta)\le2e^{-n\delta^2/8}$.
+\end{enumerate}
+\end{exercise}
+\begin{solution*}
+\textbf{(a)} For $\lambda>0$, $\prb(S\le(1-\delta)\mu)\le e^{\lambda(1-\delta)\mu}\expc e^{-\lambda S}\le e^{\mu[\lambda(1-\delta)+e^{-\lambda}-1]}$. At $\lambda=-\ln(1-\delta)$ the exponent is $\mu[-\delta-(1-\delta)\ln(1-\delta)]\le-\mu\delta^2/2$ (using $(1-\delta)\ln(1-\delta)\ge-\delta+\delta^2/2$).
+
+\textbf{(b)} For $s>0$, $\prb(\chi^2_n\le n(1-\delta))\le e^{sn(1-\delta)}(1+2s)^{-n/2}$ (Problem~\ref{prob:chisq}a, $\mu=-s$). At $1+2s=(1-\delta)^{-1}$ the exponent is $\tfrac n2(\delta+\ln(1-\delta))\le-\tfrac{n\delta^2}4$. With Problem~\ref{prob:chisq}(b), $\prb(|\chi^2_n-n|\ge n\delta)\le e^{-n\delta^2/8}+e^{-n\delta^2/4}\le2e^{-n\delta^2/8}$. \qed
+\end{solution*}
+
+%--- 12 ---
+\begin{exercise}[The Johnson--Lindenstrauss lemma]\label{prob:jl}
+Let $x_1,\ldots,x_N\in\Real^D$, $\varepsilon\in(0,1)$, $\bA$ an $m\times D$ matrix with i.i.d.\ $N(0,1)$ entries, $f(x)=\bA x/\sqrt m$. Show that if $m\ge24\varepsilon^{-2}\ln N$ then with positive probability $(1-\varepsilon)\norm{x_i-x_j}^2\le\norm{f(x_i)-f(x_j)}^2\le(1+\varepsilon)\norm{x_i-x_j}^2$ for all $i,j$.
+\end{exercise}
+\begin{solution*}
+Fix $i\neq j$, $u=x_i-x_j\neq0$. The rows $r_1,\ldots,r_m$ of $\bA$ are i.i.d.\ $N(\bzero,\bI_D)$, so $\ip{r_k}{u}/\norm u$ are i.i.d.\ $N(0,1)$ and $\norm{f(x_i)-f(x_j)}^2/\norm u^2=\tfrac1m\sum_k(\ip{r_k}u/\norm u)^2=\chi^2_m/m$. By Problem~\ref{prob:lowertail}(b), $\prb(|\chi^2_m/m-1|\ge\varepsilon)\le2e^{-m\varepsilon^2/8}$. Union over $<N^2$ pairs (\ref{F:union}): the failure probability is $\le N^2\cdot2e^{-m\varepsilon^2/8}\le2N^2e^{-3\ln N}=2/N<1$ for $N\ge3$, so a suitable $\bA$ exists. \qed
+\end{solution*}
+
+%--- 13 ---
+\begin{exercise}[Gaussian measure of a disk; two easy instances of the GCI]\label{prob:disk}
+Let $\mu$ be a standard Gaussian measure.
+\begin{enumerate}[label=(\alph*)]
+\item For $G\sim N(\bzero,\bI_2)$, show $\mu(\norm{x}\le R)=1-e^{-R^2/2}$.
+\item (Nested) For $K=\{\norm{x}\le R_1\}\subseteq L=\{\norm{x}\le R_2\}$, show $\mu(K\cap L)\ge\mu(K)\mu(L)$; evaluate at $R_1^2=2\ln2$, $R_2^2=2\ln4$.
+\item (Independent) For $N(\bzero,\bI_3)$, $K=\{|x_1|\le a\}$, $L=\{x_2^2+x_3^2\le R^2\}$, show $\mu(K\cap L)=\mu(K)\mu(L)$.
+\end{enumerate}
+\end{exercise}
+\begin{solution*}
+\textbf{(a)} Polar coordinates: $\mu(\norm x\le R)=\int_0^{2\pi}\!\int_0^R\tfrac1{2\pi}e^{-r^2/2}r\,\dd r\,\dd\theta=1-e^{-R^2/2}$.
+
+\textbf{(b)} $K\subseteq L\Rightarrow K\cap L=K$, so $\mu(K\cap L)=\mu(K)\ge\mu(K)\mu(L)$ as $\mu(L)\le1$. Here $\mu(K)=\tfrac12$, $\mu(L)=\tfrac34$, and $\tfrac12\ge\tfrac38$.
+
+\textbf{(c)} The density factors across $\{1\}$ and $\{2,3\}$ and $K\cap L$ is the corresponding product set, so by Fubini $\mu(K\cap L)=\mu(K)\mu(L)$ ($\mu(K)=\erf(a/\sqrt2)$, $\mu(L)=1-e^{-R^2/2}$). \qed
+\end{solution*}
+
+%--- 14 ---
+\begin{exercise}[The bivariate Gaussian correlation inequality, via Plackett]\label{prob:box}
+Let $X\sim N(\bzero,\bC_\rho)$, $\bC_\rho=\bigl(\begin{smallmatrix}1&\rho\\\rho&1\end{smallmatrix}\bigr)$, $|\rho|<1$, $K=\{|x_1|\le a\}$, $L=\{|x_2|\le a\}$; $\Phi_2,\phi_2$ the bivariate normal CDF/density.
+\begin{enumerate}[label=(\alph*)]
+\item (Plackett) Prove $\partial_\rho\Phi_2(h,k;\rho)=\phi_2(h,k;\rho)$.
+\item With $P(\rho)=\mu(K\cap L)$, prove $P'(\rho)=\tfrac1{\pi\sqrt{1-\rho^2}}(e^{-a^2/(1+\rho)}-e^{-a^2/(1-\rho)})$.
+\item Conclude $\mu(K\cap L)>\mu(K)\mu(L)$ for $\rho\neq0$, with equality iff $\rho=0$.
+\end{enumerate}
+\end{exercise}
+\begin{solution*}
+\textbf{(a)} Writing $\phi_2$ as the inverse Fourier transform of $e^{-\frac12(s^2+2\rho st+t^2)}$ (\ref{F:fourier}), $\partial_\rho$ brings down $-st$ and $\partial_h\partial_k$ brings down $(-\mathrm is)(-\mathrm it)=-st$, so $\partial_\rho\phi_2=\partial^2\phi_2/\partial h\partial k$. Integrating over $(-\infty,h]\times(-\infty,k]$ (decay at $-\infty$) gives $\partial_\rho\Phi_2=\phi_2$.
+
+\textbf{(b)} Inclusion--exclusion: $P(\rho)=\Phi_2(a,a)-\Phi_2(-a,a)-\Phi_2(a,-a)+\Phi_2(-a,-a)$; differentiate and use (a). The exponent $Q=\tfrac{h^2-2\rho hk+k^2}{2(1-\rho^2)}$ gives $Q(\pm a,\pm a)=\tfrac{a^2}{1+\rho}$, $Q(\pm a,\mp a)=\tfrac{a^2}{1-\rho}$; with prefactor $\tfrac1{2\pi\sqrt{1-\rho^2}}$ (each value twice), $P'(\rho)=\tfrac1{\pi\sqrt{1-\rho^2}}(e^{-a^2/(1+\rho)}-e^{-a^2/(1-\rho)})$.
+
+\textbf{(c)} For $\rho\in(0,1)$, $\tfrac{a^2}{1+\rho}<\tfrac{a^2}{1-\rho}$ so $P'(\rho)>0$; $P$ is even (reflect $x_2\mapsto-x_2$), so it increases on $[0,1)$ from $P(0)=(2\Phi(a)-1)^2=\mu(K)\mu(L)$. Hence $\mu(K\cap L)>\mu(K)\mu(L)$ for $\rho\neq0$. \qed
+\end{solution*}
+
+%--- 15 ---
+\begin{exercise}[How slack is the inequality? Small boxes]\label{prob:smalla}
+In the setting of Problem~\ref{prob:box}, show that for fixed $\rho\neq0$, $\dfrac{\mu(K\cap L)}{\mu(K)\mu(L)}\xrightarrow[a\to0]{}(1-\rho^2)^{-1/2}>1$.
+\end{exercise}
+\begin{solution*}
+By Problem~\ref{prob:box}, $\mu(K\cap L)-\mu(K)\mu(L)=\int_0^{|\rho|}P'(s)\dd s$. Expanding $e^{-a^2/(1\pm s)}=1-\tfrac{a^2}{1\pm s}+O(a^4)$ gives $e^{-a^2/(1+s)}-e^{-a^2/(1-s)}=\tfrac{2a^2s}{1-s^2}+O(a^4)$, so $\int_0^{|\rho|}\tfrac{2a^2s}{\pi(1-s^2)^{3/2}}\dd s=\tfrac{2a^2}\pi((1-\rho^2)^{-1/2}-1)+O(a^4)$. Since $\mu(K)\mu(L)=(2\Phi(a)-1)^2=\tfrac{2a^2}\pi+O(a^4)$, dividing gives $\mu(K\cap L)/(\mu(K)\mu(L))\to(1-\rho^2)^{-1/2}$. \qed
+\end{solution*}
+
+\end{document}
