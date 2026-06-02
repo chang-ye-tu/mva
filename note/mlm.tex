@@ -78,6 +78,7 @@
 \newcommand{\bD}{\mathbf{D}}
 \newcommand{\bP}{\mathbf{P}}
 \newcommand{\bg}{\mathbf{g}}
+\newcommand{\bh}{\mathbf{h}}
 \newcommand{\bU}{\mathbf{U}}
 \newcommand{\bLambda}{\boldsymbol{\Lambda}}
 \newcommand{\ba}{\mathbf{a}}
@@ -195,11 +196,15 @@ Substituting $s = t^2/(2K_2^2)$, so $t = K_2\sqrt{2s}$ and $\dd t = K_2\,\dd s/\
 \[
 \expc[|X|^p] \leqslant 2p \int_0^\infty (K_2\sqrt{2s})^{p-1}\,e^{-s}\,\frac{K_2}{\sqrt{2s}}\,\dd s = p\,(K_2\sqrt{2})^p\,\Gamma(p/2).
 \]
-For $p \geqslant 2$, we use the bound $\Gamma(\alpha) \leqslant \alpha^{\alpha-1}$, valid for $\alpha \geqslant 1$. (This follows from $\Gamma(n+1) = n! \leqslant n^n$ for integers $n \geqslant 1$, extended to non-integer $\alpha$ via the log-convexity of $\Gamma$, hence $\Gamma(\alpha) \leqslant \alpha^\alpha/\alpha = \alpha^{\alpha-1}$.) Thus $\Gamma(p/2) \leqslant (p/2)^{p/2-1}$, and substituting:
+For $p \geqslant 2$ we use the bound $\Gamma(\alpha) \leqslant 2\alpha^{\alpha-1}$, valid for $\alpha \geqslant 1$. To see it, write $\Gamma(\alpha) = \int_0^\infty t^{\alpha-1}e^{-t}\,\dd t$ and bound $t^{\alpha-1}e^{-t/2}$ by its maximum over $t \geqslant 0$, attained at $t = 2(\alpha-1)$ with value $(2(\alpha-1)/e)^{\alpha-1}$; then
 \[
-\expc[|X|^p] \leqslant p\,(K_2\sqrt{2})^p\,(p/2)^{p/2-1} = 2\cdot(2K_2^2)^{p/2}\cdot p^{p/2}.
+\Gamma(\alpha) = \int_0^\infty \!\big(t^{\alpha-1}e^{-t/2}\big)e^{-t/2}\,\dd t \leqslant \left(\frac{2(\alpha-1)}{e}\right)^{\!\alpha-1}\!\int_0^\infty e^{-t/2}\,\dd t = 2\left(\frac{2(\alpha-1)}{e}\right)^{\!\alpha-1} \leqslant 2\alpha^{\alpha-1},
 \]
-Taking $p$-th roots: $(\expc[|X|^p])^{1/p} \leqslant 2^{1/p}\sqrt{2}\,K_2\sqrt{p} \leqslant 2\sqrt{2}\,K_2\sqrt{p}$. For $p = 1$: $\expc[|X|] \leqslant 2\int_0^\infty e^{-t^2/(2K_2^2)}\,\dd t = K_2\sqrt{2\pi} \leqslant 3K_2$. So $K_3 = 3K_2$ works uniformly for all $p \geqslant 1$.
+the last step using $\alpha - 1 \leqslant \alpha$ and $2/e < 1$. Thus $\Gamma(p/2) \leqslant 2(p/2)^{p/2-1}$, and substituting:
+\[
+\expc[|X|^p] \leqslant p\,(K_2\sqrt{2})^p\cdot 2(p/2)^{p/2-1} = 4\,(K_2^2)^{p/2}\,p^{p/2}.
+\]
+Taking $p$-th roots: $(\expc[|X|^p])^{1/p} \leqslant 4^{1/p}K_2\sqrt{p} \leqslant 2K_2\sqrt{p}$ for $p \geqslant 2$. For $p = 1$: $\expc[|X|] \leqslant 2\int_0^\infty e^{-t^2/(2K_2^2)}\,\dd t = K_2\sqrt{2\pi} \leqslant 3K_2$. So $K_3 = 3K_2$ works uniformly for all $p \geqslant 1$.
 
 \medskip\noindent\textbf{\ref{sg:moment}~$\Rightarrow$~\ref{sg:psi2}.} From~\ref{sg:moment}, $\expc[|X|^{2k}] \leqslant (K_3\sqrt{2k})^{2k} = K_3^{2k}(2k)^k$. Using the Taylor expansion:
 \[
@@ -305,6 +310,8 @@ Let $X$ be a random variable with $\expc[X] = 0$ and $a \leqslant X \leqslant b$
 \end{lemma}
 
 \begin{proof}
+If $a = b$, then $\expc[X] = 0$ forces $X = a = b = 0$ almost surely, and both sides of~\eqref{eq:hoeffding-lemma} equal $1$; assume henceforth $a < b$.
+
 \textbf{Step 1: Convexity bound.} Since $e^{tx}$ is convex in $x$, for any $x \in [a, b]$:
 \[
 e^{tx} \leqslant \frac{b - x}{b - a}\,e^{ta} + \frac{x - a}{b - a}\,e^{tb}.
@@ -428,7 +435,7 @@ where $c = 1/8$ suffices.
 \end{theorem}
 
 \begin{proof}
-By the spectral decomposition of the symmetric part $(\bA + \bA')/2$ (whose quadratic form equals $\bA$'s), we may assume $\bA$ is symmetric. Let $\bA = \bU\bLambda\bU'$ with $\bLambda = \diag(\lambda_1, \ldots, \lambda_n)$. Set $\widetilde\bg = \bU'\bg$, which is again $N(\bzero, \bI_n)$ since $\bU$ is orthogonal. Then
+Since $\bg'\bA\bg = \bg'\bA_s\bg$ and $\tr(\bA) = \tr(\bA_s)$ for the symmetric part $\bA_s = (\bA + \bA')/2$, while $\fnorm{\bA_s} \leqslant \fnorm{\bA}$ and $\opnorm{\bA_s} \leqslant \opnorm{\bA}$ (as $\fnorm{\bA'} = \fnorm{\bA}$, $\opnorm{\bA'} = \opnorm{\bA}$) make the right-hand side of~\eqref{eq:hanson-wright-gaussian} only larger, it suffices to prove the bound for $\bA_s$; we may thus assume $\bA$ is symmetric. Let $\bA = \bU\bLambda\bU'$ with $\bLambda = \diag(\lambda_1, \ldots, \lambda_n)$. Set $\widetilde\bg = \bU'\bg$, which is again $N(\bzero, \bI_n)$ since $\bU$ is orthogonal. Then
 \[
 \bg'\bA\bg = \widetilde\bg'\bLambda\widetilde\bg = \sum_{k=1}^n \lambda_k \widetilde g_k^2,
 \]
@@ -438,7 +445,7 @@ a weighted sum of independent $\chi^2_1$ variables.
 \[
 \expc[e^{\mu \widetilde g_k^2}] = \int_{-\infty}^\infty \frac{e^{\mu u^2 - u^2/2}}{\sqrt{2\pi}}\,\dd u = \frac{1}{\sqrt{1 - 2\mu}}.
 \]
-Hence, for $\mu \opnorm{\bA} < 1/2$,
+Hence, for $|\mu| \opnorm{\bA} < 1/2$,
 \begin{equation}\label{eq:hw-gauss-mgf}
 \expc[e^{\mu (\bg'\bA\bg - \tr(\bA))}] = \prod_{k=1}^n \frac{e^{-\mu \lambda_k}}{\sqrt{1 - 2\mu\lambda_k}}.
 \end{equation}
@@ -666,7 +673,7 @@ We have $\expc[e^{X^2/t}] = \expc[e^{|X|^2/t}]$. By the definition of $\|X\|_{\p
 \leavevmode
 \begin{enumerate}[label=\textup{(\arabic*)}]
 \item $\chi^2_1$: if $Z \sim N(0,1)$, then $Z^2$ is sub-exponential by Proposition~\ref{prop:sg-square}. More generally, $\chi^2_n = \sum_{i=1}^n Z_i^2$ is sub-exponential.
-\item $\mathrm{Exp}(\lambda)$: if $X \sim \mathrm{Exp}(\lambda)$, then $\|X\|_{\psi_1} = 1/\lambda$.
+\item $\mathrm{Exp}(\lambda)$: if $X \sim \mathrm{Exp}(\lambda)$ (rate $\lambda$), then $\expc[e^{X/t}] = \lambda/(\lambda - 1/t) = 2$ at $t = 2/\lambda$, so $\|X\|_{\psi_1} = 2/\lambda$.
 \item Products: if $X, Y$ are sub-Gaussian, then $XY$ is sub-exponential with $\|XY\|_{\psi_1} \leqslant \|X\|_{\psi_2}\,\|Y\|_{\psi_2}$.
 \end{enumerate}
 \end{example}
@@ -694,7 +701,11 @@ We optimize subject to the constraint $\lambda \leqslant 1/(C\max_i\|X_i\|_{\psi
 \[
 \prb\!\left(\sum X_i \geqslant t\right) \leqslant \exp\!\left(-\frac{t}{C\max_i\|X_i\|_{\psi_1}} + \frac{C'^2\sum\|X_i\|_{\psi_1}^2}{2C^2(\max_i\|X_i\|_{\psi_1})^2}\right).
 \]
-Since $\sum\|X_i\|_{\psi_1}^2 \leqslant n(\max_i\|X_i\|_{\psi_1})^2$ and the second term is $O(n)$ while the first grows linearly in $t$, for $t$ in this range the bound is dominated by the linear term: $\exp(-ct/\max_i\|X_i\|_{\psi_1})$.
+Since the constraint is violated, $t > C'^2\sum\|X_i\|_{\psi_1}^2/(C\max_i\|X_i\|_{\psi_1})$, so the constant (second) term obeys
+\[
+\frac{C'^2\sum\|X_i\|_{\psi_1}^2}{2C^2(\max_i\|X_i\|_{\psi_1})^2} = \frac{1}{2C\max_i\|X_i\|_{\psi_1}}\cdot\frac{C'^2\sum\|X_i\|_{\psi_1}^2}{C\max_i\|X_i\|_{\psi_1}} < \frac{t}{2C\max_i\|X_i\|_{\psi_1}}.
+\]
+Hence the exponent is at most $-\dfrac{t}{C\max_i\|X_i\|_{\psi_1}} + \dfrac{t}{2C\max_i\|X_i\|_{\psi_1}} = -\dfrac{t}{2C\max_i\|X_i\|_{\psi_1}}$, giving $\exp(-ct/\max_i\|X_i\|_{\psi_1})$ with $c = 1/(2C)$.
 
 The minimum in~\eqref{eq:bernstein} captures both cases. The two-sided bound follows by the union bound.
 \end{proof}
@@ -888,49 +899,41 @@ In terms of $\bX'\bX/n$:
 \end{theorem}
 
 \begin{proof}
-\textbf{Upper bound on $\sigma_{\max}(\bX) = \opnorm{\bX}$.}
+We prove the sharp bound for a standard Gaussian matrix---the prototype that fixes the constants---and then state the sub-Gaussian extension.
 
-\textbf{Step 1: Pointwise bound.} For fixed $\bu \in S^{p-1}$ and $\bv \in S^{n-1}$, $\bu'\bX'\bv = \sum_{i=1}^n v_i\ip{\bx_i}{\bu}$. Since $\bx_i$ is sub-Gaussian with $\|\ip{\bx_i}{\bu}\|_{\psi_2} \leqslant K\|\bu\| = K$, and $\|v_i\ip{\bx_i}{\bu}\|_{\psi_2} \leqslant |v_i|K$, by Theorem~\ref{thm:hoeffding-sg}:
+\medskip\noindent\textbf{Gaussian case.} Suppose first that the entries of $\bX$ are i.i.d.\ $N(0,1)$. Write the extreme singular values variationally:
 \[
-\prb(|\bu'\bX'\bv| \geqslant s) \leqslant 2\exp\!\left(-\frac{cs^2}{K^2\|\bv\|^2}\right) = 2\exp\!\left(-\frac{cs^2}{K^2}\right).
+\sigma_{\max}(\bX) = \max_{\bu \in S^{p-1}}\max_{\bv \in S^{n-1}} \bv'\bX\bu, \qquad \sigma_{\min}(\bX) = \min_{\bu \in S^{p-1}}\max_{\bv \in S^{n-1}} \bv'\bX\bu.
 \]
-
-\textbf{Step 2: $\varepsilon$-nets.} Let $\calN_p$ be a $(1/4)$-net of $S^{p-1}$ and $\calN_n$ a $(1/4)$-net of $S^{n-1}$, with $|\calN_p| \leqslant 9^p$ and $|\calN_n| \leqslant 9^n$ (Lemma~\ref{lem:covering-sphere}). By the bilinear $\varepsilon$-net argument (as in Lemma~\ref{lem:eps-net-approx}, applied to the non-symmetric matrix $\bX'$ via $\opnorm{\bX} = \sup |\bu'\bX'\bv|$): $\opnorm{\bX} \leqslant 2\sup_{\bu \in \calN_p, \bv \in \calN_n}|\bu'\bX'\bv|$.
-
-\textbf{Step 3: Union bound.} Setting $s$ in Step~1 and taking the union:
+Consider the centred Gaussian process $X_{\bu,\bv} = \bv'\bX\bu$ and the comparison process $Y_{\bu,\bv} = \ip{\bg}{\bv} + \ip{\bh}{\bu}$, with $\bg \sim N(\bzero,\bI_n)$ and $\bh \sim N(\bzero,\bI_p)$ independent. Since $\expc[X_{\bu,\bv}X_{\bu',\bv'}] = \ip{\bu}{\bu'}\ip{\bv}{\bv'}$ and $\expc[Y_{\bu,\bv}Y_{\bu',\bv'}] = \ip{\bu}{\bu'} + \ip{\bv}{\bv'}$, the increments satisfy
 \[
-\prb(\opnorm{\bX} \geqslant 2s) \leqslant 2\cdot 9^{p+n}\cdot\exp(-cs^2/K^2).
+\expc(X_{\bu,\bv}-X_{\bu',\bv'})^2 = 2 - 2\ip{\bu}{\bu'}\ip{\bv}{\bv'}, \qquad \expc(Y_{\bu,\bv}-Y_{\bu',\bv'})^2 = \|\bu-\bu'\|^2 + \|\bv-\bv'\|^2,
 \]
-We need $cs^2/K^2 \geqslant (p+n)\ln 9 + \ln(2) + u^2$ for the tail probability $2e^{-u^2}$. Setting $s = CK(\sqrt{n} + \sqrt{p} + u)/2$ for $C$ large enough: $s^2/K^2 \geqslant c'(n + p + u^2)$, and the $9^{p+n}$ factor is absorbed. Hence with probability $\geqslant 1 - 2e^{-cu^2}$:
-\[
-\sigma_{\max}(\bX) \leqslant CK(\sqrt{n} + \sqrt{p} + u).
-\]
-Reparametrizing $t = CKu$ and absorbing $CK$ into the constant $C$: $\sigma_{\max}(\bX) \leqslant \sqrt{n} + C\sqrt{p} + t$.
+so that
+\begin{equation}\label{eq:gordon-incr}
+\expc(Y_{\bu,\bv}-Y_{\bu',\bv'})^2 - \expc(X_{\bu,\bv}-X_{\bu',\bv'})^2 = 2(1-\ip{\bu}{\bu'})(1-\ip{\bv}{\bv'}) \geqslant 0,
+\end{equation}
+with equality whenever $\bu = \bu'$.
 
-\medskip\noindent\textbf{Lower bound on $\sigma_{\min}(\bX) = \inf_{\bu \in S^{p-1}}\|\bX\bu\|$.}
-
-\textbf{Step 4: Pointwise lower bound.} Fix $\bu \in S^{p-1}$. Then $\|\bX\bu\|^2 = \sum_{i=1}^n(\ip{\bx_i}{\bu})^2$. Each $Z_i = (\ip{\bx_i}{\bu})^2 - 1$ is mean-zero, sub-exponential with $\|Z_i\|_{\psi_1} \leqslant CK^2$. By Bernstein's inequality:
+\emph{Upper bound.} The inequality~\eqref{eq:gordon-incr} for \emph{all} pairs is the hypothesis of the Sudakov--Fernique inequality, giving $\expc\max_{\bu,\bv} X_{\bu,\bv} \leqslant \expc\max_{\bu,\bv} Y_{\bu,\bv}$. Hence
 \[
-\prb\!\left(\left|\|\bX\bu\|^2 - n\right| \geqslant s\right) \leqslant 2\exp\!\left[-c\min\!\left(\frac{s^2}{nK^4},\;\frac{s}{K^2}\right)\right].
+\expc\,\sigma_{\max}(\bX) \leqslant \expc\Big[\max_{\bv}\ip{\bg}{\bv}\Big] + \expc\Big[\max_{\bu}\ip{\bh}{\bu}\Big] = \expc\|\bg\| + \expc\|\bh\| \leqslant \sqrt{n} + \sqrt{p},
 \]
-Setting $s = n/2$ (sub-Gaussian regime since $s^2/(nK^4) = n/(4K^4)$): $\prb(\|\bX\bu\|^2 \leqslant n/2) \leqslant 2\exp(-cn/K^4)$.
+using $\expc\|\bg\| \leqslant (\expc\|\bg\|^2)^{1/2} = \sqrt{n}$ and $\expc\|\bh\| \leqslant \sqrt{p}$.
 
-\textbf{Step 5: $\varepsilon$-net for infimum.} Let $\calN_p$ be a $(1/4)$-net of $S^{p-1}$. For any $\bu \in S^{p-1}$, pick $\bu_0 \in \calN_p$ with $\|\bu - \bu_0\| \leqslant 1/4$. Then:
+\emph{Lower bound.} The equality of increments for $\bu=\bu'$ together with~\eqref{eq:gordon-incr} is exactly the hypothesis of \textbf{Gordon's inequality} (the Gaussian min--max comparison theorem; Gordon, 1985): under these conditions $\expc\min_{\bu}\max_{\bv} X_{\bu,\bv} \geqslant \expc\min_{\bu}\max_{\bv} Y_{\bu,\bv}$. Here
 \[
-\|\bX\bu\| \geqslant \|\bX\bu_0\| - \|\bX(\bu - \bu_0)\| \geqslant \|\bX\bu_0\| - \opnorm{\bX}/4.
+\min_{\bu}\max_{\bv} Y_{\bu,\bv} = \max_{\bv}\ip{\bg}{\bv} + \min_{\bu}\ip{\bh}{\bu} = \|\bg\| - \|\bh\|,
 \]
-Hence $\sigma_{\min}(\bX) \geqslant \min_{\bu_0 \in \calN_p}\|\bX\bu_0\| - \sigma_{\max}(\bX)/4$.
+so $\expc\,\sigma_{\min}(\bX) \geqslant \expc\|\bg\| - \expc\|\bh\| \geqslant \sqrt{n-1} - \sqrt{p}$, where $\expc\|\bg\| \geqslant \sqrt{n-1}$ follows from $(\expc\|\bg\|)^2 = \expc\|\bg\|^2 - \var\|\bg\| \geqslant n - 1$ (the Gaussian Poincar\'e inequality gives $\var\|\bg\| \leqslant 1$, as $\bg \mapsto \|\bg\|$ is $1$-Lipschitz).
 
-\textbf{Step 6: Union bound.} By Step~4 and the union over $|\calN_p| \leqslant 9^p$:
+\emph{Concentration.} The maps $\bX \mapsto \sigma_{\max}(\bX)$ and $\bX \mapsto \sigma_{\min}(\bX)$ are $1$-Lipschitz in the Frobenius norm (singular values are $1$-Lipschitz by Weyl's inequality, and $\fnorm{\cdot} \geqslant \opnorm{\cdot}$). Gaussian concentration of Lipschitz functions gives $\prb(|\,f(\bX) - \expc f(\bX)\,| \geqslant t) \leqslant 2e^{-t^2/2}$ for each. With the expectation bounds and a union bound, with probability at least $1 - 2e^{-t^2/2}$,
 \[
-\prb\!\left(\min_{\calN_p}\|\bX\bu_0\| \leqslant \sqrt{n/2}\right) \leqslant 9^p\cdot 2\exp(-cn/K^4).
+\sqrt{n-1} - \sqrt{p} - t \leqslant \sigma_{\min}(\bX) \leqslant \sigma_{\max}(\bX) \leqslant \sqrt{n} + \sqrt{p} + t,
 \]
-When $n \geqslant C'K^4 p$: $9^p e^{-cn/K^4} \leqslant e^{-c'p}$, so $\min_{\calN_p}\|\bX\bu_0\| \geqslant \sqrt{n/2}$ with probability $\geqslant 1 - 2e^{-c'p}$. On the intersection with the upper-bound event (probability $\geqslant 1 - 2e^{-ct^2} - 2e^{-c'p}$):
-\begin{align*}
-\sigma_{\min}(\bX) &\geqslant \sqrt{n/2} - (\sqrt{n} + C\sqrt{p} + t)/4\\
-&= \sqrt{n}(\sqrt{1/2} - 1/4) - C\sqrt{p}/4 - t/4.
-\end{align*}
-Since $\sqrt{1/2} - 1/4 \approx 0.457 > 0$, after adjusting constants: $\sigma_{\min}(\bX) \geqslant \sqrt{n} - C''\sqrt{p} - t$ with the stated probability.
+which is~\eqref{eq:extreme-eigenvalues} with $C = 1$ (the lower-order gap $\sqrt{n}-\sqrt{n-1} \leqslant 1$ is absorbed into the additive term).
+
+\medskip\noindent\textbf{Sub-Gaussian case.} For general isotropic sub-Gaussian rows with $\|\bx_i\|_{\psi_2} \leqslant K$, the same two-sided bound holds with $C$ depending only on $K$. This is the \emph{matrix deviation inequality} (Vershynin, \emph{HDP}, Theorem~9.1.1; and Bai--Yin, 1993, for the hard edge under finite fourth moments), whose proof replaces the Gaussian comparison by a generic-chaining bound on the sub-Gaussian process $\bu \mapsto \|\bX\bu\| - \sqrt{n}$ over $S^{p-1}$; this chaining argument is beyond our scope, and the Gaussian computation above is the prototype that fixes the sharp edges $(1 \pm \sqrt{p/n})^2$ in~\eqref{eq:extreme-eigenvalues-gram}.
 \end{proof}
 
 \begin{remark}
@@ -965,7 +968,7 @@ where $p$ replaces $k+1$ for the total number of regressors. The following assum
 \begin{enumerate}[label=\textup{(\arabic*)}]
 \item \ref{M1} replaces the fixed-design assumption. The design is now stochastic.
 \item \ref{M2} replaces (A4): it is the sub-Gaussian analogue of the full-rank condition. By Theorem~\ref{thm:eigenvalue-bounds}, \ref{M2} and~\ref{M4} together imply $\bX'\bX$ is invertible with high probability.
-\item \ref{M3} replaces (A5): sub-Gaussian errors instead of normal errors. The variance parameter $\sigma^2 = \var(\varepsilon_i)$ is bounded by $C\|\varepsilon_i\|_{\psi_2}^2$ (Proposition~\ref{prop:sg-variance}).
+\item \ref{M3} replaces (A5): sub-Gaussian errors instead of normal errors. We write $\sigma_\varepsilon^2 = \var(\varepsilon_i)$ for the error variance; by Proposition~\ref{prop:sg-variance}, $\sigma_\varepsilon^2 \leqslant C\|\varepsilon_i\|_{\psi_2}^2 \leqslant C\sigma^2$, and throughout $\sigma$ is treated as a tight sub-Gaussian proxy for the noise scale, so that $\sigma_\varepsilon^2 \asymp \sigma^2$.
 \item \ref{M4} is the modern analogue of $n > k + 1$ in (A4). It is a quantitative sample-size condition.
 \end{enumerate}
 \end{remark}
@@ -1083,15 +1086,14 @@ where $\sigma_\varepsilon^2 = \var(\varepsilon_i)$. Consequently, $\MSE = \SSE/(
 \]
 Here we used $\fnorm{\bM}^2 = n - p$ and $\opnorm{\bM} = 1$.
 
-\textbf{Step 4: Choose $t$.} Set $t = \delta\sigma_\varepsilon^2(n-p)$ with $\delta > 0$. The first argument of the minimum is $\delta^2\sigma_\varepsilon^4(n-p)/\sigma^4$, and the second is $\delta\sigma_\varepsilon^2(n-p)/\sigma^2$. Since $\sigma_\varepsilon^2 \leqslant C\sigma^2$ (Proposition~\ref{prop:sg-variance}) and $\delta \leqslant 1$, both arguments are $\geqslant c'\delta^2(n-p)$ for a constant $c'$ depending on $C$. Hence:
+\textbf{Step 4: Choose $t$.} Apply the bound at the sub-Gaussian scale, $t = \delta\sigma^2(n-p)$ with $\delta \in (0,1]$. Then the first argument of the minimum is $t^2/(\sigma^4(n-p)) = \delta^2(n-p)$ and the second is $t/\sigma^2 = \delta(n-p) \geqslant \delta^2(n-p)$, so the minimum equals $\delta^2(n-p)$ and
 \[
-\prb\!\left(\left|\frac{\SSE}{\sigma_\varepsilon^2} - (n-p)\right| \geqslant \delta(n-p) \;\middle|\; \bX\right) \leqslant 2\exp(-c''\delta^2(n-p)).
+\prb\!\left(|\be'\bM\be - \sigma_\varepsilon^2(n-p)| \geqslant \delta\sigma^2(n-p) \;\middle|\; \bX\right) \leqslant 2\exp(-c\delta^2(n-p)).
 \]
-Choosing $\delta = C_0/\sqrt{n-p}$ for a constant $C_0$:
+Choosing $\delta = C_0/\sqrt{n-p}$ gives $|\be'\bM\be - \sigma_\varepsilon^2(n-p)| \leqslant C_0\sigma^2\sqrt{n-p}$ with conditional probability $\geqslant 1 - 2\exp(-cC_0^2)$. Since the sub-Gaussian proxy is comparable to the noise standard deviation --- $\sigma_\varepsilon^2 \asymp \sigma^2$ (Proposition~\ref{prop:sg-variance} gives $\sigma_\varepsilon^2 \leqslant C\sigma^2$; we take $\sigma$ to be a tight proxy, so also $\sigma^2 \leqslant C\sigma_\varepsilon^2$) --- dividing by $\sigma_\varepsilon^2$ yields
 \[
-\left|\frac{\SSE}{\sigma_\varepsilon^2} - (n-p)\right| \leqslant C_0\sqrt{n-p}
+\left|\frac{\SSE}{\sigma_\varepsilon^2} - (n-p)\right| \leqslant C_0'\sqrt{n-p}.
 \]
-with conditional probability $\geqslant 1 - 2\exp(-c''C_0^2)$.
 
 \textbf{Step 5: Remove conditioning.} By the union bound over the full-rank event and the concentration event:
 \[

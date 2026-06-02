@@ -51,6 +51,7 @@
 \newcommand{\dd}{\mathrm{d}}
 \newcommand{\ind}{\mathbf{1}}
 \newcommand{\caln}{\mathcal{N}}
+\newcommand{\erf}{\operatorname{erf}}
 \newcommand{\Mn}{M_{n\times m}}
 
 \usepackage{parskip}
@@ -142,8 +143,8 @@ set $A^{1/2}:=O\Lambda^{1/2}O^\top$; uniqueness is standard.)
   R_1+A_1R_2$ to clear the $(1,1)$-block's contribution to the $(1,2)$
   block: the matrix becomes
   $\bigl(\begin{smallmatrix}I_n+A_1A_2 & 0\\ A_2 & I_m\end{smallmatrix}\bigr)$,
-  so $D=|I_n+A_1A_2|$.  Alternatively, column-reduce $C_1\leftarrow
-  C_1+C_2A_2$: the matrix becomes
+  so $D=|I_n+A_1A_2|$.  Alternatively, row-reduce $R_2\leftarrow
+  R_2-A_2R_1$: the matrix becomes
   $\bigl(\begin{smallmatrix}I_n & -A_1\\ 0 & I_m+A_2A_1\end{smallmatrix}\bigr)$,
   so $D=|I_m+A_2A_1|$.
 \end{proof}
@@ -184,49 +185,68 @@ $C\succcurlyeq 0$ is deferred to \Cref{note:singular}.
 \end{definition}
 
 \begin{lemma}[Slab approximation]\label{lem:slab_approx}
-  Every closed symmetric convex set $K\subseteq\R^d$ is a countable
-  intersection of symmetric slabs $S_{v,t}$.
+  Every nonempty \emph{bounded} closed symmetric convex set
+  $K\subseteq\R^d$ is a countable intersection of symmetric slabs
+  $S_{v,t}$.
 \end{lemma}
 
 \begin{proof}
-  \leavevmode
-  \begin{enumerate}
-    \item Reduction to bounded $K$.  Set $K_m:=K\cap[-m,m]^d$, a closed
-      symmetric convex set.  Since $K=\bigcup_m K_m$, by monotone
-      convergence $\mu(K)=\lim_m\mu(K_m)$ and similarly for $K\cap L$,
-      so it suffices to prove the slab approximation for bounded $K$;
-      we assume $K\subseteq B(0,R)$ for some $R<\infty$ below.
+  Fix $R<\infty$ with $K\subseteq B(0,R)$, and let
+  $\mathcal V:=\{(v,t)\in\mathbb{Q}^d\times\mathbb{Q}_{>0}:K\subseteq S_{v,t}\}$,
+  a countable set; trivially $K\subseteq\bigcap_{(v,t)\in\mathcal V}S_{v,t}$.
+  For the reverse inclusion we show that each $y\notin K$ is excluded by
+  some slab in $\mathcal V$.
 
-    \item Bounded case.  Let
-      $\mathcal V:=\{(v,t)\in\mathbb{Q}^d\times\mathbb{Q}_{>0}:K\subseteq S_{v,t}\}$,
-      countable.  Trivially $K\subseteq\bigcap_{(v,t)\in\mathcal V}S_{v,t}$.
+  Fix $y\notin K$ and pick $\varepsilon>0$ with
+  $B(y,\varepsilon)\cap K=\varnothing$.  The sets
+  $\overline{B(y,\varepsilon/2)}$ (bounded) and $K$ (closed convex) are
+  disjoint, so \Cref{lem:separation} yields a separating functional;
+  replacing it by its negative if necessary, we obtain
+  $w\in\R^d\setminus\{0\}$ and $\alpha_1<\alpha_2$ with
+  $\langle w,x\rangle\leqslant\alpha_1$ for $x\in K$ and
+  $\langle w,x\rangle\geqslant\alpha_2$ for $x\in\overline{B(y,\varepsilon/2)}$.
+  Set $a:=\sup_{x\in K}\langle w,x\rangle\leqslant\alpha_1$.  Since $K$ is
+  nonempty, symmetric, and convex, $0=\tfrac12 x+\tfrac12(-x)\in K$ for
+  any $x\in K$, so $a\geqslant\langle w,0\rangle=0$; and $K=-K$ gives
+  $\sup_{x\in K}|\langle w,x\rangle|\leqslant a$.  The minimum of
+  $\langle w,\cdot\rangle$ over $\overline{B(y,\varepsilon/2)}$ is attained at
+  $y-\tfrac{\varepsilon}{2}w/|w|$, so
+  \[
+    \langle w,y\rangle
+    =\min_{z\in\overline{B(y,\varepsilon/2)}}\langle w,z\rangle
+      +\tfrac{\varepsilon}{2}|w|
+    \;\geqslant\;\alpha_2+\tfrac{\varepsilon}{2}|w|
+    \;\geqslant\;a+\tfrac{\varepsilon}{2}|w|>0,
+  \]
+  a strictly positive margin over $a$.
 
-      Conversely, fix $y\notin K$ and let $\varepsilon>0$ with
-      $B(y,\varepsilon)\cap K=\varnothing$.  Applying
-      \Cref{lem:separation} to $K_1:=\overline{B(y,\varepsilon/2)}$
-      (bounded) and $K_2:=K$ (closed convex, disjoint from $K_1$) yields
-      $w\in\R^d\setminus\{0\}$ and $a\in\R$ with
-      $\sup_{x\in K}\langle w,x\rangle\leqslant a$ and
-      $\langle w,y\rangle\geqslant a+\varepsilon|w|$.
-      Since $K$ is symmetric and convex, $0=\tfrac12 x+\tfrac12(-x)\in K$
-      for any $x\in K$ (taking any $x\in K$, e.g.\ because $K\ne\varnothing$),
-      hence $a\geqslant\langle w,0\rangle=0$; and $K=-K$ gives
-      $\sup_{x\in K}|\langle w,x\rangle|\leqslant a$.
-      Pick $(w',a')\in\mathbb{Q}^d\times\mathbb{Q}_{>0}$ with
-      $|w'-w|<\delta$, $|a'-a|<\delta$.  Then
-      \[
-        \sup_{x\in K}|\langle w',x\rangle|
-        \leqslant a+\delta R,\qquad
-        |\langle w',y\rangle|\geqslant a+\varepsilon|w|-\delta|y|.
-      \]
-      Choosing $\delta<\min(\varepsilon|w|/(|y|+R+1),\varepsilon|w|/2)$
-      and $a':=a+\delta R+\delta/2\in\mathbb{Q}_{>0}$ gives
-      $K\subseteq S_{w',a'}$ and $y\notin S_{w',a'}$.
-  \end{enumerate}
+  Now choose $(w',a')\in\mathbb{Q}^d\times\mathbb{Q}_{>0}$ with
+  $|w'-w|<\delta$, $|a'-a|<\delta$.  Using $|x|\leqslant R$ on $K$,
+  $\sup_{x\in K}|\langle w,x\rangle|\leqslant a$, and
+  $\langle w,y\rangle\geqslant a+\tfrac{\varepsilon}{2}|w|$,
+  \[
+    \sup_{x\in K}|\langle w',x\rangle|
+    \leqslant a+\delta R,\qquad
+    |\langle w',y\rangle|\geqslant a+\tfrac{\varepsilon}{2}|w|-\delta|y|.
+  \]
+  Taking $\delta<\dfrac{\varepsilon|w|}{2(|y|+R+1)}$ and
+  $a':=a+\delta R+\delta/2\in\mathbb{Q}_{>0}$ then forces $\delta(|y|+R+\tfrac12)
+  <\tfrac{\varepsilon}{2}|w|$, which gives both $K\subseteq S_{w',a'}$ and
+  $y\notin S_{w',a'}$, as required.
 \end{proof}
 
-By \Cref{lem:slab_approx} and monotone convergence, the GCI reduces
-to the case where $K$ and $L$ are finite intersections of symmetric
+We now reduce \Cref{thm:gcc_geom} to a statement about slabs.  If $K$ or
+$L$ is empty both sides of \eqref{eq:gcc} vanish, so assume both are
+nonempty.  We proceed in two steps, each by continuity of the finite measure
+$\mu$ (from below for the increasing truncations of the first step, from
+above for the decreasing slab-intersections of the second).  First, putting $K_m:=K\cap[-m,m]^d$ and $L_m:=L\cap[-m,m]^d$
+(nonempty for $m$ large, bounded closed symmetric convex, increasing to
+$K,L$), we get $\mu(K_m)\to\mu(K)$, $\mu(L_m)\to\mu(L)$, and
+$\mu(K_m\cap L_m)\to\mu(K\cap L)$, so it suffices to treat \emph{bounded}
+$K,L$.  Second, \Cref{lem:slab_approx} writes each bounded set as a
+countable intersection of symmetric slabs; intersecting the first $N$ of
+them and letting $N\to\infty$, the same continuity reduces the GCI to the
+case where $K$ and $L$ are \emph{finite} intersections of symmetric
 slabs.  Writing
 \[
   K=\bigl\{x : |\langle v_i,x\rangle|\leqslant t_i,\;1\leqslant i\leqslant n_1\bigr\},
@@ -308,13 +328,14 @@ the GCI reduces to:
       |I_n+A|\;=\;1+\sum_{\varnothing\ne J\subseteq[n]}|A_J|.
     \end{equation}
     \item For $A=\bigl(\begin{smallmatrix}A_{11}&A_{12}\\A_{21}&A_{22}
-      \end{smallmatrix}\bigr)$ with $A_{ii}$ invertible,
+      \end{smallmatrix}\bigr)$ with $A_{11},A_{22}\succ 0$,
     \begin{equation}\label{eq:det2}
       |A|=|A_{11}||A_{22}|\cdot
       \bigl|I_{n_1}-A_{11}^{-1/2}A_{12}A_{22}^{-1}A_{21}A_{11}^{-1/2}\bigr|.
     \end{equation}
-    If $A\succ 0$, then $0\leqslant A_{11}^{-1/2}A_{12}A_{22}^{-1}A_{21}
-    A_{11}^{-1/2}\leqslant I_{n_1}$.
+    If moreover $A\succ 0$, then
+    $0\preccurlyeq A_{11}^{-1/2}A_{12}A_{22}^{-1}A_{21}
+    A_{11}^{-1/2}\preccurlyeq I_{n_1}$.
   \end{enumerate}
 \end{lemma}
 
@@ -331,7 +352,8 @@ the GCI reduces to:
       term is $1$.
 
     \item Let $A_{11}^{1/2},A_{22}^{1/2}$ be the positive
-      symmetric square roots (\Cref{lem:sqrt}), invertible by assumption.
+      symmetric square roots (\Cref{lem:sqrt}), invertible since
+      $A_{11},A_{22}\succ 0$.
       Setting $P:=A_{11}^{-1/2}A_{12}A_{22}^{-1/2}$ and
       $Q:=A_{22}^{-1/2}A_{21}A_{11}^{-1/2}$, a direct block multiplication
       gives
@@ -474,9 +496,10 @@ $Z_i(\tau):=\tfrac{1}{2}X_i(\tau)^2$.
             \leqslant g(x):=c\,\frac{1+\sum_ix_i}{\sqrt{x_1\cdots x_n}}
             e^{-a\sum_ix_i}
           \]
-          for some $c=c(C,n)$.  Fubini:
-          $\int_0^\infty x^{-1/2}(1+x)e^{-ax}\,\dd x<\infty$, so
-          factoring in each coordinate gives $\int g<\infty$.
+          for some $c=c(C,n)$.  Since $1+\sum_ix_i\leqslant\prod_i(1+x_i)$,
+          we have $g(x)\leqslant c\prod_i x_i^{-1/2}(1+x_i)e^{-ax_i}$,
+          which factorises; as $\int_0^\infty x^{-1/2}(1+x)e^{-ax}\,\dd x<\infty$,
+          Tonelli gives $\int g<\infty$.
 
         \item Interchange.  For any Borel $K\subseteq[0,\infty)^n$ and
           $\lambda_i\geqslant 0$,
@@ -512,7 +535,8 @@ $Z_i(\tau):=\tfrac{1}{2}X_i(\tau)^2$.
 \end{remark}
 
 \begin{definition}\label{def:h_family}
-  For $\mu>0$, $\alpha\in(0,\infty)^n$, and
+  For a scale parameter $\mu>0$ (unrelated to the Gaussian measure of
+  \Cref{thm:gcc_geom}), $\alpha\in(0,\infty)^n$, and
   $Y=(Y_1,\ldots,Y_n)$ with $Y_i\geqslant 0$ a.s.,
   \[
     h_{\alpha,\mu,Y}(x)
@@ -563,11 +587,16 @@ $Z_i(\tau):=\tfrac{1}{2}X_i(\tau)^2$.
             \Gamma(s)\geqslant\tfrac12\quad\text{for all }s>0,
           \end{equation}
           giving $\Gamma(\alpha)^{-1}\leqslant 2$ for the $k=0$ term.
-          For $k\geqslant 1$, induction via
-          $\Gamma(k+\alpha)=(k-1+\alpha)\Gamma(k-1+\alpha)\geqslant
-          k\cdot\tfrac12(k-2)!=\tfrac12(k-1)!$ gives
-          $\Gamma(k+\alpha)\geqslant\tfrac12(k-1)!$ (base case $k=1$:
-          $\Gamma(1+\alpha)\geqslant\tfrac12$).  Substituting into
+          For $k\geqslant 1$, iterating $\Gamma(s+1)=s\Gamma(s)$ gives
+          \[
+            \Gamma(k+\alpha)
+            =\Gamma(1+\alpha)\prod_{j=1}^{k-1}(j+\alpha)
+            \;\geqslant\;\tfrac12\prod_{j=1}^{k-1}j
+            =\tfrac12(k-1)!,
+          \]
+          where we used $\Gamma(1+\alpha)\geqslant\tfrac12$ and
+          $j+\alpha\geqslant j$ (the product is empty for $k=1$).
+          Substituting into
           $g_\alpha(x,y)$:
           \begin{align*}
             g_\alpha(x,y)
@@ -593,8 +622,9 @@ $Z_i(\tau):=\tfrac{1}{2}X_i(\tau)^2$.
 
         \item Derivative formula.  Differentiating the series in
           \Cref{def:ncgamma} term by term (using
-          $\Gamma(k+\alpha)=(k+\alpha-1)\Gamma(k+\alpha-1)$, valid when
-          $\alpha>0$),
+          $\Gamma(k+\alpha)=(k+\alpha-1)\Gamma(k+\alpha-1)$; for the
+          $k=0$ term this reads $\Gamma(\alpha)=(\alpha-1)\Gamma(\alpha-1)$,
+          which is exactly where $\alpha>1$ is needed),
           \begin{equation}\label{eq:g_deriv}
             \partial_x g_\alpha(x,y)=g_{\alpha-1}(x,y)-g_\alpha(x,y),
             \qquad\alpha>1,
@@ -616,14 +646,22 @@ $Z_i(\tau):=\tfrac{1}{2}X_i(\tau)^2$.
           h_{\alpha-\sum_{i\in J}\delta_ie_i},
       \end{equation}
       each summand in $L_1$ by (i) (all $\alpha_i-\delta_i\geqslant\alpha_i-1>0$).
-      Integration by parts in each $x_j$, $j\in J$: the boundary term at
-      $x_j\to\infty$ vanishes by \eqref{eq:hbound} (exponential decay in
-      every coordinate via $\int_0^\infty x^{\alpha-1}(1+x)e^{-ax}\,\dd x<\infty$,
-      implying pointwise decay of the partial integral); at $x_j\to 0+$
-      by (ii), applied to the $\alpha'_j:=\alpha_j-\delta_j\geqslant\alpha_j-1>0$
-      shape, together with the extra factor $e^{-\sum_i\lambda_ix_i}$
-      which is bounded.  Each integration by parts brings down a
-      $\lambda_j$, giving \eqref{eq:proph_iii}.
+      Integrate by parts in each $x_j$, $j\in J$, in turn.  At the step
+      removing $\partial_{x_j}$, the function being differentiated is a
+      finite combination of densities $h_{\alpha'}$ (via
+      \eqref{eq:derivJ_h}) in which coordinate $j$ is \emph{not} among
+      the lowered ones, so its $j$-th shape parameter is still
+      $\alpha_j>1$; by (i) each such $h_{\alpha'}$, and by
+      \eqref{eq:derivJ_h} its $x_j$-partial, lies in $L_1$.  Hence, for
+      a.e.\ fixing of the remaining coordinates, $x_j\mapsto h_{\alpha'}$
+      is absolutely continuous with itself and its derivative integrable;
+      such a function tends to $0$ as $x_j\to\infty$ (an $L_1$ function on
+      $(0,\infty)$ with integrable derivative has limit $0$ at infinity),
+      and to $0$ as $x_j\to 0+$ by (ii) (since $\alpha'_j=\alpha_j>1$).
+      Both boundary contributions therefore vanish (the bounded factor
+      $e^{-\sum_i\lambda_ix_i}\in(0,1]$ does not affect this), and each
+      integration by parts brings down a factor $\lambda_j$, giving
+      \eqref{eq:proph_iii}.
   \end{enumerate}
 \end{proof}
 
@@ -925,7 +963,7 @@ which proves \Cref{prop:key} and hence \Cref{thm:gcc2}.  \qed
 
 
 %% ====================================================================
-\section{Two corollaries}\label{sec:corollaries}
+\section{\v{S}id\'ak's inequality}\label{sec:corollaries}
 %% ====================================================================
 
 \begin{corollary}[\v{S}id\'ak]\label{cor:sidak}
@@ -945,16 +983,421 @@ which proves \Cref{prop:key} and hence \Cref{thm:gcc2}.  \qed
   apply induction to $\PP(X\in L_1)$.
 \end{proof}
 
-\begin{corollary}[Decoupling]\label{cor:decouple}
-  For $X\sim\caln(0,C)$ and closed symmetric convex $K,L\subseteq\R^n$,
+
+%% ====================================================================
+\section{Worked examples}\label{sec:examples}
+%% ====================================================================
+
+We close with three exact demonstrations of the GCI on concrete
+symmetric convex sets, ordered from a fully rational anchor through the
+equality boundary to a genuinely correlated case in which strictness is
+established in closed form.  No numerical approximation is used: every
+probability is given exactly, in terms of $e$, $\pi$, and the error
+function $\erf(z)=\tfrac{2}{\sqrt\pi}\int_0^z e^{-u^2}\,\dd u$.  We use
+repeatedly that, for $Z\sim\caln(0,1)$,
+\begin{equation}\label{eq:ex-erf}
+  \PP(|Z|\leqslant a)=\Phi(a)-\Phi(-a)=2\Phi(a)-1=\erf\!\bigl(a/\sqrt2\bigr),
+\end{equation}
+the last equality because $\Phi(a)=\tfrac12\bigl(1+\erf(a/\sqrt2)\bigr)$.
+
+\subsection{A fully rational anchor: nested disks}\label{sub:ex-nested}
+
+We first record the Gaussian measure of a centred disk.  For
+$G\sim\caln(0,I_2)$, passing to polar coordinates $x=(r\cos\theta,r\sin\theta)$
+with Jacobian $r$,
+\begin{equation}\label{eq:ex-disk}
+  \mu\bigl(\{\|x\|\leqslant R\}\bigr)
+  =\int_0^{2\pi}\!\!\int_0^R\frac{1}{2\pi}e^{-r^2/2}\,r\,\dd r\,\dd\theta
+  =\int_0^R r\,e^{-r^2/2}\,\dd r
+  =\Bigl[-e^{-r^2/2}\Bigr]_0^R
+  =1-e^{-R^2/2}.
+\end{equation}
+(Equivalently $\|G\|^2\sim\chi^2_2$, an exponential law with mean $2$.)
+
+\begin{example}[Concentric disks]\label{ex:nested}
+  Let $G\sim\caln(0,I_2)$ and take the concentric disks
+  $K=\{\|x\|\leqslant R_1\}$ and $L=\{\|x\|\leqslant R_2\}$ with
   \[
-    \PP(X\in K\cap L)\geqslant\PP(X\in K)\,\PP(X\in L).
+    R_1^2=2\ln 2,\qquad R_2^2=2\ln 4=4\ln 2 .
   \]
-\end{corollary}
+  By \eqref{eq:ex-disk},
+  \[
+    \mu(K)=1-e^{-\ln 2}=1-\tfrac12=\tfrac12,\qquad
+    \mu(L)=1-e^{-2\ln 2}=1-\tfrac14=\tfrac34 .
+  \]
+  Since $R_1<R_2$ we have $K\subseteq L$, so $K\cap L=K$ and
+  $\mu(K\cap L)=\tfrac12$.  The GCI \eqref{eq:gcc} reads
+  \[
+    \tfrac12\;\geqslant\;\tfrac12\cdot\tfrac34=\tfrac38 ,
+  \]
+  a strict inequality with both sides rational.
+\end{example}
+
+This is the degenerate \emph{nested} regime: whenever $K\subseteq L$ one
+has $K\cap L=K$, so the GCI collapses to
+$\mu(K)\geqslant\mu(K)\,\mu(L)$, i.e.\ $\mu(L)\leqslant 1$, with equality
+only in the trivial case $\mu(L)=1$.  It serves purely as an exact
+sanity check; the substance is in \Cref{ex:box}.
+
+\subsection{The equality boundary: independent blocks}\label{sub:ex-indep}
+
+\begin{example}[Slab $\times$ disk on disjoint coordinates]\label{ex:indep}
+  Let $\mu=\caln(0,I_3)$ and, with $n_1=1$ and $n_2=2$, set
+  \[
+    K=\{x\in\R^3:|x_1|\leqslant a\},\qquad
+    L=\{x\in\R^3:x_2^2+x_3^2\leqslant R^2\},
+  \]
+  both symmetric and convex.  Because the standard normal density on
+  $\R^3$ factorises across the two coordinate blocks,
+  \[
+    \frac{e^{-\|x\|^2/2}}{(2\pi)^{3/2}}
+    =\underbrace{\frac{e^{-x_1^2/2}}{\sqrt{2\pi}}}_{\text{block }\{1\}}
+     \cdot
+     \underbrace{\frac{e^{-(x_2^2+x_3^2)/2}}{2\pi}}_{\text{block }\{2,3\}},
+  \]
+  and $K\cap L$ is the product set
+  $\{|x_1|\leqslant a\}\times\{x_2^2+x_3^2\leqslant R^2\}$, Fubini gives
+  \[
+    \mu(K\cap L)
+    =\PP(|X_1|\leqslant a)\cdot\PP(X_2^2+X_3^2\leqslant R^2)
+    =\mu(K)\,\mu(L).
+  \]
+  Evaluating the two factors by \eqref{eq:ex-erf} and \eqref{eq:ex-disk},
+  \[
+    \mu(K\cap L)=\mu(K)\,\mu(L)
+    =\erf\!\Bigl(\tfrac{a}{\sqrt2}\Bigr)\,\bigl(1-e^{-R^2/2}\bigr),
+  \]
+  an \emph{exact equality} in \eqref{eq:gcc}.
+\end{example}
+
+This is the tight case of the GCI.  The covariance coupling the
+$K$-block $\{1\}$ to the $L$-block $\{2,3\}$ is the zero block,
+$C_{12}=0$, so \Cref{prop:equality} predicts equality --- as the direct
+computation confirms.  Geometrically, the two sets constrain orthogonal
+subspaces, and orthogonality is precisely where no correlation can be
+gained.
+
+\subsection{A correlated box: strictness in closed form}\label{sub:ex-box}
+
+The final example is the genuinely nontrivial one.  A correlated
+Gaussian box probability has no elementary closed form, but its
+derivative in the correlation does, and this suffices to prove strict
+inequality exactly.  The tool is the following identity.
+
+\begin{lemma}[Plackett / Price]\label{lem:ex-plackett}
+  Let $\Phi_2(h,k;\rho)$ and $\phi_2(h,k;\rho)$ denote the CDF and
+  density of $\caln\!\bigl(0,\bigl(\begin{smallmatrix}1&\rho\\\rho&1
+  \end{smallmatrix}\bigr)\bigr)$, $|\rho|<1$.  Then
+  \begin{equation}\label{eq:ex-plackett}
+    \frac{\partial}{\partial\rho}\,\Phi_2(h,k;\rho)
+    =\phi_2(h,k;\rho).
+  \end{equation}
+\end{lemma}
 
 \begin{proof}
-  Restatement of \Cref{thm:gcc_geom} for this $K,L$.
+  Write the density as the inverse Fourier transform of the bivariate
+  normal characteristic function,
+  \[
+    \phi_2(h,k;\rho)
+    =\frac{1}{(2\pi)^2}\iint_{\R^2}
+      e^{-\mathrm i(sh+tk)}\,
+      e^{-\frac12(s^2+2\rho st+t^2)}\,\dd s\,\dd t .
+  \]
+  Differentiating under the integral sign (justified by the Gaussian
+  factor, which dominates all $s,t$-polynomials uniformly for $\rho$ in
+  compact subsets of $(-1,1)$) brings down $-st$ from the exponent:
+  \[
+    \frac{\partial}{\partial\rho}\phi_2
+    =\frac{1}{(2\pi)^2}\iint(-st)\,
+      e^{-\mathrm i(sh+tk)}e^{-\frac12(\cdots)}\,\dd s\,\dd t .
+  \]
+  On the other hand $\partial_h$ and $\partial_k$ bring down $-\mathrm i s$
+  and $-\mathrm i t$ respectively, so
+  $\partial_h\partial_k\phi_2$ produces the factor
+  $(-\mathrm i s)(-\mathrm i t)=-st$ under the same integral.  Hence
+  \begin{equation}\label{eq:ex-heat}
+    \frac{\partial\phi_2}{\partial\rho}
+    =\frac{\partial^2\phi_2}{\partial h\,\partial k}.
+  \end{equation}
+  Now integrate \eqref{eq:ex-heat} over the quadrant
+  $(-\infty,h]\times(-\infty,k]$.  Since $\phi_2$ and its first partials
+  decay to $0$ at $-\infty$, two applications of the fundamental theorem
+  of calculus give
+  \[
+    \frac{\partial}{\partial\rho}\Phi_2(h,k;\rho)
+    =\int_{-\infty}^{h}\!\!\int_{-\infty}^{k}
+      \frac{\partial\phi_2}{\partial\rho}\,\dd v\,\dd u
+    =\int_{-\infty}^{h}\!\!\int_{-\infty}^{k}
+      \frac{\partial^2\phi_2}{\partial u\,\partial v}\,\dd v\,\dd u
+    =\phi_2(h,k;\rho).\qedhere
+  \]
 \end{proof}
+
+\begin{example}[Two correlated slabs; \v{S}id\'ak with $n_1=n_2=1$]\label{ex:box}
+  Let $X\sim\caln(0,C_\rho)$ on $\R^2$ with
+  $C_\rho=\bigl(\begin{smallmatrix}1&\rho\\\rho&1\end{smallmatrix}\bigr)$,
+  $\rho\in(-1,1)$, and take the symmetric slabs
+  \[
+    K=\{|x_1|\leqslant a\},\qquad L=\{|x_2|\leqslant a\},\qquad a>0,
+  \]
+  so that $K\cap L=[-a,a]^2$.  Put
+  $P(\rho):=\mu(K\cap L)=\PP\bigl(|X_1|\leqslant a,\,|X_2|\leqslant a\bigr)$.
+  Then
+  \begin{equation}\label{eq:ex-gap}
+    \mu(K\cap L)-\mu(K)\,\mu(L)
+    =\int_{0}^{|\rho|}
+      \frac{e^{-a^2/(1+s)}-e^{-a^2/(1-s)}}{\pi\sqrt{1-s^2}}\,\dd s
+    \;>\;0
+    \qquad(\rho\neq 0),
+  \end{equation}
+  so the GCI \eqref{eq:gcc} holds \emph{strictly} for every $\rho\neq0$,
+  with equality iff $\rho=0$.
+\end{example}
+
+\begin{proof}
+  By inclusion--exclusion for the rectangle $[-a,a]^2$, writing
+  $\Phi_2(h,k)=\PP(X_1\leqslant h,\,X_2\leqslant k)$,
+  \[
+    P(\rho)=\Phi_2(a,a)-\Phi_2(-a,a)-\Phi_2(a,-a)+\Phi_2(-a,-a).
+  \]
+  Differentiating in $\rho$ and applying \Cref{lem:ex-plackett} to each
+  term,
+  \begin{equation}\label{eq:ex-Pprime0}
+    P'(\rho)=\phi_2(a,a;\rho)-\phi_2(-a,a;\rho)-\phi_2(a,-a;\rho)
+      +\phi_2(-a,-a;\rho).
+  \end{equation}
+  The exponent of $\phi_2$ is
+  $Q(h,k)=\dfrac{h^2-2\rho hk+k^2}{2(1-\rho^2)}$.  At the four corners,
+  \[
+    Q(\pm a,\pm a)=\frac{2a^2-2\rho a^2}{2(1-\rho^2)}
+      =\frac{a^2(1-\rho)}{(1-\rho)(1+\rho)}=\frac{a^2}{1+\rho},
+    \qquad
+    Q(\pm a,\mp a)=\frac{2a^2+2\rho a^2}{2(1-\rho^2)}=\frac{a^2}{1-\rho},
+  \]
+  (each value occurring twice, by $Q(h,k)=Q(-h,-k)$).  Hence the
+  like-sign corners share the value
+  $\frac{1}{2\pi\sqrt{1-\rho^2}}e^{-a^2/(1+\rho)}$ and the opposite-sign
+  corners the value $\frac{1}{2\pi\sqrt{1-\rho^2}}e^{-a^2/(1-\rho)}$, and
+  \eqref{eq:ex-Pprime0} collapses to
+  \begin{equation}\label{eq:ex-Pprime}
+    P'(\rho)=\frac{1}{\pi\sqrt{1-\rho^2}}
+      \Bigl(e^{-a^2/(1+\rho)}-e^{-a^2/(1-\rho)}\Bigr).
+  \end{equation}
+  For $\rho\in(0,1)$ we have $0<1-\rho<1+\rho$, so
+  $\frac{a^2}{1+\rho}<\frac{a^2}{1-\rho}$ and therefore
+  $e^{-a^2/(1+\rho)}>e^{-a^2/(1-\rho)}$, giving $P'(\rho)>0$.
+  Moreover the reflection $(x_1,x_2)\mapsto(x_1,-x_2)$ preserves both
+  Lebesgue measure and the box $[-a,a]^2$ while sending $C_\rho$ to
+  $C_{-\rho}$; hence $P(\rho)=P(-\rho)$, and $P$ is even.  Thus $P$ is
+  strictly increasing on $[0,1)$ and strictly decreasing on $(-1,0]$,
+  with its unique minimum at $\rho=0$.
+
+  At $\rho=0$ the coordinates are independent, so by \eqref{eq:ex-erf}
+  \[
+    P(0)=\PP(|X_1|\leqslant a)\,\PP(|X_2|\leqslant a)
+        =\erf\!\Bigl(\tfrac{a}{\sqrt2}\Bigr)^{2}=\mu(K)\,\mu(L).
+  \]
+  Integrating \eqref{eq:ex-Pprime} from $0$ to $\rho>0$ (and using
+  evenness for $\rho<0$) gives
+  $P(\rho)-P(0)=\int_0^{|\rho|}P'(s)\,\dd s$, which is
+  \eqref{eq:ex-gap}; the integrand is strictly positive on $(0,|\rho|]$,
+  so the gap is strictly positive.
+\end{proof}
+
+\begin{remark}[Exact size of the effect as $a\to 0$]\label{rem:ex-smalla}
+  Expanding the integrand of \eqref{eq:ex-gap} for small $a$ via
+  $e^{-a^2/(1\pm s)}=1-\tfrac{a^2}{1\pm s}+O(a^4)$ gives
+  \[
+    e^{-a^2/(1+s)}-e^{-a^2/(1-s)}
+    =a^2\Bigl(\tfrac{1}{1-s}-\tfrac{1}{1+s}\Bigr)+O(a^4)
+    =\frac{2a^2 s}{1-s^2}+O(a^4),
+  \]
+  so, with the substitution $u=1-s^2$ in
+  $\int_0^{\rho}s(1-s^2)^{-3/2}\,\dd s=\bigl[(1-s^2)^{-1/2}\bigr]_0^{\rho}
+  =(1-\rho^2)^{-1/2}-1$,
+  \[
+    \mu(K\cap L)-\mu(K)\,\mu(L)
+    =\frac{2a^2}{\pi}\Bigl((1-\rho^2)^{-1/2}-1\Bigr)+O(a^4).
+  \]
+  Since $\erf(a/\sqrt2)=\sqrt{2/\pi}\,a+O(a^3)$ gives
+  $\mu(K)\,\mu(L)=\tfrac{2a^2}{\pi}+O(a^4)$, the relative discrepancy
+  tends to an exact constant,
+  \[
+    \frac{\mu(K\cap L)}{\mu(K)\,\mu(L)}
+    \;\xrightarrow[a\to0]{}\;\frac{1}{\sqrt{1-\rho^2}}\;>\;1
+    \qquad(\rho\neq0),
+  \]
+  quantifying exactly how far the inequality is from tight for small
+  boxes.
+\end{remark}
+
+\begin{remark}[Geometric reading and the general \v{S}id\'ak inequality]
+  \label{rem:ex-geom}
+  Under the rotation-invariant law $\caln(0,I_2)$, two slabs of
+  half-width $a$ whose unit normals $u_1,u_2$ meet at angle $\theta$
+  define the forms $X_i=\langle u_i,G\rangle\sim\caln(0,1)$ with
+  $\Cov(X_1,X_2)=\langle u_1,u_2\rangle=\cos\theta$.  Thus \Cref{ex:box}
+  with $\rho=\cos\theta$ says that the rhombic cross-strip $K\cap L$
+  always carries at least the product measure, strictly so unless
+  $\theta=\tfrac\pi2$; perpendicular slabs are independent and recover
+  the equality of \Cref{ex:indep}.  \Cref{ex:box} is moreover a
+  self-contained, elementary proof of \Cref{cor:sidak} in the case
+  $n=2$, independent of the machinery of \Cref{sec:proof}; the general
+  $n$ case is the content of \Cref{cor:sidak} (via \Cref{thm:gcc2}), and
+  was first obtained by \v{S}id\'ak (1967) through a related
+  differentiation in the correlations.
+\end{remark}
+
+
+
+\subsection{Statistical applications}\label{sub:ex-stats}
+
+The inequality was conjectured and first studied because of the
+multiple-inference problem below, where it furnishes guarantees that
+hold \emph{uniformly over the unknown dependence structure}.  We give
+three worked applications: dependence-free simultaneous inference, an
+exact measure of its conservativeness, and the extension to estimated
+scale (the multivariate $t$).  Here $\Phi$ and $\Phi^{-1}$ are the
+standard normal CDF and quantile.
+
+\begin{example}[\v{S}id\'ak simultaneous intervals and familywise error]
+  \label{ex:sidak-ci}
+  Let $\hat\theta\sim\caln(\theta,\Sigma)$ in $\R^m$ with known variances
+  $\sigma_i^2:=\Sigma_{ii}>0$ and \emph{arbitrary} correlation matrix
+  $R$.  Standardizing, $Z:=\bigl((\hat\theta_i-\theta_i)/\sigma_i\bigr)_i
+  \sim\caln(0,R)$ with each $Z_i\sim\caln(0,1)$.  For $c>0$ form the
+  rectangle $\mathcal R_c:=\prod_{i=1}^m[\hat\theta_i-c\sigma_i,\,
+  \hat\theta_i+c\sigma_i]$.  Then
+  \begin{equation}\label{eq:ex-sidak-cov}
+    \PP(\theta\in\mathcal R_c)
+    =\PP\Bigl(\textstyle\bigcap_{i=1}^m\{|Z_i|\leqslant c\}\Bigr)
+    \;\geqslant\;\prod_{i=1}^m\PP(|Z_i|\leqslant c)
+    =\bigl(2\Phi(c)-1\bigr)^m ,
+  \end{equation}
+  for every $R$.  Hence the \v{S}id\'ak choice
+  \[
+    c=c_S:=\Phi^{-1}\!\Bigl(\tfrac{1+(1-\alpha)^{1/m}}{2}\Bigr)
+  \]
+  yields simultaneous coverage $\geqslant 1-\alpha$; dually, testing
+  $H_{0,i}:\theta_i=0$ by rejecting when $|Z_i|>c_S$ controls the
+  familywise error rate (FWER) at level $\leqslant\alpha$ irrespective of
+  $R$.
+\end{example}
+
+\begin{proof}
+  The sets $K_i=\{z:|z_i|\leqslant c\}$ are symmetric slabs, and
+  $|\hat\theta_i-\theta_i|\leqslant c\sigma_i\iff|Z_i|\leqslant c$, so the
+  coverage event is $\bigcap_i\{|Z_i|\leqslant c\}$ and
+  \eqref{eq:ex-sidak-cov} is exactly \Cref{cor:sidak}.  At $c=c_S$ one
+  has $2\Phi(c_S)-1=(1-\alpha)^{1/m}$, so the lower bound equals
+  $1-\alpha$.  For the testing statement, under $\theta=0$,
+  \[
+    \mathrm{FWER}
+    =\PP\Bigl(\textstyle\bigcup_i\{|Z_i|>c\}\Bigr)
+    =1-\PP\Bigl(\textstyle\bigcap_i\{|Z_i|\leqslant c\}\Bigr)
+    \leqslant 1-\bigl(2\Phi(c)-1\bigr)^m ,
+  \]
+  which is $\leqslant\alpha$ at $c=c_S$.
+\end{proof}
+
+\begin{remark}[Uniformly sharper than Bonferroni]\label{rem:ex-bonf}
+  The Bonferroni rule uses $c_B:=\Phi^{-1}\bigl(1-\tfrac{\alpha}{2m}\bigr)$,
+  so $2\Phi(c_B)-1=1-\tfrac{\alpha}{m}$.  By Bernoulli's inequality
+  $(1-\alpha)^{1/m}\leqslant 1-\tfrac{\alpha}{m}$ (valid since
+  $0<\tfrac1m\leqslant 1$, strict for $m\geqslant 2$),
+  \[
+    2\Phi(c_S)-1=(1-\alpha)^{1/m}\leqslant 1-\tfrac{\alpha}{m}=2\Phi(c_B)-1,
+  \]
+  whence $c_S\leqslant c_B$.  The \v{S}id\'ak rectangle is therefore
+  contained in the Bonferroni rectangle and gives strictly shorter
+  intervals (equivalently, a uniformly more powerful test) at the same
+  guaranteed level for $m\geqslant 2$.
+\end{remark}
+
+\begin{example}[Exact conservativeness for two correlated tests]
+  \label{ex:fwer-exact}
+  Take $m=2$ with $\Cov(Z_1,Z_2)=\rho$ (so the correlation is $\rho$,
+  the marginals being standard).  The true simultaneous coverage at
+  threshold $c$ is $P(\rho)$ from \Cref{ex:box} with $a=c$, while the
+  dependence-free guarantee \eqref{eq:ex-sidak-cov} is
+  $P(0)=(2\Phi(c)-1)^2$.  By \eqref{eq:ex-gap} the excess coverage ---
+  equivalently, the amount by which the actual FWER falls below the
+  nominal level --- is exactly
+  \[
+    \PP(|Z_1|\leqslant c,\,|Z_2|\leqslant c)-(2\Phi(c)-1)^2
+    =\int_0^{|\rho|}\frac{e^{-c^2/(1+s)}-e^{-c^2/(1-s)}}
+      {\pi\sqrt{1-s^2}}\,\dd s\;\geqslant\;0 .
+  \]
+  The procedure is thus conservative under any dependence, with slack
+  increasing in $|\rho|$.  Two regimes are explicit: as $c\to0$ (a very
+  stringent level) the ratio of true to guaranteed coverage tends to
+  $(1-\rho^2)^{-1/2}$ by \Cref{rem:ex-smalla}; and as $\rho\to1^-$
+  (perfectly dependent statistics) the two events coincide,
+  $P(\rho)\to 2\Phi(c)-1$, so the excess attains its maximum
+  \[
+    \bigl(2\Phi(c)-1\bigr)-\bigl(2\Phi(c)-1\bigr)^2
+    =2\bigl(2\Phi(c)-1\bigr)\bigl(1-\Phi(c)\bigr).
+  \]
+  This makes precise the familiar fact that \v{S}id\'ak (and a fortiori
+  Bonferroni) corrections are most conservative when the test statistics
+  are strongly correlated.
+\end{example}
+
+\begin{example}[Unknown variance: \v{S}id\'ak for the multivariate $t$]
+  \label{ex:mvt}
+  When the scale is estimated, the standardized statistics follow a
+  multivariate $t$.  Model $X=(Z_1/S,\ldots,Z_m/S)$ with $Z\sim\caln(0,R)$
+  ($R$ a correlation matrix) and $S>0$ independent of $Z$; if $\nu
+  S^2\sim\chi^2_\nu$ then $X$ has the central $t_\nu(R)$ law and each
+  $X_i\sim t_\nu$.  Writing $F_\nu$ for the $t_\nu$ CDF, for any
+  thresholds $c_1,\ldots,c_m>0$,
+  \begin{equation}\label{eq:ex-mvt}
+    \PP\Bigl(\textstyle\bigcap_{i=1}^m\{|X_i|\leqslant c_i\}\Bigr)
+    \;\geqslant\;\prod_{i=1}^m\PP(|X_i|\leqslant c_i)
+    =\prod_{i=1}^m\bigl(2F_\nu(c_i)-1\bigr).
+  \end{equation}
+  In particular the \v{S}id\'ak threshold built from $t_\nu$-quantiles
+  controls simultaneous coverage and FWER for correlated $t$-statistics
+  under arbitrary $R$.
+\end{example}
+
+\begin{proof}
+  Condition on $S$.  For fixed $s>0$, $\{|X_i|\leqslant c_i\}=\{|Z_i|
+  \leqslant sc_i\}$, so the Gaussian inequality \Cref{cor:sidak},
+  applied to the slabs $\{|z_i|\leqslant sc_i\}$ and using
+  $Z_i\sim\caln(0,1)$, gives
+  \[
+    \PP\Bigl(\textstyle\bigcap_i\{|X_i|\leqslant c_i\}\,\Big|\,S=s\Bigr)
+    \;\geqslant\;\prod_{i=1}^m\bigl(2\Phi(sc_i)-1\bigr)
+    =:\prod_{i=1}^m g_i(s).
+  \]
+  Taking expectations over $S$,
+  \[
+    \PP\Bigl(\textstyle\bigcap_i\{|X_i|\leqslant c_i\}\Bigr)
+    =\EE\Bigl[\PP\bigl(\textstyle\bigcap_i\{|Z_i|\leqslant Sc_i\}\mid S\bigr)\Bigr]
+    \;\geqslant\;\EE\Bigl[\prod_{i=1}^m g_i(S)\Bigr].
+  \]
+  Each $g_i(s)=2\Phi(sc_i)-1$ is nonnegative and nondecreasing on
+  $(0,\infty)$, so the $g_i$ are simultaneously nondecreasing functions
+  of the single variable $S$.  A product of nonnegative nondecreasing
+  functions is again nondecreasing, so Chebyshev's association
+  inequality $\EE[fg]\geqslant\EE[f]\,\EE[g]$ (for nondecreasing $f,g$ of
+  one variable), applied iteratively, yields
+  $\EE[\prod_i g_i(S)]\geqslant\prod_i\EE[g_i(S)]$.  Finally
+  $\EE[g_i(S)]=\EE\bigl[2\Phi(Sc_i)-1\bigr]
+  =\PP(|Z_i|\leqslant Sc_i)=\PP(|X_i|\leqslant c_i)=2F_\nu(c_i)-1$.
+  Combining the three displays gives \eqref{eq:ex-mvt}.
+\end{proof}
+
+\begin{remark}
+  The three examples isolate distinct virtues of the GCI for inference:
+  \Cref{ex:sidak-ci} gives coverage and error control that are
+  \emph{free of the dependence} $R$; \Cref{ex:fwer-exact} measures the
+  resulting conservativeness exactly; and \Cref{ex:mvt} shows the same
+  guarantees survive estimation of the scale, the case of practical
+  relevance for $t$-statistics.  Notably the last step combines the GCI
+  with the classical Chebyshev correlation inequality.
+\end{remark}
 
 
 %% ====================================================================
@@ -1043,10 +1486,12 @@ This is the range covered by Royen's multivariate gamma result.
 Under $C\succ 0$, the matrix
 $C_{J_1}^{-1/2}C_{J_1J_2}C_{J_2}^{-1}C_{J_2J_1}C_{J_1}^{-1/2}$ is
 the matrix of squared canonical correlations between the coordinate
-blocks $J_1$ and $J_2$.  Its eigenvalues $\mu_{J_1,J_2}(i)$ satisfy
-$\mu_{J_1,J_2}(i)\in[0,1)$ strictly, since $|C(\tau)_J|>0$ for all
-$\tau\in[0,1]$ when $C\succ 0$ (the endpoints $\tau=\pm 1$ would be
-needed to attain $\mu=1$).  Consequently, for any $J$ with
+blocks $J_1$ and $J_2$.  Its eigenvalues $\mu_{J_1,J_2}(i)$ lie in
+$[0,1)$: evaluating \eqref{eq:CtauJ} at $\tau=1$ gives
+$|C_J|=|C_{J_1}||C_{J_2}|\prod_i\bigl(1-\mu_{J_1,J_2}(i)\bigr)$, and since
+$C\succ 0$ forces $|C_J|,|C_{J_1}|,|C_{J_2}|>0$, every factor
+$1-\mu_{J_1,J_2}(i)$ is strictly positive, i.e.\ $\mu_{J_1,J_2}(i)<1$.
+Consequently, for any $J$ with
 $J_1,J_2\ne\varnothing$ and $C_{J_1J_2}\ne 0$, some $\mu_{J_1,J_2}(i)
 >0$, so $a_J(\tau)>0$ on $(0,1]$.  At $\tau=0$, every $a_J(0)=0$
 because each $|C(\tau)_J|$ is even in $\tau$ (see \eqref{eq:CtauJ}).
@@ -1118,15 +1563,11 @@ $\mu(K\cap L)=0<\mu(K)\mu(L)$.
 
 \subsection{\v{S}id\'ak correction for multiple testing}\label{note:fwer}
 
-Let $Z_1,\ldots,Z_n$ be jointly Gaussian with $Z_i\sim\caln(0,1)$
-marginally.  By \Cref{cor:sidak},
-\[
-  \PP(|Z_i|>c\text{ for some }i)
-  \leqslant 1-(2\Phi(c)-1)^n,
-\]
-\emph{independently of the joint covariance}.  Setting the right side
-equal to $\alpha$ gives $c=\Phi^{-1}\bigl(\tfrac{1+(1-\alpha)^{1/n}}{2}
-\bigr)$, the \v{S}id\'ak threshold.
+The use of \Cref{cor:sidak} to obtain dependence-free simultaneous
+confidence intervals and familywise error control, its comparison with
+the Bonferroni correction, the exact conservativeness in the bivariate
+case, and the extension to estimated scale (the multivariate $t$) are
+developed in \Cref{sub:ex-stats} (\Cref{ex:sidak-ci,ex:fwer-exact,ex:mvt}).
 
 \subsection{Related correlation inequalities}\label{note:correlations}
 
