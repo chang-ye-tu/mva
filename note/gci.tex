@@ -553,7 +553,7 @@ $Z_i(\tau):=\tfrac{1}{2}X_i(\tau)^2$.
     \item If $\alpha_i>1$, then $h_\alpha(x)\to 0$ as $x_i\to 0+$,
       and
       \begin{equation}\label{eq:deriv_h}
-        \frac{\partial}{\partial x_i}h_\alpha=h_{\alpha-e_i}-h_\alpha.
+        \frac{\partial}{\partial x_i}h_\alpha=\tfrac{1}{\mu}\bigl(h_{\alpha-e_i}-h_\alpha\bigr).
       \end{equation}
     \item If $\alpha\in(1,\infty)^n$, then for any $J\subseteq[n]$
       and $\lambda_i\geqslant 0$,
@@ -642,7 +642,7 @@ $Z_i(\tau):=\tfrac{1}{2}X_i(\tau)^2$.
     \item Iterating \eqref{eq:deriv_h},
       \begin{equation}\label{eq:derivJ_h}
         \frac{\partial^{|J|}}{\partial x_J}h_\alpha
-        =\sum_{\delta\in\{0,1\}^J}(-1)^{|J|-|\delta|}
+        =\frac{1}{\mu^{|J|}}\sum_{\delta\in\{0,1\}^J}(-1)^{|J|-|\delta|}
           h_{\alpha-\sum_{i\in J}\delta_ie_i},
       \end{equation}
       each summand in $L_1$ by (i) (all $\alpha_i-\delta_i\geqslant\alpha_i-1>0$).
