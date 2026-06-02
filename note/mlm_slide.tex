@@ -321,10 +321,11 @@ From Stirling's lower bound $p! \geqslant (p/e)^p$, we obtain $p^{p/2}/p! \leqsl
 \[
 \frac{(CK|t|)^p\,p^{p/2}}{p!} \leqslant \frac{(CK|t|)^p\,e^p}{p^{p/2}} = \left(\frac{CeK|t|}{\sqrt{p}}\right)^p.
 \]
-For $p \geqslant 2$ and $|t| \leqslant 1/(2CeK)$: $CeK|t|/\sqrt{p} \leqslant CeK|t| \leqslant 1/2$, so each term is $\leqslant 2^{-p}$. Hence:
+For $p \geqslant 2$ and $|t| \leqslant 1/(2CeK)$, write $r := CeK|t| \leqslant 1/2$; since $\sqrt{p} \geqslant 1$, each term is $\leqslant r^p$, and summing the geometric tail keeps the $t^2$ scaling:
 \[
-\expc[e^{tX}] \leqslant 1 + \sum_{p=2}^\infty 2^{-p} = 1 + 1/2 < 2 \leqslant e^1, \quad \text{for } |t| \leqslant \frac{1}{2CeK}.
+\expc[e^{tX}] \leqslant 1 + \sum_{p=2}^\infty r^p = 1 + \frac{r^2}{1-r} \leqslant 1 + 2r^2 \leqslant e^{2r^2} = e^{2C^2e^2K^2t^2}, \quad \text{for } |t| \leqslant \frac{1}{2CeK},
 \]
+using $r/(1-r) \leqslant 2r$ (as $r \leqslant 1/2$) and $1 + x \leqslant e^x$. This is already of the form $e^{(\text{const})K^2t^2}$ needed below; a crude constant bound $\expc[e^{tX}] < 2$ would not capture the $t^2$ decay as $t \to 0$.
 
 \textbf{Step 4: Extend to all $t$.} For $|t| > 1/(2CeK)$, we use the tail bound from Step~1. Split the MGF:
 \[
@@ -1154,11 +1155,11 @@ The estimation error bound~\eqref{eq:estimation-error} involves $1/\lambda_{\min
 In the classical theory, $\SSE/\sigma^2 \sim \chi^2_{n-p}$ under normality (Theorem~4.5 in the classical notes). The following theorem is its non-asymptotic, sub-Gaussian counterpart.
 
 \begin{theorem}[Concentration of $\SSE$]\label{thm:sse-concentration}
-Under assumptions~\ref{M1}--\ref{M4}, with probability at least $1 - C\exp(-cp)$:
+Under assumptions~\ref{M1}--\ref{M4} there are universal constants $C', c, c_0 > 0$ such that for every $\eta \in [1, \sqrt{n-p}]$, with probability at least $1 - 2e^{-c\eta^2} - 2e^{-c_0 p}$,
 \begin{equation}\label{eq:sse-concentration}
-\left|\frac{\SSE}{\sigma_\varepsilon^2} - (n-p)\right| \leqslant C'\sqrt{n-p},
+\left|\frac{\SSE}{\sigma_\varepsilon^2} - (n-p)\right| \leqslant C'\eta\sqrt{n-p},
 \end{equation}
-where $\sigma_\varepsilon^2 = \var(\varepsilon_i)$. Consequently, $\MSE = \SSE/(n-p)$ satisfies $|\MSE - \sigma_\varepsilon^2| \leqslant C'\sigma_\varepsilon^2/\sqrt{n-p}$.
+where $\sigma_\varepsilon^2 = \var(\varepsilon_i)$. Consequently $\MSE = \SSE/(n-p)$ satisfies $|\MSE - \sigma_\varepsilon^2| \leqslant C'\eta\,\sigma_\varepsilon^2/\sqrt{n-p}$ on the same event, so at any fixed confidence the deviation is of the central-limit scale $\sqrt{n-p}$ and $\MSE \to \sigma_\varepsilon^2$ at the $1/\sqrt{n-p}$ rate. (This is the correct scaling: a deviation of order $\sqrt{n-p}$ holds only at constant confidence, exactly as $\SSE/\sigma^2 \sim \chi^2_{n-p}$ has standard deviation $\sqrt{2(n-p)}$ under normality; an exponential-in-$p$ confidence $1 - e^{-cp}$ would require the larger deviation of order $\sqrt{p(n-p)}$, a constant relative error in the proportional regime $p \asymp n$.)
 \end{theorem}
 
 \begin{proof}
@@ -1189,7 +1190,7 @@ with conditional probability $\geqslant 1 - 2\exp(-c''C_0^2)$.
 \[
 \prb\!\left(\left|\frac{\SSE}{\sigma_\varepsilon^2} - (n-p)\right| \leqslant C_0\sqrt{n-p}\right) \geqslant 1 - 2\exp(-c''C_0^2) - 2\exp(-c_0 p).
 \]
-Choosing $C_0$ large enough and noting $n - p \geqslant c_1 p$ under~\ref{M4}: the probability is $\geqslant 1 - C\exp(-cp)$. Dividing by $n - p$: $|\MSE - \sigma_\varepsilon^2| \leqslant C_0\sigma_\varepsilon^2/\sqrt{n-p}$.
+This is~\eqref{eq:sse-concentration} with $\eta := C_0$ (any value in $[1, \sqrt{n-p}]$ keeps $\delta = C_0/\sqrt{n-p} \leqslant 1$, the range used in Step~4). The confidence is governed by the deviation parameter $\eta$, not by $p$: at the central-limit scale $\eta = O(1)$ the failure probability $2e^{-c\eta^2}$ is a small tunable constant, and forcing it down to $e^{-cp}$ would require $\eta \asymp \sqrt{p}$, i.e.\ the larger deviation $\asymp\sqrt{p(n-p)}$. Dividing by $n - p$: $|\MSE - \sigma_\varepsilon^2| \leqslant C'\eta\,\sigma_\varepsilon^2/\sqrt{n-p}$.
 \end{proof}
 
 %=============================================================================
@@ -1400,7 +1401,7 @@ A design matrix $\bX \in \Real^{100 \times 10}$ has i.i.d.\ Rademacher entries (
 \end{exercise}
 
 \begin{exercise}\label{ex:mC4}
-\textbf{(From concentration to confidence intervals.)} Under~\ref{M1}--\ref{M4}, construct a non-asymptotic confidence interval for a single coefficient $\beta_j$ \emph{without assuming normality}. Specifically: (a)~Show $\hat\beta_j - \beta_j = \mathbf{e}_j'(\bX'\bX)^{-1}\bX'\be$, where $\mathbf{e}_j$ is the $j$-th standard basis vector. (b)~Conditionally on $\bX$, bound $|\hat\beta_j - \beta_j|$ using the sub-Gaussian tail of $\bc'\be$ for $\bc = (\bX'\bX)^{-1}\bX'\mathbf{e}_j$. (c)~Show this yields a confidence interval of width $O(\sigma\sqrt{[(\bX'\bX)^{-1}]_{jj}\log(1/\alpha)})$ at level $1-\alpha$. Compare with the classical interval width $t_{\alpha/2, n-p}\cdot s\sqrt{[(\bX'\bX)^{-1}]_{jj}}$.
+\textbf{(From concentration to confidence intervals.)} Under~\ref{M1}--\ref{M4}, construct a non-asymptotic confidence interval for a single coefficient $\beta_j$ \emph{without assuming normality}. Specifically: (a)~Show $\hat\beta_j - \beta_j = \mathbf{e}_j'(\bX'\bX)^{-1}\bX'\be$, where $\mathbf{e}_j$ is the $j$-th standard basis vector. (b)~Conditionally on $\bX$, bound $|\hat\beta_j - \beta_j|$ using the sub-Gaussian tail of $\bc'\be$ for $\bc = \bX(\bX'\bX)^{-1}\mathbf{e}_j$. (c)~Show this yields a confidence interval of width $O(\sigma\sqrt{[(\bX'\bX)^{-1}]_{jj}\log(1/\alpha)})$ at level $1-\alpha$. Compare with the classical interval width $t_{\alpha/2, n-p}\cdot s\sqrt{[(\bX'\bX)^{-1}]_{jj}}$.
 \end{exercise}
 
 %=============================================================================
