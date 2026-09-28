@@ -1,0 +1,47 @@
+# Whitelist: nothing is tracked unless re-included below. Keeps exams, plans and
+# local tooling out of the public repo by default.
+/*
+!/.gitignore
+!/README.md
+!/note/
+
+# Inside note/: only the .tex sources and their compiled .pdf are tracked.
+# LaTeX / latexmk byproducts
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+*.synctex(busy)
+*.nav
+*.snm
+*.vrb
+*.bbl
+*.blg
+*.bcf
+*.run.xml
+*.idx
+*.ilg
+*.ind
+*.xdv
+*.dvi
+build/
+
+# Audit-loop working state (math-review / math-fix / math-loop): local by design.
+# To publish the audit trail instead, delete the next line.
+review/
+
+# knitr / notebooks / Python
+.Rhistory
+*.ipynb_checkpoints/
+__pycache__/
+
+# Editor and OS litter
+*.swp
+*.swo
+*~
+.DS_Store

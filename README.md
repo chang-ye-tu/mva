@@ -1,0 +1,58 @@
+# 多變量分析 
+
+## 教科書
+
+教師編纂講義。
+
+| &nbsp;<a href="https://github.com/chang-ye-tu/mva/blob/master/note/clm.pdf">Classical Linear Models</a>&nbsp; | &nbsp;<a href="https://github.com/chang-ye-tu/mva/blob/master/note/mc.pdf">Matrix Calculus</a>&nbsp; |  &nbsp;<a href="https://github.com/chang-ye-tu/mva/blob/master/note/mlm.pdf">Modern Linear Models</a>&nbsp; |
+
+
+## 參考書
+
+<!--
+- [Härdle, W., Simar, L., 2015. Applied Multivariate Statistical Analysis. 4th ed., Springer.](https://link.springer.com/book/10.1007/978-3-662-45171-7)
+  - 範例原始碼：[MVA-ToDo: Quantlets to Update for MVA](https://github.com/QuantLet/MVA-ToDo/tree/master)
+- [Härdle, W., Hlávka, Z., 2019. Multivariate Statistics: Exercises and Solutions. 2nd ed., Springer.](https://link.springer.com/book/10.1007/978-3-642-36005-3)
+-->
+
+### Matrix Calculus
+
+- Magnus, J. R., Neudecker, H., 2019. Matrix Differential Calculus with Applications in Statistics and Econometrics. 3rd ed., John Wiley & Sons.
+- Abadir, K., Magnus, J. R., 2005. Matrix Algebra. Cambridge University Press.
+
+### High-Dimensional Probability and Statistics
+
+- [Vershynin, R., 2026. High-Dimensional Probability: An Introduction with Applications in Data Science. 2nd ed., Cambridge University Press.](https://www.math.uci.edu/~rvershyn/papers/HDP-book/HDP-2.pdf)
+- [Wright, J., Ma, Y., 2022. High-Dimensional Data Analysis with Low-Dimensional Models: Principles, Computation, and Applications. Cambridge University Press.](https://book-wright-ma.github.io/Book-WM-20210422.pdf)
+  - [Course Slides](https://book-wright-ma.github.io/Lecture-Slides/)
+- Wainwright, M., 2019. High-Dimensional Statistics: A Non-Asymptotic Viewpoint. Cambridge University Press.
+
+<!--
+## 評分標準
+
+- 期中考（35%） 04/24 
+- 期末考（35%） 06/12 
+- 作業（30%）
+
+## 授課時程
+
+| 上課時間 |   課程進度                                                                                                             |
+|----------|------------------------------------------------------------------------------------------------------------------------|
+| 03/06    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/clm_slide.pdf">Classical Linear Models</a>                |
+| 03/13    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/clm_slide.pdf">Classical Linear Models</a>                |
+| 03/20    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/clm_slide.pdf">Classical Linear Models</a>                |
+| 03/27    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mc_slide.pdf">Matrix Calculus</a>                         |
+| 04/10    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mc_slide.pdf">Matrix Calculus</a>                         |
+| 04/17    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mc_slide.pdf">Matrix Calculus</a>                         |
+| 04/24    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/qa_mid.pdf">**期中考**</a>                                |
+| 05/08    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/gci_slide.pdf">The Gaussian Correlation Inequality</a>    |
+| 05/15    | <a href="https://www.math.uci.edu/~rvershyn/teaching/hdp/hdp.html">線上上課：Vershynin's "High-Dimensional Probability and Applications in Data Science"</a>                                                                                                                         |
+| 05/22    | 學術演講：梁賡義院士                                                                                                   |
+| 05/29    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/mlm_slide.pdf">Modern Linear Models</a>                   |
+| 06/05    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/drm_slide.pdf">Dimensionality Reduction Methods</a>       |
+| 06/12    | <a href="https://github.com/chang-ye-tu/mva/blob/master/note/qa_final.pdf">**期末考**</a>                              |
+
+## 授課教師
+
+changytu @ o365.fcu.edu.tw
+-->
