@@ -31,9 +31,12 @@
 *.dvi
 build/
 
-# Audit-loop working state (math-review / math-fix / math-loop): local by design.
+# Audit-loop working state: local by design.
 # To publish the audit trail instead, delete the next line.
 review/
+
+# Print layout of clm.pdf: local
+/note/clm_print.*
 
 # knitr / notebooks / Python
 .Rhistory
